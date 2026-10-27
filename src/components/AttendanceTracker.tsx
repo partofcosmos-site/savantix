@@ -4,7 +4,7 @@ import {
   AlertTriangle, CheckCircle2, Clock, ShieldAlert, FileText, Copy,
   ExternalLink, Plus, Trash2, Edit3, Save, X, ChevronDown, ChevronUp,
   BookOpen, Filter, Search, Check, RefreshCw, Sliders, Info, Scale, ArrowRight,
-  Compass, Lock, Unlock, ChevronLeft, ChevronRight
+  Compass, Lock, Unlock, ChevronLeft, ChevronRight, Download
 } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -26,6 +26,7 @@ import {
   DEFAULT_INITIAL_STATE
 } from '../services/attendanceRegulatorService';
 import { WidgetSyncService } from '../services/widgetSyncService';
+import { GoogleCalendarSyncService } from '../services/googleCalendarSyncService';
 import { useAppContext } from '../context/AppContext';
 
 const COLOR_MAP: Record<string, { bg: string; border: string; text: string; ring: string }> = {
@@ -75,9 +76,9 @@ export const AttendanceTracker: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('locked_matrix');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Mobile Calendar & Locked-In Matrix State
-  const [calYear, setCalYear] = useState<number>(2026);
-  const [calMonth, setCalMonth] = useState<number>(8); // September = 8 (0-indexed)
+  // Mobile Calendar & Locked-In Matrix State - initialized to current date
+  const [calYear, setCalYear] = useState<number>(() => new Date().getFullYear());
+  const [calMonth, setCalMonth] = useState<number>(() => new Date().getMonth());
   const [selectedCalDate, setSelectedCalDate] = useState<CalendarDayInfo | null>(null);
 
   // Reload state if active account changes (e.g. login/logout)
@@ -97,7 +98,7 @@ export const AttendanceTracker: React.FC = () => {
   const [absenceCategoryFilter, setAbsenceCategoryFilter] = useState<string>('all');
   const [absenceSearch, setAbsenceSearch] = useState<string>('');
   const [isAddingAbsence, setIsAddingAbsence] = useState<boolean>(false);
-  const [newAbsDate, setNewAbsDate] = useState<string>('2026-09-02');
+  const [newAbsDate, setNewAbsDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
   const [newAbsReason, setNewAbsReason] = useState<string>('');
   const [newAbsCategory, setNewAbsCategory] = useState<AbsenceCategory>('self_study');
   const [newAbsIsPractical, setNewAbsIsPractical] = useState<boolean>(false);
@@ -509,7 +510,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
           </div>
 
-          {/* 1-Click Zero-Cost Gemini Regulator CTA */}
+          {/* Action CTAs: AI Regulator + Google Calendar Sync + Reset */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
             <button
               onClick={handleLaunchGemini}
@@ -518,6 +519,19 @@ export const AttendanceTracker: React.FC = () => {
               <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
               <span>Launch Attendance AI Regulator</span>
               <ExternalLink className="w-4 h-4 text-indigo-200 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+            </button>
+
+            <button
+              onClick={() => {
+                GoogleCalendarSyncService.downloadCalendarIcs(state);
+                showToast('📅 Exported all absences & academic calendar to .ics for Google Calendar');
+              }}
+              title="Sync / Export all absences & milestones to Google Calendar (.ics format)"
+              className="flex items-center justify-center gap-2 px-4 py-3.5 bg-zinc-900/90 hover:bg-zinc-800/90 text-zinc-200 border border-zinc-700/80 rounded-2xl text-xs font-semibold shadow-lg hover:border-zinc-500 transition-all cursor-pointer"
+            >
+              <Calendar className="w-4 h-4 text-indigo-400" />
+              <span>Google Calendar (.ics)</span>
+              <Download className="w-3.5 h-3.5 text-zinc-400" />
             </button>
 
             <button

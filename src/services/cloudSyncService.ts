@@ -178,7 +178,8 @@ export class CloudSyncService {
 
     let institutional_attendance: any = null;
     try {
-      const rawInst = localStorage.getItem('savantix_attendance_institutional_v1');
+      const userKey = `savantix_attendance_institutional_${email.split('@')[0]}`;
+      const rawInst = localStorage.getItem(userKey) || localStorage.getItem('savantix_attendance_institutional_v1');
       if (rawInst) institutional_attendance = JSON.parse(rawInst);
     } catch {}
 
@@ -367,20 +368,39 @@ export class CloudSyncService {
     if (remote.institutional_attendance) {
       try {
         let localInst: any = null;
-        const rawInst = localStorage.getItem('savantix_attendance_institutional_v1');
-        if (rawInst) localInst = JSON.parse(rawInst);
+        const userEmail = remote.email || userSession?.user?.email || 'debanjan8686@gmail.com';
+        const userKey = `savantix_attendance_institutional_${userEmail.split('@')[0]}`;
+        const rawInst = localStorage.getItem(userKey) || localStorage.getItem('savantix_attendance_institutional_v1');
+        if (rawInst) {
+          try { localInst = JSON.parse(rawInst); } catch {}
+        }
 
         if (!localInst) {
           localStorage.setItem('savantix_attendance_institutional_v1', JSON.stringify(remote.institutional_attendance));
+          localStorage.setItem(userKey, JSON.stringify(remote.institutional_attendance));
         } else {
+          // Robust Map-based deduplication by unique absence date/id to prevent exponential duplication loops
+          const absenceMap = new Map<string, any>();
+          const remoteAbs = Array.isArray(remote.institutional_attendance.absences) ? remote.institutional_attendance.absences : [];
+          const localAbs = Array.isArray(localInst.absences) ? localInst.absences : [];
+          
+          [...localAbs, ...remoteAbs].forEach(a => {
+            if (a && (a.date || a.id)) {
+              const sig = a.date || a.id;
+              absenceMap.set(sig, a);
+            }
+          });
+
+          const deduplicatedAbsences = Array.from(absenceMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+
           const mergedInst = {
             ...localInst,
             ...remote.institutional_attendance,
-            absences: Array.isArray(remote.institutional_attendance.absences) && Array.isArray(localInst.absences)
-              ? Array.from(new Set([...localInst.absences, ...remote.institutional_attendance.absences]))
-              : (remote.institutional_attendance.absences || localInst.absences)
+            absences: deduplicatedAbsences
           };
+
           localStorage.setItem('savantix_attendance_institutional_v1', JSON.stringify(mergedInst));
+          localStorage.setItem(userKey, JSON.stringify(mergedInst));
         }
       } catch (instErr) {
         console.warn('[CloudSyncService] Institutional attendance merge error:', instErr);

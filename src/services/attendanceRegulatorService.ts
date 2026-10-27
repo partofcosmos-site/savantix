@@ -10,6 +10,7 @@ import {
   SimulationResult,
   SubjectAttendance
 } from '../types/attendance';
+import { CloudSyncService } from './cloudSyncService';
 
 export const INSTITUTIONAL_STORAGE_KEY = 'savantix_attendance_institutional_v1';
 export const LEGACY_SUBJECTS_STORAGE_KEY = 'savantix_attendance_data_v1';
@@ -453,11 +454,22 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
 
     if (rawData) {
       const parsed = JSON.parse(rawData);
+      
+      // Deduplicate absences by date to guarantee clean ledger even if storage was previously polluted
+      const rawAbsences = Array.isArray(parsed.absences) ? parsed.absences : baseline.absences;
+      const absenceMap = new Map<string, AbsenceEntry>();
+      rawAbsences.forEach((a: AbsenceEntry) => {
+        if (a && a.date) {
+          absenceMap.set(a.date, a);
+        }
+      });
+      const cleanAbsences = Array.from(absenceMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+
       state = {
         ...baseline,
         ...parsed,
         profile: { ...baseline.profile, ...(parsed.profile || {}) },
-        absences: Array.isArray(parsed.absences) ? parsed.absences : baseline.absences,
+        absences: cleanAbsences,
         holidays: Array.isArray(parsed.holidays) && parsed.holidays.length > 0 ? parsed.holidays : baseline.holidays,
         vacations: Array.isArray(parsed.vacations) && parsed.vacations.length > 0 ? parsed.vacations : baseline.vacations,
         exams: Array.isArray(parsed.exams) && parsed.exams.length > 0 ? parsed.exams : baseline.exams,
@@ -518,6 +530,18 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
     // Also persist subjects to legacy storage key so cloudSyncService continues without interruption
     if (Array.isArray(state.profile?.subjects)) {
       localStorage.setItem(LEGACY_SUBJECTS_STORAGE_KEY, JSON.stringify(state.profile.subjects));
+    }
+
+    // Proactively push institutional state to cloud relay so absences are never lost on refresh/blur
+    const syncEmail = isDebanjanAccount(identifier)
+      ? 'debanjan8686@gmail.com'
+      : (identifier && identifier !== 'guest' && identifier !== 'anonymous' ? identifier : null);
+
+    if (syncEmail) {
+      const canonicalId = CloudSyncService.getCanonicalUid(syncEmail);
+      CloudSyncService.pushToCloud(syncEmail, canonicalId).catch(syncErr => {
+        console.warn('[saveInstitutionalState] Auto cloud push notice:', syncErr);
+      });
     }
   } catch (err) {
     console.error('Failed to save institutional attendance state', err);
