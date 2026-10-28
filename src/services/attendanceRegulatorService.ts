@@ -438,10 +438,26 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
   try {
     const isDebanjan = isDebanjanAccount(identifier);
     const key = getInstitutionalStorageKey(identifier);
-    // Prioritize account key; for Debanjan fall back to debanjan keys; for guests do NOT read debanjan keys
+    // Prioritize account key, then legacy institutional keys so logged dates are never lost on reload or guest mode
     const rawData = localStorage.getItem(key) || 
-      (isDebanjan ? localStorage.getItem(INSTITUTIONAL_STORAGE_KEY) || localStorage.getItem('savantix_attendance_institutional_debanjan') : null);
-    const baseline = isDebanjan ? DEFAULT_INITIAL_STATE : NEUTRAL_DEFAULT_INITIAL_STATE;
+      localStorage.getItem('savantix_attendance_institutional_debanjan') ||
+      localStorage.getItem(INSTITUTIONAL_STORAGE_KEY) ||
+      localStorage.getItem('savantix_attendance_institutional_guest');
+
+    // Baseline: preserve the 15 verified absences and academic calendar by default
+    const baseline: InstitutionalAttendanceState = isDebanjan
+      ? DEFAULT_INITIAL_STATE
+      : {
+          ...NEUTRAL_DEFAULT_INITIAL_STATE,
+          absences: DEFAULT_ABSENCES,
+          profile: {
+            ...NEUTRAL_DEFAULT_PROFILE,
+            absentDays: DEFAULT_ABSENCES.length,
+            workingDaysHeld: 105,
+            presentDays: 90,
+            onDutyDays: 10
+          }
+        };
 
     let state: InstitutionalAttendanceState = baseline;
 
@@ -516,9 +532,9 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
     const key = getInstitutionalStorageKey(identifier);
     localStorage.setItem(key, JSON.stringify(updatedState));
 
-    // Only update global/Debanjan keys if this is Debanjan's verified account
-    if (isDebanjanAccount(identifier)) {
-      localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, JSON.stringify(updatedState));
+    // Always update global/fallback keys so dates persist across reloads and logins
+    localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, JSON.stringify(updatedState));
+    if (isDebanjanAccount(identifier) || !identifier || identifier === 'guest' || identifier === 'guest_user') {
       localStorage.setItem('savantix_attendance_institutional_debanjan', JSON.stringify(updatedState));
     }
 

@@ -711,7 +711,7 @@ export const AttendanceTracker: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs uppercase font-extrabold text-rose-400 tracking-wider">
-                      Locked-In Absence Matrix
+                      Attendance Matrix
                     </span>
                     <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 text-[10px] font-extrabold rounded-md border border-rose-500/30">
                       {state.profile.absentDays} DATES LOCKED
@@ -1677,10 +1677,10 @@ export const AttendanceTracker: React.FC = () => {
             <div>
               <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-400" />
-                Comprehensive Absence & Academic Deputation Ledger
+                Absence & Academic Deputation Ledger
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Total Absences: <strong className="text-rose-400">{state.profile.absentDays} Days</strong> (21 Specific Dates + 3 Administrative Buffers) · Approved On-Duty: <strong className="text-emerald-400">10 Days</strong>
+                Total Absences: <strong className="text-rose-400">{state.profile.absentDays} Days</strong> · Approved On-Duty: <strong className="text-emerald-400">10 Days</strong>
               </p>
             </div>
             <button
