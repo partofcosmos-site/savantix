@@ -368,7 +368,7 @@ export class CloudSyncService {
     if (remote.institutional_attendance) {
       try {
         let localInst: any = null;
-        const userEmail = remote.email || userSession?.user?.email || 'debanjan8686@gmail.com';
+        const userEmail = remote.email || email || 'debanjan8686@gmail.com';
         const userKey = `savantix_attendance_institutional_${userEmail.split('@')[0]}`;
         const rawInst = localStorage.getItem(userKey) || localStorage.getItem('savantix_attendance_institutional_v1');
         if (rawInst) {

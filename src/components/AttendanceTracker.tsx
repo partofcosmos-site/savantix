@@ -23,7 +23,9 @@ import {
   simulateAttendanceScenario,
   generateGeminiRegulatoryPrompt,
   launchGeminiRegulator,
-  DEFAULT_INITIAL_STATE
+  DEFAULT_INITIAL_STATE,
+  NEUTRAL_DEFAULT_INITIAL_STATE,
+  isDebanjanAccount
 } from '../services/attendanceRegulatorService';
 import { WidgetSyncService } from '../services/widgetSyncService';
 import { GoogleCalendarSyncService } from '../services/googleCalendarSyncService';
@@ -61,9 +63,9 @@ export const MONTH_NAMES = [
 ];
 
 export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; reason: string }[] = [
+  { label: '⚡ Tutopia Self-Study', category: 'tutopia', reason: 'Tutopia CBSE PCM syllabus consolidation' },
   { label: '⚡ Olympiad Sprint', category: 'olympiad', reason: 'IPhO / NSEP theoretical problem solving & optics sprint' },
   { label: '⚡ JEE Mechanics & Calculus', category: 'jee_prep', reason: 'Rotational dynamics, calculus & coordinate geometry' },
-  { label: '⚡ Tutopia Self-Study', category: 'self_study', reason: 'Tutopia CBSE PCM syllabus consolidation' },
   { label: '⚡ Half-Yearly Revision', category: 'exam_prep', reason: 'Class XI Half-Yearly syllabus revision' },
   { label: '⚡ Medical / Health Rest', category: 'recovery', reason: 'Health recovery & sleep consolidation' },
 ];
@@ -71,19 +73,38 @@ export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; r
 export const AttendanceTracker: React.FC = () => {
   const { user, isGuest } = useAppContext();
   const userIdentifier = user?.email || (isGuest ? 'guest' : 'anonymous');
+  const isDebanjan = isDebanjanAccount(userIdentifier);
 
   const [state, setState] = useState<InstitutionalAttendanceState>(() => loadInstitutionalState(userIdentifier));
   const [activeTab, setActiveTab] = useState<ActiveTab>('locked_matrix');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Institution Profile Edit Modal State
+  const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
+  const [editSchoolName, setEditSchoolName] = useState<string>('');
+  const [editAffiliationNo, setEditAffiliationNo] = useState<string>('');
+  const [editStream, setEditStream] = useState<string>('');
 
   // Mobile Calendar & Locked-In Matrix State - initialized to current date
   const [calYear, setCalYear] = useState<number>(() => new Date().getFullYear());
   const [calMonth, setCalMonth] = useState<number>(() => new Date().getMonth());
   const [selectedCalDate, setSelectedCalDate] = useState<CalendarDayInfo | null>(null);
 
-  // Reload state if active account changes (e.g. login/logout)
+  // Reload state if active account changes (e.g. login/logout) or another tab updates
   useEffect(() => {
-    setState(loadInstitutionalState(userIdentifier));
+    const refreshFromStorage = () => {
+      setState(loadInstitutionalState(userIdentifier));
+    };
+
+    refreshFromStorage();
+
+    window.addEventListener('storage', refreshFromStorage);
+    window.addEventListener('savantix:attendance-updated', refreshFromStorage as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', refreshFromStorage);
+      window.removeEventListener('savantix:attendance-updated', refreshFromStorage as EventListener);
+    };
   }, [userIdentifier]);
 
   // Reality Math Simulator State
@@ -203,17 +224,22 @@ export const AttendanceTracker: React.FC = () => {
     };
 
     setState(prev => {
-      const updatedAbsences = [newEntry, ...prev.absences];
+      // Deduplicate to avoid adding the same date multiple times
+      const existingFiltered = prev.absences.filter(a => a.date !== newAbsDate);
+      const updatedAbsences = [newEntry, ...existingFiltered].sort((a, b) => b.date.localeCompare(a.date));
       const updatedProfile = {
         ...prev.profile,
-        absentDays: prev.profile.absentDays + 1,
-        workingDaysHeld: prev.profile.workingDaysHeld + 1
+        absentDays: updatedAbsences.length,
+        workingDaysHeld: Math.max(prev.profile.workingDaysHeld, 105)
       };
-      return {
+      const newState = {
         ...prev,
         profile: updatedProfile,
         absences: updatedAbsences
       };
+      // CRITICAL: Synchronously commit to persistent storage immediately before React state transition
+      saveInstitutionalState(newState, userIdentifier);
+      return newState;
     });
 
     setNewAbsReason('');
@@ -223,14 +249,19 @@ export const AttendanceTracker: React.FC = () => {
 
   // Remove absence
   const handleDeleteAbsence = (id: string) => {
-    setState(prev => ({
-      ...prev,
-      absences: prev.absences.filter(a => a.id !== id),
-      profile: {
-        ...prev.profile,
-        absentDays: Math.max(0, prev.profile.absentDays - 1)
-      }
-    }));
+    setState(prev => {
+      const updatedAbsences = prev.absences.filter(a => a.id !== id);
+      const newState = {
+        ...prev,
+        absences: updatedAbsences,
+        profile: {
+          ...prev.profile,
+          absentDays: updatedAbsences.length
+        }
+      };
+      saveInstitutionalState(newState, userIdentifier);
+      return newState;
+    });
     showToast('Absence record removed.');
   };
 
@@ -309,10 +340,38 @@ export const AttendanceTracker: React.FC = () => {
 
   // Reset to default ground truth
   const handleResetToGroundTruth = () => {
-    if (window.confirm('Reset all attendance data back to verified institutional ground truth (Bandhan School, 71 held, 48 attended, 10 on-duty, 28 holidays)?')) {
-      setState(DEFAULT_INITIAL_STATE);
-      showToast('Reset to verified ground truth.');
+    if (isDebanjan) {
+      if (window.confirm('Reset all attendance data back to verified institutional ground truth (Bandhan School, 105 held, 90 attended, 10 on-duty, 15 absences, 28 holidays)?')) {
+        setState(DEFAULT_INITIAL_STATE);
+        showToast('Reset to verified ground truth.');
+      }
+    } else {
+      if (window.confirm('Reset attendance ledger to clean slate?')) {
+        setState(NEUTRAL_DEFAULT_INITIAL_STATE);
+        showToast('Reset to default academic ledger.');
+      }
     }
+  };
+
+  const handleOpenEditProfile = () => {
+    setEditSchoolName(state.profile.schoolName);
+    setEditAffiliationNo(state.profile.affiliationNo);
+    setEditStream(state.profile.stream);
+    setIsEditingProfile(true);
+  };
+
+  const handleSaveProfile = () => {
+    setState(prev => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        schoolName: editSchoolName.trim() || 'Academic Institution',
+        affiliationNo: editAffiliationNo.trim(),
+        stream: editStream.trim() || 'General Senior Secondary'
+      }
+    }));
+    setIsEditingProfile(false);
+    showToast('Institution profile updated.');
   };
 
   // Filtered holidays
@@ -452,15 +511,24 @@ export const AttendanceTracker: React.FC = () => {
       notes: `Quick locked-in via Mobile Calendar`
     };
 
-    setState(prev => ({
-      ...prev,
-      profile: {
+    setState(prev => {
+      // Deduplicate to avoid adding the same date multiple times
+      const existingFiltered = prev.absences.filter(a => a.date !== day.dateStr);
+      const updatedAbsences = [newEntry, ...existingFiltered].sort((a, b) => b.date.localeCompare(a.date));
+      const updatedProfile = {
         ...prev.profile,
-        absentDays: prev.profile.absentDays + 1,
-        workingDaysHeld: prev.profile.workingDaysHeld + 1
-      },
-      absences: [newEntry, ...prev.absences]
-    }));
+        absentDays: updatedAbsences.length,
+        workingDaysHeld: Math.max(prev.profile.workingDaysHeld, 105)
+      };
+      const newState = {
+        ...prev,
+        profile: updatedProfile,
+        absences: updatedAbsences
+      };
+      // CRITICAL: Synchronously commit to persistent storage immediately before React state transition
+      saveInstitutionalState(newState, userIdentifier);
+      return newState;
+    });
 
     setSelectedCalDate(null);
     showToast(`🔒 Locked in absence for ${day.dateStr} (${day.dayOfWeek})`);
@@ -488,15 +556,25 @@ export const AttendanceTracker: React.FC = () => {
                 <School className="w-6 h-6" />
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/25 rounded-full text-xs font-semibold text-indigo-300 tracking-wide">
-                  CBSE Affiliation: {state.profile.affiliationNo}
-                </span>
+                {state.profile.affiliationNo && (
+                  <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/25 rounded-full text-xs font-semibold text-indigo-300 tracking-wide">
+                    Affiliation: {state.profile.affiliationNo}
+                  </span>
+                )}
                 <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/25 rounded-full text-xs font-semibold text-emerald-300">
-                  {state.profile.stream}
+                  {state.profile.stream || 'Senior Secondary'}
                 </span>
                 <span className="px-3 py-1 bg-zinc-800/80 border border-zinc-700 rounded-full text-xs text-zinc-400">
                   Mon – Fri Schedule
                 </span>
+                <button
+                  onClick={handleOpenEditProfile}
+                  className="flex items-center gap-1 px-2.5 py-1 bg-zinc-800/80 hover:bg-zinc-700 border border-zinc-700/80 rounded-full text-xs text-zinc-300 transition-colors cursor-pointer"
+                  title="Configure your school name, board affiliation, and stream"
+                >
+                  <Edit3 className="w-3 h-3 text-indigo-400" />
+                  <span>Customize</span>
+                </button>
               </div>
             </div>
 
@@ -505,21 +583,31 @@ export const AttendanceTracker: React.FC = () => {
                 {state.profile.schoolName}
               </h1>
               <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
-                Institutional Attendance Reality Engine & Regulatory Compliance Dashboard · Academic Session 2026–2027
+                Attendance Ledger & Regulatory Compliance Dashboard · Academic Session 2026–2027
               </p>
             </div>
           </div>
 
-          {/* Action CTAs: AI Regulator + Google Calendar Sync + Reset */}
+          {/* Action CTAs: AI Regulator / Advisory + Google Calendar Sync + Reset */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-            <button
-              onClick={handleLaunchGemini}
-              className="relative group flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-indigo-700 hover:from-violet-500 hover:to-indigo-600 text-white rounded-2xl font-bold text-sm shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all duration-300 cursor-pointer active:scale-95 border border-indigo-400/30"
-            >
-              <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
-              <span>Launch Attendance AI Regulator</span>
-              <ExternalLink className="w-4 h-4 text-indigo-200 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-            </button>
+            {isDebanjan ? (
+              <button
+                onClick={handleLaunchGemini}
+                className="relative group flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-indigo-700 hover:from-violet-500 hover:to-indigo-600 text-white rounded-2xl font-bold text-sm shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all duration-300 cursor-pointer active:scale-95 border border-indigo-400/30"
+              >
+                <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
+                <span>Launch Attendance AI Regulator</span>
+                <ExternalLink className="w-4 h-4 text-indigo-200 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+              </button>
+            ) : (
+              <button
+                onClick={() => setActiveTab('overview')}
+                className="flex items-center justify-center gap-2 px-5 py-3.5 bg-zinc-800/90 hover:bg-zinc-700/90 text-zinc-100 rounded-2xl text-xs font-semibold border border-zinc-700 transition-all cursor-pointer"
+              >
+                <Scale className="w-4 h-4 text-indigo-400" />
+                <span>Attendance Projections</span>
+              </button>
+            )}
 
             <button
               onClick={() => {
@@ -536,7 +624,7 @@ export const AttendanceTracker: React.FC = () => {
 
             <button
               onClick={handleResetToGroundTruth}
-              title="Reset data to verified ground truth"
+              title={isDebanjan ? "Reset data to verified ground truth" : "Reset attendance ledger to default"}
               className="p-3 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-2xl text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
               <RefreshCw className="w-4 h-4" />
@@ -549,10 +637,10 @@ export const AttendanceTracker: React.FC = () => {
           {[
             { id: 'locked_matrix', label: '🔒 Locked Dates Matrix', icon: Lock, badge: `${state.profile.absentDays} Locked` },
             { id: 'absences', label: 'Absence Ledger', icon: Award, badge: `${state.absences.length}` },
-            { id: 'overview', label: 'Reality Math', icon: Scale },
-            { id: 'calendar', label: 'Holidays (28)', icon: Calendar },
-            { id: 'subjects', label: 'Subjects (6)', icon: BookOpen },
-            { id: 'ai_regulator', label: 'AI Regulator', icon: FileText },
+            { id: 'overview', label: 'Attendance Projections', icon: Scale },
+            { id: 'calendar', label: 'Holidays & Breaks', icon: Calendar },
+            { id: 'subjects', label: `Subjects (${state.profile.subjects.length})`, icon: BookOpen },
+            ...(isDebanjan ? [{ id: 'ai_regulator', label: 'AI Regulatory Dossier', icon: FileText }] : []),
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -2205,8 +2293,8 @@ export const AttendanceTracker: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 5: AI REGULATOR DOSSIER & LEGAL ANALYSIS */}
-      {activeTab === 'ai_regulator' && (
+      {/* TAB 5: AI REGULATORY DOSSIER (Strictly Private to Verified Account) */}
+      {isDebanjan && activeTab === 'ai_regulator' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Action Header Card */}
           <div className="bg-gradient-to-r from-violet-950/40 via-indigo-950/30 to-zinc-900 border border-violet-500/40 rounded-3xl p-6 backdrop-blur-md space-y-4 shadow-2xl">
@@ -2214,17 +2302,17 @@ export const AttendanceTracker: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1 bg-violet-500/20 text-violet-300 text-xs font-bold rounded-full border border-violet-500/30">
-                    Zero-Cost Gemini Web AI Bridge
+                    Gemini AI Regulatory Bridge
                   </span>
                   <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full border border-emerald-500/25">
-                    No API Keys Required
+                    Private Verified Session
                   </span>
                 </div>
                 <h3 className="text-xl font-extrabold text-white mt-2">
-                  Institutional Attendance Regulator & Strategic Dossier
+                  Institutional Attendance Regulator & Advisory Dossier
                 </h3>
                 <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
-                  Automatically compiles live CBSE Ground Truth, IIT Kharagpur on-duty proof, 28 holidays, 21 absence records, and CBSE Rule 13.2 / 14 by-laws into an elite strategic consultation prompt.
+                  Compiles live academic ledger, On-Duty credits, holiday calendar, logged absence schedule, and CBSE Examination By-Laws (Rules 13.2 & 14) into an executive advisory prompt for Gemini.
                 </p>
               </div>
 
@@ -2258,7 +2346,7 @@ export const AttendanceTracker: React.FC = () => {
                 rows={2}
                 value={customAIQuery}
                 onChange={(e) => setCustomAIQuery(e.target.value)}
-                placeholder="e.g., Draft an official letter to Principal requesting counter-signature on IIT Kharagpur on-duty certificate under CBSE Rule 14.ii, and provide an optimized leave plan for NSEP revision..."
+                placeholder="e.g., Draft an official letter requesting On-Duty attendance credit counter-signature under CBSE Rule 14.ii, and provide an optimized leave plan..."
                 className="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl p-3 text-xs text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
               />
             </div>
@@ -2270,9 +2358,9 @@ export const AttendanceTracker: React.FC = () => {
               <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase">
                 <Scale className="w-4 h-4" /> CBSE Rule 13.2 By-Laws
               </div>
-              <h4 className="font-bold text-sm text-zinc-100">75% Mandatory Attendance</h4>
+              <h4 className="font-bold text-sm text-zinc-100">75% Mandatory Floor</h4>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Mandates that candidates for CBSE Senior Secondary Board Exams must attain minimum 75% attendance from session commencement until the cutoff lock date (Dec 31).
+                Candidates for CBSE Senior Secondary Board Exams must attain a minimum 75% attendance from session commencement until the cutoff lock date (Dec 31).
               </p>
             </div>
 
@@ -2282,17 +2370,17 @@ export const AttendanceTracker: React.FC = () => {
               </div>
               <h4 className="font-bold text-sm text-zinc-100">15% Medical & OD Relief</h4>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Rule 14(i) permits Chairman condonation down to 60% for certified illnesses. Rule 14(ii) grants official On-Duty (OD) attendance credit for authorized scientific olympiad camps and deputations.
+                Rule 14(i) permits condonation down to 60% for certified illnesses. Rule 14(ii) grants official On-Duty (OD) attendance credit for authorized scientific camps, sports, and academic deputations.
               </p>
             </div>
 
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-2">
               <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase">
-                <Compass className="w-4 h-4" /> Strategic Alternatives
+                <Compass className="w-4 h-4" /> Academic Pathway Analysis
               </div>
-              <h4 className="font-bold text-sm text-zinc-100">Dummy vs NIOS vs A-Levels</h4>
+              <h4 className="font-bold text-sm text-zinc-100">Attendance Allocation</h4>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Comparative analysis for high-achieving STEM aspirants balancing JEE Advanced / IPhO with formal schooling, open board flexibility (NIOS), or British Cambridge A-Levels.
+                Strategic balance between classroom presence, laboratory practicals, and independent preparation for competitive entrance exams.
               </p>
             </div>
           </div>
@@ -2301,7 +2389,7 @@ export const AttendanceTracker: React.FC = () => {
           <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-bold text-zinc-200 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-zinc-400" /> Live AI Dossier Payload Preview
+                <FileText className="w-4 h-4 text-zinc-400" /> AI Regulatory Prompt Payload
               </h4>
               <span className="text-[11px] text-zinc-500 font-mono">
                 {generateGeminiRegulatoryPrompt(state, customAIQuery).length} characters
@@ -2311,6 +2399,76 @@ export const AttendanceTracker: React.FC = () => {
             <pre className="p-4 bg-zinc-950 rounded-2xl border border-zinc-800/90 text-xs text-zinc-300 font-mono overflow-x-auto max-h-96 whitespace-pre-wrap leading-relaxed select-all">
               {generateGeminiRegulatoryPrompt(state, customAIQuery)}
             </pre>
+          </div>
+        </div>
+      )}
+
+      {/* Institution Profile Customization Modal */}
+      {isEditingProfile && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+              <div className="flex items-center gap-2.5">
+                <School className="w-5 h-5 text-indigo-400" />
+                <h3 className="font-bold text-base text-zinc-100">Institution & Stream Settings</h3>
+              </div>
+              <button
+                onClick={() => setIsEditingProfile(false)}
+                className="p-1 text-zinc-400 hover:text-zinc-200 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <div>
+                <label className="block text-zinc-400 font-semibold mb-1">School / Institution Name</label>
+                <input
+                  type="text"
+                  value={editSchoolName}
+                  onChange={(e) => setEditSchoolName(e.target.value)}
+                  placeholder="e.g., Delhi Public School / St. Xavier's"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-zinc-400 font-semibold mb-1">Affiliation / Registration No (Optional)</label>
+                <input
+                  type="text"
+                  value={editAffiliationNo}
+                  onChange={(e) => setEditAffiliationNo(e.target.value)}
+                  placeholder="e.g., 2430453 or leave blank"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-zinc-400 font-semibold mb-1">Class & Academic Stream</label>
+                <input
+                  type="text"
+                  value={editStream}
+                  onChange={(e) => setEditStream(e.target.value)}
+                  placeholder="e.g., Class XI — Science (PCM)"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-200 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-800/80">
+              <button
+                onClick={() => setIsEditingProfile(false)}
+                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-xs font-semibold cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveProfile}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold cursor-pointer"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       )}
