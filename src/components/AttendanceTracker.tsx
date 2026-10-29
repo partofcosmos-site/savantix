@@ -714,7 +714,7 @@ export const AttendanceTracker: React.FC = () => {
                       Attendance Matrix
                     </span>
                     <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 text-[10px] font-extrabold rounded-md border border-rose-500/30">
-                      {state.profile.absentDays} DATES LOCKED
+                      {state.absences.length} DATES LOCKED
                     </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-zinc-100 mt-0.5">

@@ -464,20 +464,29 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
     if (rawData) {
       const parsed = JSON.parse(rawData);
       
-      // Deduplicate absences by date to guarantee clean ledger even if storage was previously polluted
-      const rawAbsences = Array.isArray(parsed.absences) ? parsed.absences : baseline.absences;
+      // Auto-merge verified baseline absences with user-logged absences
+      // DEFAULT_ABSENCES acts as the ground truth foundation so verified dates are NEVER lost
       const absenceMap = new Map<string, AbsenceEntry>();
-      rawAbsences.forEach((a: AbsenceEntry) => {
-        if (a && a.date) {
-          absenceMap.set(a.date, a);
-        }
+      DEFAULT_ABSENCES.forEach((a: AbsenceEntry) => {
+        if (a && a.date) absenceMap.set(a.date, a);
       });
+
+      if (Array.isArray(parsed.absences)) {
+        parsed.absences.forEach((a: AbsenceEntry) => {
+          if (a && a.date) {
+            absenceMap.set(a.date, a);
+          }
+        });
+      }
       const cleanAbsences = Array.from(absenceMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+
+      const mergedProfile = { ...baseline.profile, ...(parsed.profile || {}) };
+      mergedProfile.absentDays = cleanAbsences.length;
 
       state = {
         ...baseline,
         ...parsed,
-        profile: { ...baseline.profile, ...(parsed.profile || {}) },
+        profile: mergedProfile,
         absences: cleanAbsences,
         holidays: Array.isArray(parsed.holidays) && parsed.holidays.length > 0 ? parsed.holidays : baseline.holidays,
         vacations: Array.isArray(parsed.vacations) && parsed.vacations.length > 0 ? parsed.vacations : baseline.vacations,
