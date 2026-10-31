@@ -56,7 +56,7 @@ if (typeof globalThis.localStorage === 'undefined') {
 const DRAFT_STORAGE_KEY = 'savantix_feedback_draft';
 const HISTORY_STORAGE_KEY = 'savantix_submitted_feedback';
 const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/savantix.core@gmail.com';
-const GITHUB_ISSUES_URL = 'https://github.com/partofcosmos-site/aegis1/issues';
+const GITHUB_ISSUES_URL = 'https://github.com/partofcosmos-site/savantix/issues';
 
 // ─── VALIDATION ENGINE MIRROR ──────────────────────────────────────────────
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

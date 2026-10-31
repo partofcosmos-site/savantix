@@ -16,7 +16,7 @@ Keeping a physical study logbook or navigating complex productivity tools drains
 ## 🌐 Live Production Access
 
 * **Production URL:** [https://savantix.vercel.app/](https://savantix.vercel.app/)
-* **GitHub Repository:** [https://github.com/partofcosmos-site/aegis1](https://github.com/partofcosmos-site/aegis1)
+* **GitHub Repository:** [https://github.com/partofcosmos-site/savantix](https://github.com/partofcosmos-site/savantix)
 * **Access Modes:**
   * **Google One-Tap Cloud Sync:** Instant synchronization across phone, tablet, and PC via Cloud Firestore.
   * **Explore Demo / Guest Mode:** 100% offline, privacy-first local storage execution with zero login barriers.
@@ -126,7 +126,7 @@ A comprehensive stress-test benchmark was conducted across all **16 Free Tier Mo
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/partofcosmos-site/aegis1.git
+git clone https://github.com/partofcosmos-site/savantix.git
 cd aegis1
 
 # 2. Install dependencies

@@ -241,7 +241,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
               <span className="text-[10px] text-zinc-500 group-hover:text-emerald-400">↗</span>
             </a>
             <a
-              href="https://partofcosmos.pages.dev/ai/council.html"
+              href="https://partofcosmos.pages.dev/ai/council"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-amber-300 hover:bg-zinc-800/60 transition-all group"
