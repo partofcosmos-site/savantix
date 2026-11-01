@@ -13,11 +13,69 @@ import { DeepWorkFortress } from './components/DeepWorkFortress';
 import { ContactFeedback } from './components/ContactFeedback';
 import { AttendanceCalculator } from './components/AttendanceCalculator';
 
+const TAB_ROUTES: Record<ActiveTabType, { path: string; title: string }> = {
+  dashboard: { path: '/', title: 'Savantix | Elite AI Study Optimization' },
+  pomodoro: { path: '/pomodoro', title: 'Focus Timer & Deep Work | Savantix' },
+  analytics: { path: '/analytics', title: 'Study Analytics & Velocity | Savantix' },
+  attendance: { path: '/attendance', title: 'Smart Attendance Calculator & Planner | Savantix' },
+  goals: { path: '/goals', title: 'Study Targets & Syllabus Goals | Savantix' },
+  journal: { path: '/journal', title: 'Daily Reflection & Study Journal | Savantix' },
+  settings: { path: '/settings', title: 'System Settings | Savantix' },
+  feedback: { path: '/feedback', title: 'Contact & Feedback | Savantix' },
+};
+
+function resolveTabFromLocation(): ActiveTabType {
+  if (typeof window === 'undefined') return 'dashboard';
+
+  // 1. Check path-based URL (/attendance, /pomodoro, /analytics, etc.)
+  const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
+  for (const [tabKey, config] of Object.entries(TAB_ROUTES)) {
+    if (config.path === pathname || pathname === `/${tabKey}`) {
+      return tabKey as ActiveTabType;
+    }
+  }
+
+  // 2. Fallback to query parameter (?tab=attendance)
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const targetTab = params.get('tab') as ActiveTabType;
+    if (targetTab && TAB_ROUTES[targetTab]) {
+      return targetTab;
+    }
+  } catch {}
+
+  return 'dashboard';
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTabType>('dashboard');
+  const [activeTab, setActiveTab] = useState<ActiveTabType>(resolveTabFromLocation);
   const [isFortressMode, setIsFortressMode] = useState(false);
   // Keep-alive lazy mounting: only mount heavy components when first visited
-  const [mountedTabs, setMountedTabs] = useState<Set<ActiveTabType>>(() => new Set(['dashboard']));
+  const [mountedTabs, setMountedTabs] = useState<Set<ActiveTabType>>(() => new Set([resolveTabFromLocation()]));
+
+  // Synchronize document title and browser URL with activeTab
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const route = TAB_ROUTES[activeTab];
+      if (route) {
+        document.title = route.title;
+        const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+        if (currentPath !== route.path) {
+          window.history.pushState({ tab: activeTab }, '', route.path);
+        }
+      }
+    }
+  }, [activeTab]);
+
+  // Handle browser Back / Forward buttons (popstate)
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      const newTab = (e.state && e.state.tab) || resolveTabFromLocation();
+      setActiveTab(newTab);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     setMountedTabs(prev => {
@@ -37,15 +95,9 @@ export default function App() {
     };
     window.addEventListener('navigate', handleNavigate);
 
-    // 2. Android PWA / Home Screen Widget Shortcut Deep Linking
+    // 2. Android PWA / Home Screen Widget Shortcut Actions
     try {
       const params = new URLSearchParams(window.location.search);
-      const targetTab = params.get('tab') as ActiveTabType;
-      const validTabs: ActiveTabType[] = ['dashboard', 'pomodoro', 'analytics', 'attendance', 'goals', 'journal', 'settings', 'feedback'];
-      if (targetTab && validTabs.includes(targetTab)) {
-        setActiveTab(targetTab);
-      }
-
       const action = params.get('action');
       if (action === 'microlog') {
         setTimeout(() => {
