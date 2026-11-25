@@ -438,38 +438,31 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
   try {
     const isDebanjan = isDebanjanAccount(identifier);
     const key = getInstitutionalStorageKey(identifier);
-    // Prioritize account key, then legacy institutional keys so logged dates are never lost on reload or guest mode
-    const rawData = localStorage.getItem(key) || 
-      localStorage.getItem('savantix_attendance_institutional_debanjan') ||
-      localStorage.getItem(INSTITUTIONAL_STORAGE_KEY) ||
-      localStorage.getItem('savantix_attendance_institutional_guest');
 
-    // Baseline: preserve the 15 verified absences and academic calendar by default
+    // STRICT ISOLATION: Only verified Debanjan account may read personal/legacy keys or seed private absences.
+    // Guest/Demo Mode and all other accounts stay 100% sandboxed to their own neutral storage key.
+    const rawData = isDebanjan
+      ? (localStorage.getItem(key) ||
+         localStorage.getItem('savantix_attendance_institutional_debanjan') ||
+         localStorage.getItem(INSTITUTIONAL_STORAGE_KEY))
+      : localStorage.getItem(key);
+
     const baseline: InstitutionalAttendanceState = isDebanjan
       ? DEFAULT_INITIAL_STATE
-      : {
-          ...NEUTRAL_DEFAULT_INITIAL_STATE,
-          absences: DEFAULT_ABSENCES,
-          profile: {
-            ...NEUTRAL_DEFAULT_PROFILE,
-            absentDays: DEFAULT_ABSENCES.length,
-            workingDaysHeld: 105,
-            presentDays: 90,
-            onDutyDays: 10
-          }
-        };
+      : NEUTRAL_DEFAULT_INITIAL_STATE;
 
     let state: InstitutionalAttendanceState = baseline;
 
     if (rawData) {
       const parsed = JSON.parse(rawData);
-      
-      // Auto-merge verified baseline absences with user-logged absences
-      // DEFAULT_ABSENCES acts as the ground truth foundation so verified dates are NEVER lost
+
       const absenceMap = new Map<string, AbsenceEntry>();
-      DEFAULT_ABSENCES.forEach((a: AbsenceEntry) => {
-        if (a && a.date) absenceMap.set(a.date, a);
-      });
+      if (isDebanjan) {
+        // Only merge verified institutional ground-truth absences for the verified owner account
+        DEFAULT_ABSENCES.forEach((a: AbsenceEntry) => {
+          if (a && a.date) absenceMap.set(a.date, a);
+        });
+      }
 
       if (Array.isArray(parsed.absences)) {
         parsed.absences.forEach((a: AbsenceEntry) => {
@@ -538,32 +531,29 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
       ...state,
       lastUpdated: new Date().toISOString()
     };
+    const isDebanjan = isDebanjanAccount(identifier);
+    const isGuestOrAnon = !identifier || identifier === 'guest' || identifier === 'guest_user' || identifier === 'anonymous' || identifier === 'guest@savantix.app';
     const key = getInstitutionalStorageKey(identifier);
     localStorage.setItem(key, JSON.stringify(updatedState));
 
-    // Always update global/fallback keys so dates persist across reloads and logins
-    localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, JSON.stringify(updatedState));
-    if (isDebanjanAccount(identifier) || !identifier || identifier === 'guest' || identifier === 'guest_user') {
+    // STRICT ISOLATION: Never overwrite owner/global keys or push to cloud from Guest/Demo Mode
+    if (isDebanjan) {
+      localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, JSON.stringify(updatedState));
       localStorage.setItem('savantix_attendance_institutional_debanjan', JSON.stringify(updatedState));
+      if (Array.isArray(state.profile?.subjects)) {
+        localStorage.setItem(LEGACY_SUBJECTS_STORAGE_KEY, JSON.stringify(state.profile.subjects));
+      }
     }
 
-    // Also persist subjects to legacy storage key so cloudSyncService continues without interruption
-    if (Array.isArray(state.profile?.subjects)) {
-      localStorage.setItem(LEGACY_SUBJECTS_STORAGE_KEY, JSON.stringify(state.profile.subjects));
-    }
-
-    // Dispatch custom and standard storage events so all open tabs and components synchronize instantaneously
+    // Dispatch storage events so open tabs stay in sync
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: updatedState }));
     }
 
-    // Proactively push institutional state to cloud relay so absences are never lost on refresh/blur
-    const syncEmail = isDebanjanAccount(identifier)
-      ? 'debanjan8686@gmail.com'
-      : (identifier && identifier !== 'guest' && identifier !== 'anonymous' ? identifier : 'debanjan8686@gmail.com');
-
-    if (syncEmail) {
+    // Only push to cloud for authenticated real accounts (NEVER for guest/demo/anonymous)
+    if (!isGuestOrAnon && identifier && identifier.includes('@')) {
+      const syncEmail = isDebanjan ? 'debanjan8686@gmail.com' : identifier.trim().toLowerCase();
       const canonicalId = CloudSyncService.getCanonicalUid(syncEmail);
       CloudSyncService.pushToCloud(syncEmail, canonicalId).catch(syncErr => {
         console.warn('[saveInstitutionalState] Auto cloud push notice:', syncErr);

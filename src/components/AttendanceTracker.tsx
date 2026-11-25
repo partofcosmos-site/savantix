@@ -72,7 +72,7 @@ export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; r
 
 export const AttendanceTracker: React.FC = () => {
   const { user, isGuest } = useAppContext();
-  const userIdentifier = user?.email || (isGuest ? 'guest' : 'anonymous');
+  const userIdentifier = isGuest ? 'guest' : (user?.email || 'anonymous');
   const isDebanjan = isDebanjanAccount(userIdentifier);
 
   const [state, setState] = useState<InstitutionalAttendanceState>(() => loadInstitutionalState(userIdentifier));
