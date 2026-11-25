@@ -78,6 +78,50 @@ export const AttendanceTracker: React.FC = () => {
   const [state, setState] = useState<InstitutionalAttendanceState>(() => loadInstitutionalState(userIdentifier));
   const [activeTab, setActiveTab] = useState<ActiveTab>('locked_matrix');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
+  const [bulkDatesInput, setBulkDatesInput] = useState<string>('');
+  const [bulkReasonInput, setBulkReasonInput] = useState<string>('Self-study / missed school day');
+
+  const handleBulkImportDates = () => {
+    const matches = Array.from(new Set(bulkDatesInput.match(/20\d{2}-\d{2}-\d{2}/g) || []));
+    if (matches.length === 0) {
+      showToast('Enter at least one YYYY-MM-DD date (e.g. 2026-11-04, 2026-11-12)');
+      return;
+    }
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const map = new Map<string, AbsenceEntry>();
+    state.absences.forEach((a) => { if (a?.date) map.set(a.date, a); });
+    let added = 0;
+    for (const dt of matches) {
+      if (!map.has(dt)) {
+        const dObj = new Date(`${dt}T00:00:00`);
+        const dow = isNaN(dObj.getTime()) ? 'Weekday' : dayNames[dObj.getDay()];
+        map.set(dt, {
+          id: `abs_bulk_${dt}`,
+          date: dt,
+          dayOfWeek: dow,
+          reason: bulkReasonInput.trim() || 'Logged absence',
+          category: 'self_study',
+          isPracticalDay: dow === 'Thursday' || dow === 'Friday',
+          notes: 'Bulk imported'
+        });
+        added++;
+      }
+    }
+    const merged = Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
+    setState((prev) => ({
+      ...prev,
+      absences: merged,
+      profile: {
+        ...prev.profile,
+        absentDays: merged.length,
+        presentDays: Math.max(0, prev.profile.workingDaysHeld - merged.length)
+      }
+    }));
+    setIsBulkOpen(false);
+    setBulkDatesInput('');
+    showToast(`Added ${added} new absence date(s) ? synced to cloud`);
+  };
 
   // Institution Profile Edit Modal State
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
@@ -620,6 +664,15 @@ export const AttendanceTracker: React.FC = () => {
               <Calendar className="w-4 h-4 text-indigo-400" />
               <span>Google Calendar (.ics)</span>
               <Download className="w-3.5 h-3.5 text-zinc-400" />
+            </button>
+
+            <button
+              onClick={() => setIsBulkOpen(true)}
+              title="Paste multiple YYYY-MM-DD missed dates at once"
+              className="flex items-center justify-center gap-2 px-3.5 py-2.5 bg-zinc-900/90 hover:bg-zinc-800/90 text-zinc-200 border border-zinc-700/80 rounded-xl text-xs font-medium transition-colors cursor-pointer"
+            >
+              <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Bulk Add</span>
             </button>
 
             <button
@@ -2526,6 +2579,59 @@ export const AttendanceTracker: React.FC = () => {
                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold cursor-pointer"
               >
                 Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isBulkOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#d5d3cb] pb-3">
+              <div>
+                <span className="font-mono text-[10px] text-[#ea580c] tracking-wider">BULK ABSENCE ENTRY</span>
+                <h3 className="text-base font-semibold text-[#141413]">Add multiple missed dates</h3>
+              </div>
+              <button
+                onClick={() => setIsBulkOpen(false)}
+                className="text-xs text-[#575652] hover:text-[#141413] px-2 py-1 border border-[#d5d3cb] rounded-[4px] cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-xs font-medium text-[#575652]">
+                Dates (YYYY-MM-DD, comma or newline separated)
+              </label>
+              <textarea
+                rows={4}
+                value={bulkDatesInput}
+                onChange={(e) => setBulkDatesInput(e.target.value)}
+                placeholder="2026-11-04, 2026-11-12, 2026-11-19"
+                className="w-full p-2.5 text-xs font-mono border border-[#b8b5ac] rounded-[4px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-xs font-medium text-[#575652]">Reason</label>
+              <input
+                type="text"
+                value={bulkReasonInput}
+                onChange={(e) => setBulkReasonInput(e.target.value)}
+                className="w-full p-2.5 text-xs border border-[#b8b5ac] rounded-[4px]"
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#d5d3cb]">
+              <button
+                onClick={() => setIsBulkOpen(false)}
+                className="px-3.5 py-2 text-xs font-medium border border-[#b8b5ac] rounded-[4px] bg-[#f4f3ef] text-[#141413] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleBulkImportDates}
+                className="rams-btn-primary px-4 py-2 text-xs font-medium rounded-[4px] cursor-pointer"
+              >
+                Add & Sync Dates
               </button>
             </div>
           </div>
