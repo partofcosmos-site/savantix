@@ -144,6 +144,27 @@ export const Settings = () => {
           <p className="text-zinc-400 mt-1">Use ANY AI model from any documentation, endpoint, or provider with zero hardcoding.</p>
         </div>
 
+        {/* Built-in Edge AI Status Strip */}
+        <div className="bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <span className="w-2 h-2 rounded-full bg-[#15803d] mt-1.5 shrink-0" />
+            <div>
+              <div className="font-mono text-[10px] text-[#ea580c] tracking-wider uppercase">
+                Built-In Edge AI ? Active
+              </div>
+              <p className="text-xs text-[#141413] font-medium mt-0.5">
+                Cloudflare Workers AI (Llama 3.3 70B) is active by default ? zero API key required.
+              </p>
+              <p className="text-xs text-[#575652] mt-0.5">
+                Configure any optional BYOK provider key below to override the built-in edge model.
+              </p>
+            </div>
+          </div>
+          <span className="font-mono text-[11px] text-[#15803d] bg-[#15803d]/10 border border-[#15803d]/30 px-2.5 py-1 rounded-[4px] self-start sm:self-center shrink-0">
+            /api/ai-chat ? READY
+          </span>
+        </div>
+
         {/* AI Provider Management Section */}
         <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">

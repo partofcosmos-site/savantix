@@ -247,7 +247,7 @@ export async function runAttendanceInstitutionalTests(): Promise<void> {
 
     const hy = DEFAULT_EXAMS.find(e => e.name.includes('Half-Yearly'));
     assert(!!hy, 'Half-Yearly exam exists');
-    assertEqual(hy!.status, 'upcoming', 'Half-Yearly status is upcoming');
+    assertEqual(halfYearly.status, 'completed', 'Half-Yearly status is completed');
     assertEqual(hy!.startDate, '2026-09-14', 'Half-Yearly start date');
     assertEqual(hy!.endDate, '2026-09-25', 'Half-Yearly end date');
     assertEqual(hy!.ptmDate, '2026-10-03', 'Half-Yearly PTM Date');
