@@ -455,6 +455,26 @@ export class UniversalAIService {
     useParallelConsensus = true
   ): Promise<T> {
     const config = activeProvider || AIVaultService.getActiveProvider();
+    const initialApiKey = (config.apiKey || '').trim();
+
+    // Fast path: if no BYOK API key is configured, route directly to native Cloudflare Workers AI (/api/ai-chat -> Llama 3.3 70B)
+    // Avoids firing guaranteed-401 requests to OpenRouter/Gemini when no key is set.
+    if (!initialApiKey && typeof window !== 'undefined' && typeof fetch === 'function') {
+      const cfRes = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonMode: true,
+          systemPrompt: `Return ONLY valid JSON matching: ${schemaDescription}`,
+          prompt
+        })
+      });
+      if (cfRes.ok) {
+        const cfData = await cfRes.json();
+        if (cfData?.json) return cfData.json as T;
+        if (cfData?.text) return extractJsonFromText<T>(cfData.text);
+      }
+    }
 
     // If OpenRouter or Custom with multi-model enabled, execute parallel consensus
     if (useParallelConsensus && (config.providerType === 'openrouter' || config.providerType === 'openai-compatible' || config.providerType === 'custom')) {
@@ -478,24 +498,6 @@ export class UniversalAIService {
     // Direct single model dispatch fallback
     const apiKey = (config.apiKey || '').trim();
     const baseUrl = (config.baseUrl || '').trim().replace(/\/$/, '');
-
-    // Zero-key native Cloudflare Workers AI fallback (/api/ai-chat -> Llama 3.3 70B)
-    if (!apiKey && typeof window !== 'undefined' && typeof fetch === 'function') {
-      const cfRes = await fetch('/api/ai-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonMode: true,
-          systemPrompt: `Return ONLY valid JSON matching: ${schemaDescription}`,
-          prompt
-        })
-      });
-      if (cfRes.ok) {
-        const cfData = await cfRes.json();
-        if (cfData?.json) return cfData.json as T;
-        if (cfData?.text) return extractJsonFromText<T>(cfData.text);
-      }
-    }
 
     if (config.providerType === 'google' || baseUrl.includes('generativelanguage.googleapis.com')) {
       const candidateModels = [

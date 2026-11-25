@@ -550,7 +550,7 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
     }
 
     // Dispatch storage events so open tabs stay in sync
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: updatedState }));
     }
