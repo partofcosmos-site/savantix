@@ -63,7 +63,7 @@ export const MONTH_NAMES = [
 ];
 
 export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; reason: string }[] = [
-  { label: '⚡ Tutopia Self-Study', category: 'tutopia', reason: 'Tutopia CBSE PCM syllabus consolidation' },
+  { label: 'Guided Online Coaching', category: 'self_study', reason: 'Structured online lecture and syllabus consolidation' },
   { label: '⚡ Olympiad Sprint', category: 'olympiad', reason: 'IPhO / NSEP theoretical problem solving & optics sprint' },
   { label: '⚡ JEE Mechanics & Calculus', category: 'jee_prep', reason: 'Rotational dynamics, calculus & coordinate geometry' },
   { label: '⚡ Half-Yearly Revision', category: 'exam_prep', reason: 'Class XI Half-Yearly syllabus revision' },

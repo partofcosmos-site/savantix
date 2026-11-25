@@ -1,21 +1,300 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root { color-scheme: dark; }
+:root {
+  color-scheme: light;
+  --rams-paper: #f4f3ef;
+  --rams-canvas: #eceae3;
+  --rams-surface: #ffffff;
+  --rams-hover: #eae8e2;
+  --rams-ink: #141413;
+  --rams-ink-secondary: #575652;
+  --rams-ink-muted: #8c8a84;
+  --rams-hairline: #d5d3cb;
+  --rams-border: #b8b5ac;
+  --rams-signal: #ea580c;
+  --rams-safe: #15803d;
+  --rams-caution: #b45309;
+  --rams-fault: #b91c1c;
+}
 
 html, body {
-  background-color: #09090b;
-  color: #f4f4f5;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--rams-paper);
+  color: var(--rams-ink);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   margin: 0;
   padding: 0;
+  scroll-behavior: smooth;
+}
+
+code, pre, .font-mono, input[type="number"], td, th {
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #3f3f46 #09090b;
+  scrollbar-color: #b8b5ac #f4f3ef;
 }
 
-html {
-  scroll-behavior: smooth;
+/* ==========================================================================
+   DIETER RAMS INDUSTRIAL DAYLIGHT — GLOBAL UNSLOP TOKEN REMAPPING
+   Replaces dark-mode bento-box neon slop with warm paper, 1px hairlines,
+   jet-black ink, and International Signal Orange functional accents.
+   ========================================================================== */
+
+/* 1. Surfaces: Warm Architectural Paper & Crisp White Controls */
+.bg-zinc-950,
+.bg-zinc-950\/95,
+.bg-zinc-950\/90,
+.bg-zinc-950\/80,
+.bg-black,
+.bg-black\/90 {
+  background-color: var(--rams-paper) !important;
+}
+
+.bg-zinc-900,
+.bg-zinc-900\/95,
+.bg-zinc-900\/90,
+.bg-zinc-900\/80,
+.bg-zinc-900\/70,
+.bg-zinc-900\/60,
+.bg-zinc-900\/50,
+.bg-zinc-900\/40 {
+  background-color: var(--rams-surface) !important;
+  backdrop-filter: none !important;
+}
+
+.bg-zinc-800,
+.bg-zinc-800\/90,
+.bg-zinc-800\/80,
+.bg-zinc-800\/70,
+.bg-zinc-800\/60,
+.bg-zinc-800\/50,
+.bg-zinc-800\/40 {
+  background-color: var(--rams-paper) !important;
+}
+
+.hover\:bg-zinc-800:hover,
+.hover\:bg-zinc-800\/80:hover,
+.hover\:bg-zinc-800\/60:hover,
+.hover\:bg-zinc-700:hover {
+  background-color: var(--rams-hover) !important;
+}
+
+/* 2. Typography Ink Roles */
+.text-white,
+.text-zinc-50,
+.text-zinc-100,
+.text-zinc-200 {
+  color: var(--rams-ink) !important;
+}
+
+.text-zinc-300,
+.text-zinc-400 {
+  color: var(--rams-ink-secondary) !important;
+}
+
+.text-zinc-500,
+.text-zinc-600 {
+  color: var(--rams-ink-muted) !important;
+}
+
+.hover\:text-white:hover,
+.hover\:text-zinc-100:hover,
+.hover\:text-zinc-200:hover {
+  color: var(--rams-ink) !important;
+}
+
+/* 3. Hairlines & Structural Dividers (Zero Neon Borders / Zero Box Fatigue) */
+.border-zinc-900,
+.border-zinc-800,
+.border-zinc-800\/90,
+.border-zinc-800\/80,
+.border-zinc-800\/60,
+.border-zinc-800\/50,
+.border-zinc-700,
+.border-zinc-700\/80,
+.border-zinc-700\/60,
+.border-zinc-700\/50 {
+  border-color: var(--rams-hairline) !important;
+}
+
+/* 4. Crisp Architectural Radii & Quiet Elevation */
+.rounded-3xl {
+  border-radius: 6px !important;
+}
+.rounded-2xl {
+  border-radius: 6px !important;
+}
+.rounded-xl {
+  border-radius: 4px !important;
+}
+.shadow-2xl,
+.shadow-xl,
+.shadow-lg {
+  box-shadow: 0 1px 2px rgba(20, 20, 19, 0.05) !important;
+}
+
+/* 5. Kill AI Neon Gradients & Ambient Blur Blobs */
+.blur-3xl {
+  display: none !important;
+}
+
+[class*="from-indigo-"],
+[class*="from-violet-"],
+[class*="from-purple-"],
+[class*="bg-gradient-to-"] {
+  background-image: none !important;
+}
+
+/* 6. Primary Signal Actions: Jet Black or Signal Orange with Pure White Ink */
+.bg-indigo-600,
+.bg-indigo-500,
+.bg-violet-600,
+.bg-emerald-600 {
+  background-color: var(--rams-ink) !important;
+  color: #ffffff !important;
+  border-color: var(--rams-ink) !important;
+}
+.bg-indigo-600 *,
+.bg-indigo-500 *,
+.bg-violet-600 *,
+.bg-emerald-600 *,
+button.bg-indigo-600,
+button.bg-indigo-500,
+button.bg-violet-600,
+button.bg-emerald-600 {
+  color: #ffffff !important;
+}
+.hover\:bg-indigo-500:hover,
+.hover\:bg-indigo-600:hover,
+.hover\:bg-violet-500:hover {
+  background-color: var(--rams-signal) !important;
+  border-color: var(--rams-signal) !important;
+  color: #ffffff !important;
+}
+
+/* Accent Tints -> Quiet Signal Orange Hairline Surfaces */
+.bg-indigo-500\/10,
+.bg-indigo-500\/15,
+.bg-indigo-500\/20,
+.bg-indigo-600\/10,
+.bg-indigo-600\/20,
+.bg-violet-500\/10,
+.bg-violet-500\/20,
+.bg-purple-500\/10 {
+  background-color: rgba(234, 88, 12, 0.08) !important;
+}
+
+.border-indigo-500\/20,
+.border-indigo-500\/30,
+.border-indigo-500\/40,
+.border-indigo-500\/50,
+.border-violet-500\/30,
+.border-violet-500\/40 {
+  border-color: rgba(234, 88, 12, 0.35) !important;
+}
+
+.text-indigo-300,
+.text-indigo-400,
+.text-violet-300,
+.text-violet-400,
+.text-purple-400 {
+  color: var(--rams-signal) !important;
+}
+
+/* 7. Functional Physical Signals (High Contrast on Warm Paper) */
+.text-emerald-300,
+.text-emerald-400,
+.text-green-400 {
+  color: var(--rams-safe) !important;
+}
+.bg-emerald-500\/10,
+.bg-emerald-500\/20,
+.bg-emerald-950\/40,
+.bg-emerald-950\/50 {
+  background-color: rgba(21, 128, 61, 0.08) !important;
+}
+.border-emerald-500\/20,
+.border-emerald-500\/30,
+.border-emerald-800\/50 {
+  border-color: rgba(21, 128, 61, 0.3) !important;
+}
+
+.text-amber-300,
+.text-amber-400,
+.text-yellow-400 {
+  color: var(--rams-caution) !important;
+}
+.bg-amber-500\/10,
+.bg-amber-500\/20,
+.bg-amber-950\/40,
+.bg-amber-950\/50 {
+  background-color: rgba(180, 83, 9, 0.08) !important;
+}
+.border-amber-500\/30,
+.border-amber-800\/60 {
+  border-color: rgba(180, 83, 9, 0.35) !important;
+}
+
+.text-rose-300,
+.text-rose-400,
+.text-red-300,
+.text-red-400 {
+  color: var(--rams-fault) !important;
+}
+.bg-rose-500\/10,
+.bg-rose-500\/20,
+.bg-red-500\/10,
+.bg-red-950\/40,
+.bg-red-950\/50 {
+  background-color: rgba(185, 28, 28, 0.08) !important;
+}
+.border-rose-500\/30,
+.border-red-500\/30,
+.border-red-800\/60 {
+  border-color: rgba(185, 28, 28, 0.35) !important;
+}
+
+.text-sky-300,
+.text-sky-400,
+.text-cyan-400 {
+  color: #0369a1 !important;
+}
+
+/* 8. Form Inputs & Focus States */
+input, textarea, select {
+  background-color: var(--rams-surface) !important;
+  color: var(--rams-ink) !important;
+  border-color: var(--rams-border) !important;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--rams-ink-muted) !important;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--rams-signal) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px var(--rams-signal) !important;
+}
+
+/* 9. Calm Motion (No Pulsing/Bouncing AI Slop) */
+.animate-pulse {
+  animation: none !important;
+}
+
+/* 10. Explicit Rams Ink Helpers */
+.rams-btn-primary {
+  background-color: #141413 !important;
+  color: #ffffff !important;
+  border: 1px solid #141413 !important;
+}
+.rams-btn-primary *,
+.rams-btn-primary span {
+  color: #ffffff !important;
+}
+.rams-btn-primary:hover {
+  background-color: #ea580c !important;
+  border-color: #ea580c !important;
 }
