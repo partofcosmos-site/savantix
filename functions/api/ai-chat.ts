@@ -1,4 +1,10 @@
-﻿const corsHeaders = {
+﻿interface Env {
+  AI?: {
+    run: (model: string, input: any) => Promise<any>;
+  };
+}
+
+const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
@@ -6,8 +12,8 @@
   'Cache-Control': 'no-store',
 };
 
-export async function onRequest(context: { request: Request }) {
-  const { request } = context;
+export async function onRequest(context: { request: Request; env: Env }) {
+  const { request, env } = context;
 
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -36,28 +42,27 @@ export async function onRequest(context: { request: Request }) {
       });
     }
 
-    const upstream = await fetch('https://text.pollinations.ai/openai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'openai',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt },
-        ],
-        ...(jsonMode ? { response_format: { type: 'json_object' } } : {}),
-      }),
-    });
-
-    if (!upstream.ok) {
+    if (!env?.AI) {
       return new Response(
-        JSON.stringify({ success: false, error: `Upstream AI error (${upstream.status})` }),
-        { status: 502, headers: corsHeaders }
+        JSON.stringify({ success: false, error: 'Workers AI binding unavailable' }),
+        { status: 503, headers: corsHeaders }
       );
     }
 
-    const data: any = await upstream.json();
-    const content = data?.choices?.[0]?.message?.content || '';
+    const aiRes = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 1400,
+    });
+
+    const content =
+      typeof aiRes?.response === 'string'
+        ? aiRes.response
+        : typeof aiRes === 'string'
+        ? aiRes
+        : JSON.stringify(aiRes);
 
     if (jsonMode) {
       let parsed: any = null;
@@ -73,15 +78,15 @@ export async function onRequest(context: { request: Request }) {
         }
       }
       return new Response(
-        JSON.stringify({ success: true, json: parsed, text: content }),
+        JSON.stringify({ success: true, provider: 'cloudflare-workers-ai', json: parsed, text: content }),
         { status: 200, headers: corsHeaders }
       );
     }
 
-    return new Response(JSON.stringify({ success: true, text: content }), {
-      status: 200,
-      headers: corsHeaders,
-    });
+    return new Response(
+      JSON.stringify({ success: true, provider: 'cloudflare-workers-ai', text: content }),
+      { status: 200, headers: corsHeaders }
+    );
   } catch (err: any) {
     return new Response(
       JSON.stringify({ success: false, error: err?.message || 'AI request failed' }),

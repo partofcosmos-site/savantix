@@ -5,3 +5,6 @@ pages_build_output_dir = "dist"
 [[kv_namespaces]]
 binding = "SAVANTIX_SYNC_KV"
 id = "d44ffdaa196f4ee5a3a8711655c07d0e"
+
+[ai]
+binding = "AI"
