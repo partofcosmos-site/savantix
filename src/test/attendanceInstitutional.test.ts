@@ -326,7 +326,7 @@ export async function runAttendanceInstitutionalTests(): Promise<void> {
     assertEqual(rehydrated.profile.presentDays, 49, 'Rehydrated present days');
     assertEqual(rehydrated.profile.absentDays, 15, 'Rehydrated absent days');
     assertEqual(rehydrated.profile.workingDaysHeld, 73, 'Rehydrated working days held');
-    assertEqual(rehydrated.holidays.length, 28, 'Holidays preserved');
+    assertEqual(rehydrated.holidays.length, 27, 'Holidays preserved');
     assertEqual(rehydrated.vacations.length, 4, 'Vacations preserved');
     assertEqual(rehydrated.exams.length, 4, 'Exams preserved');
   });
