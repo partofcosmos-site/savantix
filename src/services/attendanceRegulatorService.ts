@@ -538,8 +538,12 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
 
     // STRICT ISOLATION: Never overwrite owner/global keys or push to cloud from Guest/Demo Mode
     if (isDebanjan) {
-      localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, JSON.stringify(updatedState));
-      localStorage.setItem('savantix_attendance_institutional_debanjan', JSON.stringify(updatedState));
+      const serialized = JSON.stringify(updatedState);
+      localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, serialized);
+      localStorage.setItem('savantix_attendance_institutional_debanjan', serialized);
+      if (identifier && identifier.includes('@')) {
+        localStorage.setItem(`savantix_attendance_institutional_${identifier.trim().toLowerCase().split('@')[0]}`, serialized);
+      }
       if (Array.isArray(state.profile?.subjects)) {
         localStorage.setItem(LEGACY_SUBJECTS_STORAGE_KEY, JSON.stringify(state.profile.subjects));
       }
@@ -551,9 +555,9 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
       window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: updatedState }));
     }
 
-    // Only push to cloud for authenticated real accounts (NEVER for guest/demo/anonymous)
+    // Push to the EXACT signed-in account's cloud partition (e.g. partofcosmmos@gmail.com -> deb_sync_partofcosmmos_gmail_com)
     if (!isGuestOrAnon && identifier && identifier.includes('@')) {
-      const syncEmail = isDebanjan ? 'debanjan8686@gmail.com' : identifier.trim().toLowerCase();
+      const syncEmail = identifier.trim().toLowerCase();
       const canonicalId = CloudSyncService.getCanonicalUid(syncEmail);
       CloudSyncService.pushToCloud(syncEmail, canonicalId).catch(syncErr => {
         console.warn('[saveInstitutionalState] Auto cloud push notice:', syncErr);
