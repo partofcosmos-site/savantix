@@ -479,6 +479,24 @@ export class UniversalAIService {
     const apiKey = (config.apiKey || '').trim();
     const baseUrl = (config.baseUrl || '').trim().replace(/\/$/, '');
 
+    // Zero-key native Cloudflare Workers AI fallback (/api/ai-chat -> Llama 3.3 70B)
+    if (!apiKey && typeof window !== 'undefined' && typeof fetch === 'function') {
+      const cfRes = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonMode: true,
+          systemPrompt: `Return ONLY valid JSON matching: ${schemaDescription}`,
+          prompt
+        })
+      });
+      if (cfRes.ok) {
+        const cfData = await cfRes.json();
+        if (cfData?.json) return cfData.json as T;
+        if (cfData?.text) return extractJsonFromText<T>(cfData.text);
+      }
+    }
+
     if (config.providerType === 'google' || baseUrl.includes('generativelanguage.googleapis.com')) {
       const candidateModels = [
         config.selectedModel,

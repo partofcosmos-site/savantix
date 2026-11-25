@@ -83,7 +83,7 @@ export const AttendanceTracker: React.FC = () => {
   const [bulkReasonInput, setBulkReasonInput] = useState<string>('Self-study / missed school day');
 
   const handleBulkImportDates = () => {
-    const matches = Array.from(new Set(bulkDatesInput.match(/20\d{2}-\d{2}-\d{2}/g) || []));
+    const matches = Array.from(new Set(bulkDatesInput.match(/\b20\d{2}-\d{2}-\d{2}\b/g) || []));
     if (matches.length === 0) {
       showToast('Enter at least one YYYY-MM-DD date (e.g. 2026-11-04, 2026-11-12)');
       return;
