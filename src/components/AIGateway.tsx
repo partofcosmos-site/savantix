@@ -423,7 +423,7 @@ Requirements:
             setLaunchToast({
               name: "Savantix Live STEM Engine",
               message: "Synthesized live 4-tier derivation via Savantix Cloud AI",
-              copied: false
+              type: 'success'
             });
             setTimeout(() => setLaunchToast(null), 4000);
             return;
