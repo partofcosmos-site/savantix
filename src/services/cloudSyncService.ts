@@ -587,23 +587,39 @@ export class CloudSyncService {
       console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
     }
 
-    // 2. Secondary fallback: Serverless Sync Relay (/api/sync)
-    if (!remoteData) {
-      try {
-        const endpoint = typeof window !== 'undefined'
-          ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`
-          : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
+    // 2. Durable Cloudflare KV Sync Relay (/api/sync) ? always read & union-merge with Firestore
+    try {
+      const endpoint = typeof window !== 'undefined'
+        ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`
+        : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
 
-        const response = await fetch(endpoint);
-        if (response.ok) {
-          const json = await response.json();
-          if (json.exists && json.payload) {
-            remoteData = json.payload as CloudSyncPayload;
+      const response = await fetch(endpoint);
+      if (response.ok) {
+        const json = await response.json();
+        if (json.exists && json.payload) {
+          const kvData = json.payload as CloudSyncPayload;
+          if (!remoteData) {
+            remoteData = kvData;
+          } else {
+            const absMap = new Map<string, any>();
+            (remoteData.institutional_attendance?.absences || []).forEach((a: any) => { if (a?.date) absMap.set(a.date, a); });
+            (kvData.institutional_attendance?.absences || []).forEach((a: any) => { if (a?.date) absMap.set(a.date, a); });
+            remoteData = {
+              ...remoteData,
+              ...kvData,
+              institutional_attendance: (remoteData.institutional_attendance || kvData.institutional_attendance)
+                ? {
+                    ...(remoteData.institutional_attendance || {}),
+                    ...(kvData.institutional_attendance || {}),
+                    absences: Array.from(absMap.values())
+                  }
+                : undefined
+            };
           }
         }
-      } catch (apiErr) {
-        console.warn('[CloudSyncService] Serverless pull notice:', apiErr);
       }
+    } catch (apiErr) {
+      console.warn('[CloudSyncService] Durable KV pull notice:', apiErr);
     }
 
     if (remoteData) {
