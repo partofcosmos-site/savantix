@@ -1,38 +1,36 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { 
-  LogOut, 
-  BrainCircuit, 
-  LayoutDashboard, 
-  MessageSquare, 
-  BarChart2, 
-  BookOpen, 
-  Clock, 
-  Target, 
-  Settings, 
-  Layers, 
-  Menu, 
+import {
+  LogOut,
+  LayoutDashboard,
+  BarChart2,
+  BookOpen,
+  Clock,
+  Target,
+  Settings,
+  Layers,
+  Menu,
   X,
   Sparkles,
   Network,
   Crown,
   Zap,
-  Lock,
   MessageSquareHeart,
   GraduationCap,
-  RefreshCw
+  RefreshCw,
+  ArrowUpRight
 } from 'lucide-react';
 import clsx from 'clsx';
 import { MicroLoggerModal } from './MicroLoggerModal';
 import { AIGatewayButton } from './AIGateway';
 
-export type ActiveTabType = 
-  | 'dashboard' 
-  | 'pomodoro' 
-  | 'analytics' 
+export type ActiveTabType =
+  | 'dashboard'
+  | 'pomodoro'
+  | 'analytics'
   | 'attendance'
-  | 'goals' 
-  | 'journal' 
+  | 'goals'
+  | 'journal'
   | 'settings'
   | 'feedback';
 
@@ -48,20 +46,15 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
   const [isMicroLoggerOpen, setIsMicroLoggerOpen] = useState(false);
   const isFounder = ['debanjan8686@gmail.com', 'partofcosmmos@gmail.com'].includes(user?.email || '');
 
-  // Global hotkeys for Micro-Logger HUD (Alt+L or Ctrl+K / Cmd+K) and AI Gateway (Alt+G)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      // Check Alt+L
       if (e.altKey && (e.key === 'l' || e.key === 'L')) {
         e.preventDefault();
-        setIsMicroLoggerOpen(prev => !prev);
-      }
-      // Check Ctrl+K or Cmd+K
-      else if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        setIsMicroLoggerOpen((prev) => !prev);
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault();
-        setIsMicroLoggerOpen(prev => !prev);
-      }
-      else if (e.altKey && (e.key === 'g' || e.key === 'G')) {
+        setIsMicroLoggerOpen((prev) => !prev);
+      } else if (e.altKey && (e.key === 'g' || e.key === 'G')) {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent('savantix_open_ai_gateway', { detail: { open: true } }));
       }
@@ -69,7 +62,6 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
 
     const handleOpenMicroLog = () => setIsMicroLoggerOpen(true);
     window.addEventListener('savantix_open_microlog', handleOpenMicroLog);
-
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
@@ -79,234 +71,216 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard & Study Logger', icon: LayoutDashboard },
+    { id: 'attendance', label: 'Attendance Tracker', icon: GraduationCap },
     { id: 'pomodoro', label: 'Pomodoro & Flowmodoro', icon: Clock },
     { id: 'analytics', label: 'Analytics & Heatmap', icon: BarChart2 },
-    { id: 'attendance', label: 'Attendance Tracker', icon: GraduationCap },
     { id: 'goals', label: 'Goals & Milestones', icon: Target },
     { id: 'journal', label: 'Journal & Reflections', icon: BookOpen },
     { id: 'settings', label: 'Universal AI Providers', icon: Settings },
     { id: 'feedback', label: 'Contact & Feedback', icon: MessageSquareHeart },
   ] as const;
 
-  return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-200 flex flex-col md:flex-row font-sans relative">
-      {/* Global Floating Micro-Logger HUD Modal */}
-      <MicroLoggerModal 
-        isOpen={isMicroLoggerOpen} 
-        onClose={() => setIsMicroLoggerOpen(false)} 
-      />
+  const suiteLinks = [
+    { href: 'https://partofcosmos.pages.dev/stem-solver/', label: 'STEM Solver', icon: Sparkles },
+    { href: 'https://partofcosmos.pages.dev/concept-graph/', label: 'Concept Graph', icon: Network },
+    { href: 'https://partofcosmos.pages.dev/flashcards/', label: 'Flashcards Vault', icon: Layers },
+    { href: 'https://partofcosmos.pages.dev/ai/council', label: 'AI Council', icon: Crown },
+  ];
 
-      {/* Global Floating AI Gateway Button (Alt+G) */}
+  return (
+    <div className="min-h-screen bg-[#f4f3ef] text-[#141413] flex flex-col md:flex-row font-sans relative">
+      <MicroLoggerModal isOpen={isMicroLoggerOpen} onClose={() => setIsMicroLoggerOpen(false)} />
       <AIGatewayButton />
 
-      {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-zinc-900/60 backdrop-blur-md border-b border-zinc-800/80">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <BrainCircuit className="w-5 h-5 text-white" />
-          </div>
+      {/* Mobile Top Bar */}
+      <header className="md:hidden flex items-center justify-between px-4 h-14 bg-[#f4f3ef] border-b border-[#b8b5ac] sticky top-0 z-30">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ea580c]" />
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-zinc-100">Savantix</h1>
-            <p className="text-[9px] text-indigo-400 font-semibold tracking-wider uppercase">
+            <h1 className="text-sm font-semibold tracking-tight text-[#141413] leading-none">Savantix</h1>
+            <p className="font-mono text-[9px] text-[#8c8a84] uppercase tracking-wider mt-0.5">
               An initiative of Part of Cosmos
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Quick Real-Time Sync Button */}
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => forceSyncNow()}
             disabled={syncStatus.isSyncing}
-            className="p-2 text-zinc-400 hover:text-zinc-200 bg-zinc-800/80 border border-zinc-700/60 rounded-lg transition-colors cursor-pointer"
+            className="p-2 text-[#575652] hover:text-[#141413] bg-[#ffffff] border border-[#d5d3cb] rounded-[4px] transition-colors cursor-pointer"
             title={`Cloud Sync: ${syncStatus.lastSyncedAt || 'Live'}`}
           >
-            <RefreshCw className={clsx("w-4 h-4", syncStatus.isSyncing && "animate-spin text-indigo-400")} />
+            <RefreshCw className={clsx('w-4 h-4', syncStatus.isSyncing && 'animate-spin text-[#ea580c]')} />
           </button>
 
-          {/* Quick Micro-Log HUD Trigger on Mobile */}
           <button
             onClick={() => setIsMicroLoggerOpen(true)}
-            className="p-2 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg transition-colors cursor-pointer"
+            className="p-2 text-[#141413] bg-[#ffffff] hover:bg-[#eae8e2] border border-[#d5d3cb] rounded-[4px] transition-colors cursor-pointer"
             title="Open Micro-Logger (Alt+L)"
           >
-            <Zap className="w-5 h-5 text-amber-400" />
+            <Zap className="w-4 h-4 text-[#ea580c]" />
           </button>
 
-          <button 
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-zinc-400 hover:text-zinc-200 transition-colors bg-zinc-800 rounded-lg"
+            className="p-2 text-[#141413] bg-[#ffffff] border border-[#d5d3cb] rounded-[4px] cursor-pointer"
+            aria-label="Toggle navigation"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Sidebar */}
-      <aside className={clsx(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-zinc-900/80 backdrop-blur-xl border-r border-zinc-800/80 flex flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0",
-        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
-        <div className="hidden md:flex p-6 items-center gap-3 border-b border-zinc-800/80">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <BrainCircuit className="w-5 h-5 text-white" />
-          </div>
+      {/* Architectural Navigation Rail */}
+      <aside
+        className={clsx(
+          'fixed inset-y-0 left-0 z-40 w-64 bg-[#f4f3ef] border-r border-[#b8b5ac] flex flex-col transform transition-transform duration-200 ease-out md:relative md:translate-x-0',
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {/* Brand Masthead */}
+        <div className="hidden md:flex px-5 py-4 items-center justify-between border-b border-[#d5d3cb]">
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-zinc-100">Savantix</h1>
-            <p className="text-[10px] text-indigo-400 font-semibold tracking-wider uppercase">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#ea580c]" />
+              <h1 className="text-base font-semibold tracking-tight text-[#141413]">Savantix</h1>
+            </div>
+            <p className="font-mono text-[9px] text-[#8c8a84] uppercase tracking-wider mt-1">
               An initiative of Part of Cosmos
             </p>
           </div>
         </div>
 
-        {/* Global Quick Micro-Logger Button */}
-        <div className="px-4 pt-3 pb-1">
+        {/* Quick Micro-Logger Command */}
+        <div className="px-4 py-3 border-b border-[#d5d3cb]">
           <button
             onClick={() => setIsMicroLoggerOpen(true)}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-900/40 to-indigo-800/20 hover:from-indigo-900/60 hover:to-indigo-800/40 text-indigo-200 border border-indigo-500/30 shadow-sm transition-all cursor-pointer group"
-            title="Sub-Second Micro-Logger HUD (Alt+L or Ctrl+K)"
+            className="rams-btn-primary w-full flex items-center justify-between px-3 py-2 rounded-[4px] text-xs font-medium transition-colors duration-150 cursor-pointer"
+            title="Quick Study Micro-Logger (Alt+L or Ctrl+K)"
           >
-            <div className="flex items-center gap-2 text-xs font-semibold">
-              <Zap className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+            <span className="flex items-center gap-2">
+              <Zap className="w-3.5 h-3.5" />
               <span>Micro-Logger HUD</span>
-            </div>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-950/80 border border-indigo-500/30 text-indigo-300">
-              Alt+L
             </span>
+            <kbd className="font-mono text-[10px] opacity-80 px-1.5 py-0.5 rounded-[2px] border border-white/25">
+              Alt+L
+            </kbd>
           </button>
         </div>
-        
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id as ActiveTabType);
-                setIsMobileMenuOpen(false);
-              }}
-              className={clsx(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-xs font-medium cursor-pointer border border-transparent",
-                activeTab === tab.id 
-                  ? "bg-indigo-600/10 text-indigo-400 border-indigo-500/30 shadow-inner font-semibold" 
-                  : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200 hover:border-zinc-700"
-              )}
-            >
-              <tab.icon className={clsx("w-4 h-4", activeTab === tab.id ? "text-indigo-400" : "text-zinc-500")} />
-              {tab.label}
-            </button>
-          ))}
+
+        {/* Primary Workspace Navigation */}
+        <nav className="flex-1 py-3 overflow-y-auto">
+          <div className="px-5 pb-1.5 font-mono text-[10px] text-[#8c8a84] tracking-wider">
+            01 / WORKSPACE
+          </div>
+          <div className="space-y-0.5">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id as ActiveTabType);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={clsx(
+                    'w-full flex items-center gap-2.5 px-5 py-2.5 text-xs transition-colors duration-150 cursor-pointer border-l-2 text-left',
+                    isActive
+                      ? 'border-[#ea580c] bg-[#eae8e2] text-[#141413] font-semibold'
+                      : 'border-transparent text-[#575652] hover:bg-[#eae8e2]/60 hover:text-[#141413] font-medium'
+                  )}
+                >
+                  <tab.icon
+                    className={clsx('w-4 h-4 shrink-0', isActive ? 'text-[#ea580c]' : 'text-[#8c8a84]')}
+                    strokeWidth={1.75}
+                  />
+                  <span className="truncate">{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Cosmic Knowledge Suite */}
+          <div className="mt-4 pt-3 border-t border-[#d5d3cb]">
+            <div className="px-5 pb-1.5 font-mono text-[10px] text-[#8c8a84] tracking-wider">
+              02 / KNOWLEDGE SUITE
+            </div>
+            <div className="space-y-0.5">
+              {suiteLinks.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-between px-5 py-2 text-xs font-medium text-[#575652] hover:text-[#141413] hover:bg-[#eae8e2]/60 transition-colors duration-150"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <item.icon className="w-3.5 h-3.5 text-[#8c8a84]" strokeWidth={1.75} />
+                    <span>{item.label}</span>
+                  </span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#8c8a84]" />
+                </a>
+              ))}
+            </div>
+          </div>
         </nav>
 
-        {/* Cosmic Knowledge Suite External Links (Live on Part of Cosmos) */}
-        <div className="px-4 py-3 border-t border-zinc-800/80 bg-zinc-950/20">
-          <p className="text-[10px] font-mono uppercase text-zinc-500 font-bold px-2 mb-2 tracking-wider flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3 text-cyan-400" />
-            <span>Cosmic Knowledge Suite</span>
-          </p>
-          <div className="space-y-0.5">
-            <a
-              href="https://partofcosmos.pages.dev/stem-solver/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-cyan-300 hover:bg-zinc-800/60 transition-all group"
-            >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
-                <span>STEM Solver</span>
-              </div>
-              <span className="text-[10px] text-zinc-500 group-hover:text-cyan-400">↗</span>
-            </a>
-            <a
-              href="https://partofcosmos.pages.dev/concept-graph/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-purple-300 hover:bg-zinc-800/60 transition-all group"
-            >
-              <div className="flex items-center gap-2">
-                <Network className="w-3.5 h-3.5 text-purple-400 group-hover:scale-110 transition-transform" />
-                <span>Concept Graph</span>
-              </div>
-              <span className="text-[10px] text-zinc-500 group-hover:text-purple-400">↗</span>
-            </a>
-            <a
-              href="https://partofcosmos.pages.dev/flashcards/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-emerald-300 hover:bg-zinc-800/60 transition-all group"
-            >
-              <div className="flex items-center gap-2">
-                <Layers className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
-                <span>Flashcards Vault</span>
-              </div>
-              <span className="text-[10px] text-zinc-500 group-hover:text-emerald-400">↗</span>
-            </a>
-            <a
-              href="https://partofcosmos.pages.dev/ai/council"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-amber-300 hover:bg-zinc-800/60 transition-all group"
-            >
-              <div className="flex items-center gap-2">
-                <Crown className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-                <span>AI Council</span>
-              </div>
-              <span className="text-[10px] text-zinc-500 group-hover:text-amber-400">↗</span>
-            </a>
-          </div>
-        </div>
-
-        {/* Live Cloud Sync Status Strip */}
-        <div className="px-4 py-2 border-t border-zinc-800/80 bg-zinc-950/40 flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className={clsx(
-              "w-2 h-2 rounded-full shrink-0",
-              syncStatus.isSyncing ? "bg-amber-400 animate-ping" : "bg-emerald-400 shadow-sm shadow-emerald-400/50"
-            )} />
-            <span className="text-zinc-400 truncate text-[10px]">
-              {syncStatus.isSyncing ? "Syncing..." : `Live Sync: ${syncStatus.lastSyncedAt || "Active"}`}
+        {/* Cloud Sync Telemetry Strip */}
+        <div className="px-4 py-2.5 border-t border-[#d5d3cb] bg-[#eceae3]/60 flex items-center justify-between">
+          <div className="flex items-center gap-2 min-w-0">
+            <span
+              className={clsx(
+                'w-1.5 h-1.5 rounded-full shrink-0',
+                syncStatus.isSyncing ? 'bg-[#ea580c]' : 'bg-[#15803d]'
+              )}
+            />
+            <span className="font-mono text-[10px] text-[#575652] truncate">
+              {syncStatus.isSyncing ? 'Syncing cloud...' : `Synced · ${syncStatus.lastSyncedAt || 'Live'}`}
             </span>
           </div>
           <button
             onClick={() => forceSyncNow()}
             disabled={syncStatus.isSyncing}
-            className="p-1 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 rounded transition-colors cursor-pointer"
-            title="Force Instant Cloud Sync"
+            className="p-1 text-[#575652] hover:text-[#141413] hover:bg-[#eae8e2] rounded-[4px] transition-colors cursor-pointer"
+            title="Sync now"
           >
-            <RefreshCw className={clsx("w-3 h-3", syncStatus.isSyncing && "animate-spin text-indigo-400")} />
+            <RefreshCw className={clsx('w-3.5 h-3.5', syncStatus.isSyncing && 'animate-spin text-[#ea580c]')} />
           </button>
         </div>
 
-        {/* User Profile Footer */}
-        <div className="p-4 border-t border-zinc-800/80">
-          <div className="flex items-center justify-between px-4 py-3 bg-zinc-950/50 rounded-xl border border-zinc-800/80">
-            <div className="flex flex-col truncate pr-2">
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-zinc-200 truncate">
-                {user?.displayName && !user.displayName.toLowerCase().includes('debanjan') ? user.displayName : 'Lead Scholar'}
-                {isFounder && <Crown className="w-3 h-3 text-amber-400 fill-amber-400" />}
-              </span>
-              {isFounder && <span className="text-[9px] text-amber-400 font-bold uppercase mt-0.5">Core Researcher</span>}
-            </div>
-            <button 
-              onClick={logout}
-              className="p-2 text-zinc-400 hover:text-red-400 transition-colors rounded-lg hover:bg-zinc-800 cursor-pointer"
-              title="Sign Out"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+        {/* Account Footer */}
+        <div className="px-4 py-3 border-t border-[#d5d3cb] flex items-center justify-between">
+          <div className="flex flex-col min-w-0 pr-2">
+            <span className="text-xs font-semibold text-[#141413] truncate">
+              {user?.displayName && !user.displayName.toLowerCase().includes('debanjan')
+                ? user.displayName
+                : 'Lead Scholar'}
+            </span>
+            <span className="font-mono text-[10px] text-[#8c8a84] truncate">
+              {isFounder ? 'Core Researcher' : user?.email || 'Local Sandbox'}
+            </span>
           </div>
+          <button
+            onClick={logout}
+            className="p-2 text-[#575652] hover:text-[#b91c1c] hover:bg-[#eae8e2] rounded-[4px] transition-colors cursor-pointer"
+            title="Sign out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </aside>
 
-      {/* Mobile Backdrop Overlay */}
+      {/* Mobile Backdrop */}
       {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-30 md:hidden transition-opacity" 
-          onClick={() => setIsMobileMenuOpen(false)} 
+        <div
+          className="fixed inset-0 bg-[#141413]/30 z-30 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Main Content Viewport */}
-      <main className="flex-1 overflow-y-auto min-h-0 h-[calc(100vh-60px)] md:h-screen scroll-smooth">
+      {/* Main Content Stage */}
+      <main className="flex-1 overflow-y-auto min-h-0 h-[calc(100vh-56px)] md:h-screen bg-[#f4f3ef]">
         {children}
       </main>
     </div>

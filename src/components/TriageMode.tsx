@@ -142,7 +142,7 @@ const ProgressRing: React.FC<RingProps> = ({ pct, size = 200, stroke = 10, color
   const dash = circ * (pct / 100);
   return (
     <svg width={size} height={size} className="-rotate-90">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#27272a" strokeWidth={stroke} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#d5d3cb" strokeWidth={stroke} />
       <circle
         cx={size / 2} cy={size / 2} r={r} fill="none"
         stroke={color} strokeWidth={stroke}

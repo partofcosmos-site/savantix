@@ -1195,7 +1195,7 @@ export const Analytics = () => {
                 ) : (
                   <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <ScatterChart margin={{ top: 20, right: 25, bottom: 25, left: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#d5d3cb" />
                       <XAxis
                         type="number"
                         dataKey="velocityQpH"
@@ -1271,7 +1271,7 @@ export const Analytics = () => {
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
-                            stroke="#18181b"
+                            stroke="#ffffff"
                             strokeWidth={1.5}
                             className="transition-all hover:scale-125 cursor-pointer"
                           />
@@ -2036,7 +2036,7 @@ export const Analytics = () => {
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#d5d3cb" vertical={false} />
                   <XAxis
                     dataKey="formattedDate"
                     stroke="#71717a"
@@ -2053,7 +2053,7 @@ export const Analytics = () => {
                     tickFormatter={(val) => `${val}`}
                   />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.75rem', fontSize: '12px' }}
+                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d5d3cb', borderRadius: '0.75rem', fontSize: '12px' }}
                     itemStyle={{ color: '#e4e4e7' }}
                     formatter={(value: any, name: any) => {
                       if (name === 'hours') return [`${value} hrs`, 'Study Time'];
@@ -2116,7 +2116,7 @@ export const Analytics = () => {
                         ))}
                       </Pie>
                       <Tooltip
-                        contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.5rem', fontSize: '12px' }}
+                        contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d5d3cb', borderRadius: '0.5rem', fontSize: '12px' }}
                         itemStyle={{ color: '#e4e4e7' }}
                         formatter={(value: any) => {
                           const mins = Number(value) || 0;
@@ -2214,12 +2214,12 @@ export const Analytics = () => {
             <div className="h-64 w-full min-w-0 min-h-[256px]">
               <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <BarChart data={analyticsData.subjectList} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#d5d3cb" vertical={false} />
                   <XAxis dataKey="name" stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.5rem', fontSize: '12px' }}
-                    cursor={{ fill: '#27272a' }}
+                    contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d5d3cb', borderRadius: '0.5rem', fontSize: '12px' }}
+                    cursor={{ fill: '#d5d3cb' }}
                   />
                   <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
                   <Bar dataKey="hours" name="Hours" fill="#6366f1" radius={[4, 4, 0, 0]} />

@@ -1,7 +1,5 @@
-const CACHE_NAME = 'savantix-pwa-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
+﻿const CACHE_NAME = 'savantix-pwa-v3';
+const STATIC_ASSETS = [
   '/manifest.json',
   '/favicon.svg',
   'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css'
@@ -9,51 +7,59 @@ const ASSETS_TO_CACHE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS).catch(() => {}))
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((key) => (key !== CACHE_NAME ? caches.delete(key) : Promise.resolve())))
+    )
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  // Never cache API sync requests or external AI streams
   const url = event.request.url;
-  if (url.includes('/api/') || url.includes('firestore.googleapis.com') || url.includes('firebaseio.com') || url.includes('generativelanguage.googleapis.com')) {
+  if (
+    event.request.method !== 'GET' ||
+    url.includes('/api/') ||
+    url.includes('firestore.googleapis.com') ||
+    url.includes('firebaseio.com') ||
+    url.includes('generativelanguage.googleapis.com')
+  ) {
     return;
   }
 
-  if (event.request.method !== 'GET') {
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Return cached and fetch in background for update
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
+  // Network-first for HTML navigations so users ALWAYS get fresh UI & sync code
+  if (event.request.mode === 'navigate' || url.endsWith('/') || url.endsWith('/index.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          if (res && res.status === 200) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => caches.match('/'));
+          return res;
+        })
+        .catch(() => caches.match(event.request).then((c) => c || caches.match('/')))
+    );
+    return;
+  }
+
+  // Cache-first for immutable hashed assets
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((res) => {
+        if (res && res.status === 200 && url.includes('/assets/')) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        }
+        return res;
+      });
     })
   );
 });
