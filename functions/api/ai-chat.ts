@@ -4,6 +4,13 @@
   };
 }
 
+const MODELS = [
+  '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+  '@cf/meta/llama-3.1-8b-instruct-fast',
+  '@cf/meta/llama-4-scout-17b-16e-instruct',
+  '@cf/qwen/qwen2.5-coder-32b-instruct',
+];
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -49,17 +56,38 @@ export async function onRequest(context: { request: Request; env: Env }) {
       );
     }
 
-    const aiRes = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-      max_tokens: 1400,
-    });
+    let aiRes: any = null;
+    let usedModel = '';
+    let lastErr = '';
+
+    for (const model of MODELS) {
+      try {
+        aiRes = await env.AI.run(model, {
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: prompt },
+          ],
+          max_tokens: 1400,
+        });
+        usedModel = model;
+        break;
+      } catch (e: any) {
+        lastErr = `${model}: ${e?.message || e}`;
+      }
+    }
+
+    if (!aiRes) {
+      return new Response(
+        JSON.stringify({ success: false, error: lastErr || 'All Workers AI models failed' }),
+        { status: 502, headers: corsHeaders }
+      );
+    }
 
     const content =
       typeof aiRes?.response === 'string'
         ? aiRes.response
+        : typeof aiRes?.choices?.[0]?.message?.content === 'string'
+        ? aiRes.choices[0].message.content
         : typeof aiRes === 'string'
         ? aiRes
         : JSON.stringify(aiRes);
@@ -78,13 +106,13 @@ export async function onRequest(context: { request: Request; env: Env }) {
         }
       }
       return new Response(
-        JSON.stringify({ success: true, provider: 'cloudflare-workers-ai', json: parsed, text: content }),
+        JSON.stringify({ success: true, provider: 'cloudflare-workers-ai', model: usedModel, json: parsed, text: content }),
         { status: 200, headers: corsHeaders }
       );
     }
 
     return new Response(
-      JSON.stringify({ success: true, provider: 'cloudflare-workers-ai', text: content }),
+      JSON.stringify({ success: true, provider: 'cloudflare-workers-ai', model: usedModel, text: content }),
       { status: 200, headers: corsHeaders }
     );
   } catch (err: any) {
