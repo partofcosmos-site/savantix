@@ -405,7 +405,33 @@ Requirements:
       }
     } catch (err) {
       // 2. Offline deterministic fallback
-      console.warn("Live Socratic synthesis offline fallback:", err);
+      console.warn("Primary BYOK AI unavailable, routing to /api/ai-chat:", err);
+      try {
+        const apiRes = await fetch('/api/ai-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonMode: true,
+            systemPrompt: 'Return ONLY valid JSON matching: {"domain":string,"topic":string,"intuition":string,"derivationSteps":[{"title":string,"explanation":string,"latex":string}],"finalBoxedLatex":string,"commonTraps":[string],"sanityCheck":string}',
+            prompt: `Solve with rigorous first-principles STEM derivation and exact KaTeX LaTeX: "${trimmed}"`
+          })
+        });
+        if (apiRes.ok) {
+          const data = await apiRes.json();
+          if (data?.json && data.json.derivationSteps?.length) {
+            setInAppSolution(data.json);
+            setLaunchToast({
+              name: "Savantix Live STEM Engine",
+              message: "Synthesized live 4-tier derivation via Savantix Cloud AI",
+              copied: false
+            });
+            setTimeout(() => setLaunchToast(null), 4000);
+            return;
+          }
+        }
+      } catch (proxyErr) {
+        console.warn("Cloud AI fallback notice:", proxyErr);
+      }
       const sol = SocraticStemEngine.deriveSolution(trimmed);
       setInAppSolution(sol);
       setLaunchToast({
