@@ -266,7 +266,7 @@ export const ContactFeedback: React.FC = () => {
       const payload = getStructuredPayloadText();
       await navigator.clipboard.writeText(payload);
       setCopiedPayload(true);
-      showToast('📋 Feedback payload copied to clipboard!', 'success');
+      showToast('Feedback payload copied to clipboard!', 'success');
       setTimeout(() => setCopiedPayload(false), 3000);
     } catch (e) {
       showToast('Failed to copy to clipboard', 'error');
@@ -278,7 +278,7 @@ export const ContactFeedback: React.FC = () => {
     try {
       await navigator.clipboard.writeText(FOUNDER_EMAIL);
       setCopiedEmail(true);
-      showToast('📧 Founder email copied to clipboard!', 'success');
+      showToast('Founder email copied to clipboard!', 'success');
       setTimeout(() => setCopiedEmail(false), 3000);
     } catch (e) {
       showToast('Failed to copy email', 'error');
@@ -369,7 +369,7 @@ export const ContactFeedback: React.FC = () => {
         setMessage('');
         setAffiliation('');
         setTouched({ name: false, email: false, subject: false, message: false });
-        showToast('🎉 Feedback dispatched successfully to founder!', 'success');
+        showToast('Feedback dispatched successfully to founder!', 'success');
       } else {
         throw new Error(data.message || 'FormSubmit endpoint returned an error response.');
       }

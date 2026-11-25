@@ -604,10 +604,10 @@ export const Goals = () => {
                 className="bg-zinc-950/80 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-indigo-500"
               >
                 <option value="All">All Priorities</option>
-                <option value="Urgent">🔥 Urgent</option>
-                <option value="High">⚡ High</option>
-                <option value="Medium">🎯 Medium</option>
-                <option value="Low">📌 Low</option>
+                <option value="Urgent">Urgent</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
               </select>
 
               <select

@@ -64,10 +64,10 @@ export const MONTH_NAMES = [
 
 export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; reason: string }[] = [
   { label: 'Guided Online Coaching', category: 'self_study', reason: 'Structured online lecture and syllabus consolidation' },
-  { label: '⚡ Olympiad Sprint', category: 'olympiad', reason: 'IPhO / NSEP theoretical problem solving & optics sprint' },
-  { label: '⚡ JEE Mechanics & Calculus', category: 'jee_prep', reason: 'Rotational dynamics, calculus & coordinate geometry' },
-  { label: '⚡ Half-Yearly Revision', category: 'exam_prep', reason: 'Class XI Half-Yearly syllabus revision' },
-  { label: '⚡ Medical / Health Rest', category: 'recovery', reason: 'Health recovery & sleep consolidation' },
+  { label: 'Olympiad Sprint', category: 'olympiad', reason: 'IPhO / NSEP theoretical problem solving & optics sprint' },
+  { label: 'JEE Mechanics & Calculus', category: 'jee_prep', reason: 'Rotational dynamics, calculus & coordinate geometry' },
+  { label: 'Half-Yearly Revision', category: 'exam_prep', reason: 'Class XI Half-Yearly syllabus revision' },
+  { label: 'Medical / Health Rest', category: 'recovery', reason: 'Health recovery & sleep consolidation' },
 ];
 
 export const AttendanceTracker: React.FC = () => {
@@ -198,11 +198,11 @@ export const AttendanceTracker: React.FC = () => {
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(payload);
         setCopiedSuccess(true);
-        showToast('✅ Structured AI Regulatory Payload copied to clipboard!');
+        showToast('Structured AI Regulatory Payload copied to clipboard!');
         setTimeout(() => setCopiedSuccess(false), 4000);
       }
     } catch {
-      showToast('⚠️ Unable to write to clipboard directly. Please copy from the dossier below.');
+      showToast('Unable to write to clipboard directly. Please copy from the dossier below.');
     }
   };
 
@@ -531,7 +531,7 @@ export const AttendanceTracker: React.FC = () => {
     });
 
     setSelectedCalDate(null);
-    showToast(`🔒 Locked in absence for ${day.dateStr} (${day.dayOfWeek})`);
+    showToast(`Locked in absence for ${day.dateStr} (${day.dayOfWeek})`);
   };
 
   return (
@@ -612,7 +612,7 @@ export const AttendanceTracker: React.FC = () => {
             <button
               onClick={() => {
                 GoogleCalendarSyncService.downloadCalendarIcs(state);
-                showToast('📅 Exported all absences & academic calendar to .ics for Google Calendar');
+                showToast('Exported all absences & academic calendar to .ics for Google Calendar');
               }}
               title="Sync / Export all absences & milestones to Google Calendar (.ics format)"
               className="flex items-center justify-center gap-2 px-4 py-3.5 bg-zinc-900/90 hover:bg-zinc-800/90 text-zinc-200 border border-zinc-700/80 rounded-2xl text-xs font-semibold shadow-lg hover:border-zinc-500 transition-all cursor-pointer"
@@ -621,6 +621,65 @@ export const AttendanceTracker: React.FC = () => {
               <span>Google Calendar (.ics)</span>
               <Download className="w-3.5 h-3.5 text-zinc-400" />
             </button>
+
+            <button
+              onClick={() => {
+                const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `savantix_attendance_backup_${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Exported attendance backup (.json)');
+              }}
+              title="Download full attendance backup as JSON"
+              className="flex items-center justify-center gap-2 px-3.5 py-2.5 bg-zinc-900/90 hover:bg-zinc-800/90 text-zinc-200 border border-zinc-700/80 rounded-xl text-xs font-medium transition-colors cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Backup (.json)</span>
+            </button>
+
+            <label
+              title="Restore or merge attendance from a JSON backup"
+              className="flex items-center justify-center gap-2 px-3.5 py-2.5 bg-zinc-900/90 hover:bg-zinc-800/90 text-zinc-200 border border-zinc-700/80 rounded-xl text-xs font-medium transition-colors cursor-pointer"
+            >
+              <span>Restore</span>
+              <input
+                type="file"
+                accept=".json,application/json"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    try {
+                      const imported = JSON.parse(String(reader.result || '{}'));
+                      if (!Array.isArray(imported.absences)) throw new Error('Invalid backup format');
+                      const mergedMap = new Map<string, AbsenceEntry>();
+                      state.absences.forEach((a) => { if (a?.date) mergedMap.set(a.date, a); });
+                      imported.absences.forEach((a: AbsenceEntry) => { if (a?.date) mergedMap.set(a.date, a); });
+                      const mergedAbsences = Array.from(mergedMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+                      setState((prev) => ({
+                        ...prev,
+                        absences: mergedAbsences,
+                        profile: {
+                          ...prev.profile,
+                          absentDays: mergedAbsences.length,
+                          presentDays: Math.max(0, prev.profile.workingDaysHeld - mergedAbsences.length)
+                        }
+                      }));
+                      showToast(`Merged ${mergedAbsences.length} attendance records and synced to cloud`);
+                    } catch {
+                      showToast('Could not parse attendance JSON backup');
+                    }
+                  };
+                  reader.readAsText(file);
+                  e.target.value = '';
+                }}
+              />
+            </label>
 
             <button
               onClick={handleResetToGroundTruth}
@@ -635,7 +694,7 @@ export const AttendanceTracker: React.FC = () => {
         {/* Navigation Tabs */}
         <div className="relative z-10 flex items-center gap-2 mt-6 pt-4 border-t border-zinc-800/60 overflow-x-auto no-scrollbar">
           {[
-            { id: 'locked_matrix', label: '🔒 Locked Dates Matrix', icon: Lock, badge: `${state.profile.absentDays} Locked` },
+            { id: 'locked_matrix', label: 'Locked Dates Matrix', icon: Lock, badge: `${state.profile.absentDays} Locked` },
             { id: 'absences', label: 'Absence Ledger', icon: Award, badge: `${state.absences.length}` },
             { id: 'overview', label: 'Attendance Projections', icon: Scale },
             { id: 'calendar', label: 'Holidays & Breaks', icon: Calendar },
@@ -782,7 +841,7 @@ export const AttendanceTracker: React.FC = () => {
                   <Scale className="w-3.5 h-3.5 text-indigo-400" /> Target (75%)
                 </span>
                 <span className={clsx("font-extrabold font-mono text-sm", metrics.effectivePct >= 75 ? "text-emerald-400" : "text-amber-400")}>
-                  {metrics.statusEffective === 'safe' ? '✓ SAFE' : 'CONDONABLE'}
+                  {metrics.statusEffective === 'safe' ? 'SAFE' : 'CONDONABLE'}
                 </span>
               </div>
             </div>
@@ -1021,7 +1080,7 @@ export const AttendanceTracker: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-zinc-400">Practical Day:</span>
-                    <span className="font-semibold text-zinc-100">{selectedCalDate.lockedAbsence.isPracticalDay ? '🧪 Practical Lab Day' : 'Theory Day'}</span>
+                    <span className="font-semibold text-zinc-100">{selectedCalDate.lockedAbsence.isPracticalDay ? 'Practical Lab Day' : 'Theory Day'}</span>
                   </div>
                 </div>
 
@@ -1534,7 +1593,7 @@ export const AttendanceTracker: React.FC = () => {
                         isCompleted ? 'bg-zinc-800 text-zinc-400 border-zinc-700' :
                         'bg-indigo-500/10 text-indigo-300 border-indigo-500/25'
                       )}>
-                        {isUpcoming ? '⏳ Upcoming' : isCompleted ? '✅ Completed' : '📅 Scheduled'}
+                        {isUpcoming ? '⏳ Upcoming' : isCompleted ? 'Completed' : 'Scheduled'}
                       </span>
                       {exam.syllabusPercentage && (
                         <span className="text-[10px] text-zinc-500 font-bold">{exam.syllabusPercentage}% Syllabus</span>
@@ -1924,7 +1983,7 @@ export const AttendanceTracker: React.FC = () => {
 
                     {abs.isPracticalDay && (
                       <span className="px-2 py-0.5 bg-rose-500/15 text-rose-300 border border-rose-500/30 rounded-md font-bold">
-                        🧪 Lab / Practical Day
+                        Lab / Practical Day
                       </span>
                     )}
 
@@ -2167,7 +2226,7 @@ export const AttendanceTracker: React.FC = () => {
                             'px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border',
                             isSafe ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
                           )}>
-                            {isSafe ? '✓ Safe' : '⚠ Deficit'}
+                            {isSafe ? 'Safe' : 'Deficit'}
                           </span>
                         </div>
                       </div>

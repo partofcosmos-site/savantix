@@ -469,7 +469,7 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
             <div className="flex items-center gap-0.5 ml-1">
               {shieldRack.map(s => (
                 <span key={s.index} title={s.tooltip} className="text-xs">
-                  {s.isCharged ? '🛡️' : '⚪'}
+                  {s.isCharged ? '' : ''}
                 </span>
               ))}
             </div>
@@ -634,9 +634,9 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
                           hist.status === 'shield_defended' ? 'text-indigo-400' :
                           hist.status === 'partial_decay' ? 'text-amber-400' : 'text-rose-400'
                         }`}>
-                          {hist.status === 'surplus_overdrive' ? '+25 HP & +1 🛡️' :
+                          {hist.status === 'surplus_overdrive' ? '+25 HP & +1 ' :
                            hist.status === 'target_met' ? '+15 HP' :
-                           hist.status === 'shield_defended' ? '0 HP (🛡️ Used)' :
+                           hist.status === 'shield_defended' ? '0 HP (Used)' :
                            `${hist.hpDelta} HP`}
                         </span>
                         <p className="text-[9px] text-zinc-500 capitalize">{hist.status.replace('_', ' ')}</p>

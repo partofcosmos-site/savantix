@@ -57,6 +57,13 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
       } else if (e.altKey && (e.key === 'g' || e.key === 'G')) {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent('savantix_open_ai_gateway', { detail: { open: true } }));
+      } else if (e.altKey && /^[1-8]$/.test(e.key)) {
+        const order: ActiveTabType[] = ['dashboard', 'attendance', 'pomodoro', 'analytics', 'goals', 'journal', 'settings', 'feedback'];
+        const target = order[parseInt(e.key, 10) - 1];
+        if (target) {
+          e.preventDefault();
+          setActiveTab(target);
+        }
       }
     };
 

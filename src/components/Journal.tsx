@@ -54,7 +54,7 @@ const MOOD_OPTIONS = [
     label: 'Victorious / Flow', 
     sublabel: 'Crushed all targets & peak focus',
     icon: Smile, 
-    emoji: '😄', 
+    emoji: '', 
     color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30 ring-emerald-500' 
   },
   { 
@@ -62,7 +62,7 @@ const MOOD_OPTIONS = [
     label: 'Good / Focused', 
     sublabel: 'Solid study rhythm & momentum',
     icon: Smile, 
-    emoji: '😊', 
+    emoji: '', 
     color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30 ring-indigo-500' 
   },
   { 
@@ -70,7 +70,7 @@ const MOOD_OPTIONS = [
     label: 'Neutral / Steady', 
     sublabel: 'Standard routine & moderate pace',
     icon: Meh, 
-    emoji: '😐', 
+    emoji: '', 
     color: 'text-blue-400 bg-blue-500/10 border-blue-500/30 ring-blue-500' 
   },
   { 
@@ -78,7 +78,7 @@ const MOOD_OPTIONS = [
     label: 'Fatigued / Stressed', 
     sublabel: 'Encountered friction or brain fog',
     icon: Frown, 
-    emoji: '😓', 
+    emoji: '', 
     color: 'text-amber-400 bg-amber-500/10 border-amber-500/30 ring-amber-500' 
   },
   { 
@@ -86,7 +86,7 @@ const MOOD_OPTIONS = [
     label: 'Burned Out / Low', 
     sublabel: 'Depleted stamina, needed recovery',
     icon: Frown, 
-    emoji: '😫', 
+    emoji: '', 
     color: 'text-rose-400 bg-rose-500/10 border-rose-500/30 ring-rose-500' 
   }
 ];
@@ -248,11 +248,11 @@ export const Journal = () => {
       `# ${entry.title || 'Daily Reflection'} - ${entry.date}`,
       `**Mood:** ${entry.mood || 3}/5 | **Energy:** ${entry.energy || 3}/5`,
       entry.tags?.length ? `**Tags:** ${entry.tags.map((t: string) => `#${t}`).join(' ')}` : '',
-      entry.wins ? `\n### 🏆 Wins of the Day\n${entry.wins}` : '',
-      entry.struggles ? `\n### ⚡ Struggles & Bottlenecks\n${entry.struggles}` : '',
-      entry.insights ? `\n### 💡 Key Insights Learned\n${entry.insights}` : '',
-      entry.priorities ? `\n### 🎯 Tomorrow's Top 3 Priorities\n${entry.priorities}` : '',
-      (entry.notes || entry.content) ? `\n### 📝 Notes & Reflections\n${entry.notes || entry.content}` : '',
+      entry.wins ? `\n### Wins of the Day\n${entry.wins}` : '',
+      entry.struggles ? `\n### Struggles & Bottlenecks\n${entry.struggles}` : '',
+      entry.insights ? `\n### Key Insights Learned\n${entry.insights}` : '',
+      entry.priorities ? `\n### Tomorrow's Top 3 Priorities\n${entry.priorities}` : '',
+      (entry.notes || entry.content) ? `\n### Notes & Reflections\n${entry.notes || entry.content}` : '',
     ].filter(Boolean).join('\n');
 
     try {
@@ -404,7 +404,7 @@ export const Journal = () => {
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Today's Log</p>
               <p className={`text-base sm:text-lg font-bold mt-1 ${hasLoggedToday ? 'text-emerald-400' : 'text-indigo-400'}`}>
-                {hasLoggedToday ? 'Completed ✨' : 'Pending ⏳'}
+                {hasLoggedToday ? 'Completed ' : 'Pending ⏳'}
               </p>
             </div>
             {!hasLoggedToday && (
@@ -450,11 +450,11 @@ export const Journal = () => {
                 className="bg-zinc-950/80 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:border-indigo-500"
               >
                 <option value="All">All Moods</option>
-                <option value="5">😄 Flow / 5★</option>
-                <option value="4">😊 Good / 4★</option>
-                <option value="3">😐 Steady / 3★</option>
-                <option value="2">😓 Fatigued / 2★</option>
-                <option value="1">😫 Low / 1★</option>
+                <option value="5">Flow / 5</option>
+                <option value="4">Good / 4</option>
+                <option value="3">Steady / 3</option>
+                <option value="2">Fatigued / 2</option>
+                <option value="1">Low / 1</option>
               </select>
 
               <select
@@ -593,7 +593,7 @@ export const Journal = () => {
                           }`}
                         >
                           <span className="text-xl mb-1">{opt.emoji}</span>
-                          <span className="text-[10px] font-bold">{opt.level}★</span>
+                          <span className="text-[10px] font-bold">{opt.level}</span>
                         </button>
                       );
                     })}
@@ -628,7 +628,7 @@ export const Journal = () => {
                         >
                           <div className="flex items-center gap-0.5 mb-1">
                             {Array.from({ length: opt.bars }).map((_, i) => (
-                              <span key={i} className="text-xs font-bold text-amber-400">⚡</span>
+                              <span key={i} className="text-xs font-bold text-amber-400"></span>
                             ))}
                           </div>
                           <span className="text-[10px] font-bold">{opt.level} / 5</span>
@@ -661,7 +661,7 @@ export const Journal = () => {
                             : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
                         }`}
                       >
-                        {isAdded ? `✓ #${pt}` : `+ #${pt}`}
+                        {isAdded ? `#${pt}` : `+ #${pt}`}
                       </button>
                     );
                   })}

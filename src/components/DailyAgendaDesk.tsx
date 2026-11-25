@@ -148,10 +148,10 @@ export const DailyAgendaDesk: React.FC<{ selectedDate: string }> = ({ selectedDa
       });
 
       setAgenda(prev => prev.map(t => t.id === item.id ? { ...t, completed: true, logged: true } : t));
-      setLogSuccessMsg(`✅ Logged "${item.title}" (+${item.targetMinutes}m, ${item.targetProblems} Qs)!`);
+      setLogSuccessMsg(`Logged "${item.title}" (+${item.targetMinutes}m, ${item.targetProblems} Qs)!`);
       setTimeout(() => setLogSuccessMsg(null), 3500);
     } catch (err: any) {
-      setLogSuccessMsg(`⚠️ Notice: ${err?.message || 'Logged locally'}`);
+      setLogSuccessMsg(`Notice: ${err?.message || 'Logged locally'}`);
       setTimeout(() => setLogSuccessMsg(null), 3000);
     }
   };
@@ -170,10 +170,10 @@ export const DailyAgendaDesk: React.FC<{ selectedDate: string }> = ({ selectedDa
         notes: `Rapid problem-solving tally logged from live desk counter.`
       });
 
-      setLogSuccessMsg(`🎯 Logged ${deskCounter} solved problems!`);
+      setLogSuccessMsg(`Logged ${deskCounter} solved problems!`);
       setTimeout(() => setLogSuccessMsg(null), 3500);
     } catch (err: any) {
-      setLogSuccessMsg(`⚠️ Notice: ${err?.message || 'Logged locally'}`);
+      setLogSuccessMsg(`Notice: ${err?.message || 'Logged locally'}`);
       setTimeout(() => setLogSuccessMsg(null), 3000);
     }
   };

@@ -47,7 +47,7 @@ export const AI_SERVICES: AIService[] = [
     description: "Instant 4-Tier Socratic KaTeX Derivation (Zero Login • 100% Offline Ready)",
     color: "from-indigo-600 to-violet-600",
     textColor: "text-indigo-400",
-    emoji: "⚡",
+    emoji: "",
     baseUrl: "in_app",
     supportsDirectLink: true,
     requiresLogin: false,
@@ -61,7 +61,7 @@ export const AI_SERVICES: AIService[] = [
     description: "OpenAI o3 & GPT-4o — advanced STEM problem solving & code reasoning",
     color: "from-emerald-600 to-teal-600",
     textColor: "text-emerald-400",
-    emoji: "🤖",
+    emoji: "",
     queryUrl: q => `https://chatgpt.com/?q=${encodeURIComponent(q)}`,
     baseUrl: "https://chatgpt.com/",
     supportsDirectLink: true,
@@ -76,7 +76,7 @@ export const AI_SERVICES: AIService[] = [
     description: "DeepSeek R1 671B — deep thinking chain-of-thought for Olympiad math & physics",
     color: "from-sky-600 to-cyan-600",
     textColor: "text-sky-400",
-    emoji: "🔬",
+    emoji: "",
     baseUrl: "https://chat.deepseek.com/",
     supportsDirectLink: false,
     requiresLogin: true,
@@ -90,7 +90,7 @@ export const AI_SERVICES: AIService[] = [
     description: "Gemini 3 — 1M+ token context, Google Search Grounding & multimodality",
     color: "from-blue-600 to-indigo-600",
     textColor: "text-blue-400",
-    emoji: "✨",
+    emoji: "",
     baseUrl: "https://gemini.google.com/app",
     supportsDirectLink: false,
     requiresLogin: true,
@@ -104,7 +104,7 @@ export const AI_SERVICES: AIService[] = [
     description: "NotebookLM — grounded study guides, Audio Deep Dive podcasts & source synthesis",
     color: "from-purple-600 to-indigo-600",
     textColor: "text-purple-400",
-    emoji: "📓",
+    emoji: "",
     baseUrl: "https://notebooklm.google.com/",
     supportsDirectLink: false,
     requiresLogin: true,
@@ -118,7 +118,7 @@ export const AI_SERVICES: AIService[] = [
     description: "Anthropic Claude — hybrid thinking mode & crystal-clear mathematical proofs",
     color: "from-orange-600 to-amber-600",
     textColor: "text-orange-400",
-    emoji: "🏛️",
+    emoji: "",
     baseUrl: "https://claude.ai/new",
     supportsDirectLink: false,
     requiresLogin: true,
@@ -132,7 +132,7 @@ export const AI_SERVICES: AIService[] = [
     description: "Grok 3 — frontier STEM thinking, real-time reasoning & code execution",
     color: "from-zinc-500 to-zinc-600",
     textColor: "text-zinc-400",
-    emoji: "⚡",
+    emoji: "",
     baseUrl: "https://grok.com/",
     supportsDirectLink: false,
     requiresLogin: true,
@@ -146,7 +146,7 @@ export const AI_SERVICES: AIService[] = [
     description: "Perplexity AI — real-time web search with academic citations & research focus",
     color: "from-violet-600 to-purple-600",
     textColor: "text-violet-400",
-    emoji: "🔍",
+    emoji: "",
     queryUrl: q => `https://www.perplexity.ai/search?q=${encodeURIComponent(q)}`,
     baseUrl: "https://www.perplexity.ai/",
     supportsDirectLink: true,
@@ -161,7 +161,7 @@ export const AI_SERVICES: AIService[] = [
     description: "Wolfram Alpha — exact algebraic computation, ODEs & analytical integrals",
     color: "from-red-700 to-red-600",
     textColor: "text-red-400",
-    emoji: "🧮",
+    emoji: "",
     queryUrl: q => `https://www.wolframalpha.com/input?i=${encodeURIComponent(q)}`,
     baseUrl: "https://www.wolframalpha.com/",
     supportsDirectLink: true,
@@ -176,7 +176,7 @@ export const AI_SERVICES: AIService[] = [
     description: "100% Free Anonymous AI (Claude 3 Haiku, GPT-4o mini, Llama 3.3)",
     color: "from-amber-600 to-orange-600",
     textColor: "text-amber-400",
-    emoji: "🦆",
+    emoji: "",
     queryUrl: () => `https://duckduckgo.com/?q=DuckDuckGo+AI+Chat&ia=chat`,
     baseUrl: "https://duckduckgo.com/?q=DuckDuckGo+AI+Chat&ia=chat",
     supportsDirectLink: true,
@@ -209,25 +209,25 @@ export const STRATEGY_MODIFIERS: StrategyModifier[] = [
   {
     id: "first_principles",
     label: "First-Principles Proof",
-    emoji: "🔬",
+    emoji: "",
     promptSuffix: "\n\n[DIRECTIVE: Provide a rigorous first-principles derivation formatted in KaTeX. State all governing differential equations, conservation laws, and dimensional limits.]"
   },
   {
     id: "fast_heuristic",
     label: "Speed Shortcut / Trick",
-    emoji: "⚡",
+    emoji: "",
     promptSuffix: "\n\n[DIRECTIVE: Identify the fastest intuitive shortcut, symmetry argument, or Olympiad heuristic to solve this problem in <60 seconds without long algebra.]"
   },
   {
     id: "trap_boundary",
     label: "Boundary & Trap Audit",
-    emoji: "⚠️",
+    emoji: "",
     promptSuffix: "\n\n[DIRECTIVE: Audit all edge-case boundary conditions (e.g. limits -> 0, infinity, friction transitions) and highlight the exact mistake traps students fall into.]"
   },
   {
     id: "notebooklm_audio",
     label: "NotebookLM Audio Prep",
-    emoji: "🎙️",
+    emoji: "",
     promptSuffix: "\n\n[DIRECTIVE: Format this as a highly engaging 2-person Socratic discussion script with conversational analogies, ready to be ingested into Google NotebookLM for Audio Overview.]"
   }
 ];
@@ -245,7 +245,7 @@ export const MATH_SNIPPETS = [
 
 const CATEGORIES = [
   { id: "all", label: "All Gateways" },
-  { id: "instant", label: "⚡ In-App (No Login)" },
+  { id: "instant", label: "In-App (No Login)" },
   { id: "frontier", label: "Frontier AI" },
   { id: "search", label: "Search AI" },
   { id: "science", label: "Math & Science" },
@@ -447,7 +447,7 @@ Requirements:
       window.open(service.baseUrl, "_blank", "noopener,noreferrer");
       setLaunchToast({
         name: service.name,
-        message: `✓ Prompt copied to clipboard! Switch to the opened tab and press Ctrl+V to paste.`,
+        message: `Prompt copied to clipboard! Switch to the opened tab and press Ctrl+V to paste.`,
         type: "info"
       });
     }
@@ -494,7 +494,7 @@ Requirements:
     window.open("https://claude.ai/new", "_blank", "noopener,noreferrer");
 
     setLaunchToast({
-      name: "⚡ Triple-Audit Dispatched",
+      name: "Triple-Audit Dispatched",
       message: "Opened DeepSeek R1, ChatGPT, and Claude with prompt auto-copied to clipboard!",
       type: "success"
     });
@@ -759,7 +759,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                   title="Launch DeepSeek R1 + ChatGPT + Claude simultaneously"
                 >
                   <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  <span>⚡ Triple-Audit</span>
+                  <span>Triple-Audit</span>
                 </button>
 
                 <button
@@ -775,7 +775,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
             </div>
           </div>
 
-          {/* ⚡ 1-Click Fast Launch Frontier Model Roster Bar */}
+          {/* 1-Click Fast Launch Frontier Model Roster Bar */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-400">
               <span className="flex items-center gap-1.5 text-amber-300">
@@ -884,10 +884,10 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                     </div>
                     <p className="text-zinc-300">{inAppSolution.tier1.conceptualOverview}</p>
                     <div className="text-zinc-300 italic bg-zinc-950/80 p-2.5 rounded-lg border border-zinc-800">
-                      💡 <strong>Mental Model:</strong> {inAppSolution.tier1.mentalModel}
+                      <strong>Mental Model:</strong> {inAppSolution.tier1.mentalModel}
                     </div>
                     <div className="text-amber-300/90 text-[11px] bg-amber-500/10 p-2 rounded border border-amber-500/20">
-                      ❓ <strong>Self-Check Prompt:</strong> {inAppSolution.tier1.selfCheckPrompt}
+                      <strong>Self-Check Prompt:</strong> {inAppSolution.tier1.selfCheckPrompt}
                     </div>
                   </div>
 
@@ -1050,11 +1050,11 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                         
                         {service.requiresLogin ? (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium border border-zinc-700/60 shrink-0">
-                            🔑 Needs Login
+                            Needs Login
                           </span>
                         ) : (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 font-medium border border-emerald-500/30 shrink-0">
-                            🟢 No Login
+                            No Login
                           </span>
                         )}
                       </div>

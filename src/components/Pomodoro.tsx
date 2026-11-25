@@ -268,7 +268,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
       });
       setMessage({
         type: 'success',
-        text: `🎯 Saved! Logged ${sessionLogData.durationMinutes}m of ${sessionLogData.subject} (${sessionLogData.problemsSolved} problems) to Dashboard.`
+        text: `Saved! Logged ${sessionLogData.durationMinutes}m of ${sessionLogData.subject} (${sessionLogData.problemsSolved} problems) to Dashboard.`
       });
       setShowLogPromptModal(false);
     } catch (err: any) {
@@ -715,7 +715,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
 
     setMessage({
       type: 'success',
-      text: '☕ Dynamic Break complete! Refreshed and primed for your next deep flow session.'
+      text: 'Dynamic Break complete! Refreshed and primed for your next deep flow session.'
     });
   };
 
@@ -777,7 +777,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
 
       setMessage({
         type: 'success',
-        text: `🎯 Focus session completed (${focusDuration}m logged)! Enjoy your ${isLongBreakDue ? 'Long Break' : 'Short Break'}.`
+        text: `Focus session completed (${focusDuration}m logged)! Enjoy your ${isLongBreakDue ? 'Long Break' : 'Short Break'}.`
       });
     } else {
       setMode('focus');
@@ -787,7 +787,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
       setIsActive(false);
       setMessage({
         type: 'info',
-        text: '☕ Break over! Ready for the next deep work session?'
+        text: 'Break over! Ready for the next deep work session?'
       });
     }
   };
@@ -886,7 +886,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
         focusScore: 10,
         date: format(new Date(), 'yyyy-MM-dd')
       });
-      setMessage({ type: 'success', text: `✨ Logged ${finalDuration}m under ${logSubject} - ${logTopic}` });
+      setMessage({ type: 'success', text: `Logged ${finalDuration}m under ${logSubject} - ${logTopic}` });
       setTimeout(() => setMessage(null), 4000);
     } catch (error) {
       console.error('Error logging study session:', error);
@@ -979,9 +979,9 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
             <button
               onClick={() => setIsFortressMode(true)}
               className="px-3.5 py-2 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer"
-              title="Enter Deep Work Fortress"
+              title="Enter Deep Focus Session"
             >
-              🏰 <span className="hidden sm:inline">Enter Fortress</span>
+              <span className="hidden sm:inline">Enter Fortress</span>
             </button>
           )}
 
@@ -1130,7 +1130,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 bg-emerald-950/60 border-emerald-500/40 text-emerald-300 shadow-sm">
                       <Coffee className="w-3.5 h-3.5 text-emerald-400" />
-                      🌴 Dynamic Earned Rest Active
+                      Dynamic Earned Rest Active
                     </span>
                     <span className="text-[11px] text-emerald-400/80">
                       Recharging neural stamina
@@ -1158,7 +1158,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       {formatFlowTime(flowElapsedSeconds, flowElapsedSeconds >= 3600)}
                     </div>
                     <p className="text-xs text-zinc-400 mt-2 font-medium">
-                      {flowIsActive ? '⚡ Uninterrupted Cognitive Flow Accumulating...' : flowElapsedSeconds > 0 ? '⏸️ Flow Paused — Click Play to Resume' : 'Ready to begin open-ended study session'}
+                      {flowIsActive ? 'Uninterrupted Cognitive Flow Accumulating...' : flowElapsedSeconds > 0 ? '⏸️ Flow Paused — Click Play to Resume' : 'Ready to begin open-ended study session'}
                     </p>
                   </>
                 ) : (
@@ -1167,7 +1167,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       {formatFlowTime(flowBreakRemainingSeconds)}
                     </div>
                     <p className="text-xs text-emerald-400/90 mt-2 font-medium">
-                      ☕ Earned Break Countdown ({formatEarnedBreak(flowBreakTotalSeconds)} total rest)
+                      Earned Break Countdown ({formatEarnedBreak(flowBreakTotalSeconds)} total rest)
                     </p>
                   </>
                 )}
@@ -1322,7 +1322,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
-                  🧠 Focus ({focusDuration}m)
+                  Focus ({focusDuration}m)
                 </button>
                 <button
                   onClick={() => switchMode('short_break')}
@@ -1332,7 +1332,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
-                  ☕ Short Break ({shortBreakDuration}m)
+                  Short Break ({shortBreakDuration}m)
                 </button>
                 <button
                   onClick={() => switchMode('long_break')}
@@ -1342,7 +1342,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
-                  🌴 Long Break ({longBreakDuration}m)
+                  Long Break ({longBreakDuration}m)
                 </button>
               </div>
 
@@ -1718,7 +1718,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                     <form onSubmit={handleAddUserTag} className="flex gap-1.5 pt-1">
                       <input
                         type="text"
-                        placeholder="e.g. ⚔️ Attack on Titan or 🌌 Cyberpunk"
+                        placeholder="e.g. Attack on Titan or Cyberpunk"
                         value={newTagInput}
                         onChange={(e) => setNewTagInput(e.target.value)}
                         className="flex-1 bg-zinc-950 border border-indigo-500/40 rounded-xl px-3 py-1.5 text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
@@ -1788,14 +1788,14 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] scrollbar-thin">
                   {[
                     { id: 'all', label: 'All' },
-                    { id: 'anime', label: '⛩️ Anime OST' },
-                    { id: 'gaming', label: '🎮 Gaming OST' },
-                    { id: 'lofi', label: '☕ Lo-Fi' },
-                    { id: 'classical', label: '🎻 Classical' },
-                    { id: 'binaural', label: '🧠 40Hz Gamma' },
-                    { id: 'ambient', label: '🌧️ Rain Café' },
-                    { id: 'synthwave', label: '🌌 Synthwave' },
-                    { id: 'cinematic', label: '✨ Cosmic' }
+                    { id: 'anime', label: 'Anime OST' },
+                    { id: 'gaming', label: 'Gaming OST' },
+                    { id: 'lofi', label: 'Lo-Fi' },
+                    { id: 'classical', label: 'Classical' },
+                    { id: 'binaural', label: '40Hz Gamma' },
+                    { id: 'ambient', label: 'Rain Café' },
+                    { id: 'synthwave', label: 'Synthwave' },
+                    { id: 'cinematic', label: 'Cosmic' }
                   ].map(cat => (
                     <button
                       key={cat.id}
@@ -1941,7 +1941,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                     onChange={(e) => setNewTaskPomodoros(parseInt(e.target.value) || 1)}
                     className="w-12 bg-zinc-950 border border-zinc-800 rounded-lg px-2 py-1 text-xs text-center text-zinc-200 focus:outline-none"
                   />
-                  <span>🍅</span>
+                  <span></span>
                 </div>
               </div>
             </form>
@@ -2009,7 +2009,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                             <div className="flex items-center gap-2 mt-0.5 text-[10px] text-zinc-500">
                               <span className="text-indigo-400">{t.subject}</span>
                               <span>•</span>
-                              <span>🍅 {t.completedPomodoros}/{t.estimatedPomodoros}</span>
+                              <span>{t.completedPomodoros}/{t.estimatedPomodoros}</span>
                               {isTaskActive && (
                                 <span className="text-cyan-400 font-bold ml-1">● Active Target</span>
                               )}
@@ -2453,10 +2453,10 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                     onChange={(e) => setSessionLogData(prev => ({ ...prev, energyMood: e.target.value }))}
                     className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                   >
-                    <option value="Peak Flow">⚡ Peak Flow</option>
-                    <option value="High Energy">🔥 High Energy</option>
-                    <option value="Normal">✨ Steady / Normal</option>
-                    <option value="Fatigued">💤 Fatigued / Tired</option>
+                    <option value="Peak Flow">Peak Flow</option>
+                    <option value="High Energy">High Energy</option>
+                    <option value="Normal">Steady / Normal</option>
+                    <option value="Fatigued">Fatigued / Tired</option>
                   </select>
                 </div>
                 <div>

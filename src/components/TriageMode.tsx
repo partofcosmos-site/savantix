@@ -96,7 +96,7 @@ const DecisionModal: React.FC<DecisionModalProps> = ({ problemName, onCommit, on
       <div className="flex items-center justify-center mb-4">
         <span className="px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold tracking-wider uppercase flex items-center gap-2">
           <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
-          ⚡ 90 s Check
+          90 s Check
         </span>
       </div>
       <h2 className="text-center text-white font-black text-base sm:text-lg mb-1">
@@ -111,7 +111,7 @@ const DecisionModal: React.FC<DecisionModalProps> = ({ problemName, onCommit, on
           className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/30 cursor-pointer"
         >
           <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
-          <span className="text-xs sm:text-sm">Yes — Commit 🔒</span>
+          <span className="text-xs sm:text-sm">Yes — Commit </span>
           <span className="text-[9px] sm:text-[10px] font-normal text-indigo-200 text-center">20-min deep focus</span>
           <span className="text-[9px] text-indigo-300/60 font-mono">press C</span>
         </button>
@@ -120,7 +120,7 @@ const DecisionModal: React.FC<DecisionModalProps> = ({ problemName, onCommit, on
           className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-rose-600/30 cursor-pointer"
         >
           <Rocket className="w-5 h-5 sm:w-6 sm:h-6" />
-          <span className="text-xs sm:text-sm">No — Bail 🚀</span>
+          <span className="text-xs sm:text-sm">No — Bail </span>
           <span className="text-[9px] sm:text-[10px] font-normal text-rose-200 text-center">Smart skip + notes</span>
           <span className="text-[9px] text-rose-300/60 font-mono">press B</span>
         </button>
@@ -414,7 +414,7 @@ const TriageMode: React.FC = () => {
           </div>
           {microSecondsLeft <= 30 && (
             <span className="px-3 py-1 rounded-full bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-bold animate-pulse">
-              ⚠️ Decision incoming!
+              Decision incoming!
             </span>
           )}
         </div>
@@ -494,7 +494,7 @@ const TriageMode: React.FC = () => {
           {bailConfirmed ? (
             <div className="flex flex-col items-center gap-3 py-4">
               <CheckCircle2 className="w-10 h-10 text-emerald-400" />
-              <p className="text-emerald-300 font-bold text-sm">✓ Smart bail! Captured observations. Moving to next problem.</p>
+              <p className="text-emerald-300 font-bold text-sm">Smart bail! Captured observations. Moving to next problem.</p>
             </div>
           ) : (
             <>
@@ -588,11 +588,11 @@ const TriageMode: React.FC = () => {
                       <td className="py-2 pr-3">
                         {entry.decision === 'commit' ? (
                           <span className="px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800 font-semibold">
-                            🔒 Commit
+                            Commit
                           </span>
                         ) : entry.decision === 'bail' ? (
                           <span className="px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 font-semibold">
-                            🚀 Bail
+                            Bail
                           </span>
                         ) : (
                           <span className="px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">

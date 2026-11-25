@@ -188,7 +188,7 @@ export const LogInput = ({ selectedDate }: { selectedDate: string }) => {
       });
 
       setText('');
-      setMessage({ type: 'success', text: `⚡ Instant Saved! Logged ${parsedMicro.subject} (${parsedMicro.durationMinutes}m) with sub-second parser.` });
+      setMessage({ type: 'success', text: `Instant Saved! Logged ${parsedMicro.subject} (${parsedMicro.durationMinutes}m) with sub-second parser.` });
       setTimeout(() => setMessage(null), 4000);
     } catch (error: any) {
       console.error("Failed to fast log", error);
@@ -296,28 +296,28 @@ export const LogInput = ({ selectedDate }: { selectedDate: string }) => {
           onClick={() => handleAddChip('Physics')}
           className="px-2 py-0.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 font-medium transition-all shrink-0 cursor-pointer"
         >
-          ⚛️ Physics
+          Physics
         </button>
         <button
           type="button"
           onClick={() => handleAddChip('Mathematics')}
           className="px-2 py-0.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 font-medium transition-all shrink-0 cursor-pointer"
         >
-          📐 Math
+          Math
         </button>
         <button
           type="button"
           onClick={() => handleAddChip('Chemistry')}
           className="px-2 py-0.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium transition-all shrink-0 cursor-pointer"
         >
-          🧪 Chemistry
+          Chemistry
         </button>
         <button
           type="button"
           onClick={() => handleAddChip('Biology')}
           className="px-2 py-0.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 font-medium transition-all shrink-0 cursor-pointer"
         >
-          🧬 Biology
+          Biology
         </button>
         <div className="w-px h-3.5 bg-zinc-800 shrink-0 mx-0.5" />
         <button

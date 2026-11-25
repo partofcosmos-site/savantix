@@ -178,13 +178,13 @@ export const Dashboard = () => {
     if (!isNaN(parsed) && parsed >= 15) {
       updateElasticStreak({ targetMinutesDaily: parsed });
       setIsEditingTarget(false);
-      showToast(`🎯 Daily study target updated to ${parsed} mins!`);
+      showToast(`Daily study target updated to ${parsed} mins!`);
     }
   };
 
   const handleRecompute = () => {
     recomputeElasticStreak();
-    showToast('⚡ Elastic streak recomputed from history!');
+    showToast('Elastic streak recomputed from history!');
   };
 
   const showToast = (msg: string) => {
@@ -211,7 +211,7 @@ export const Dashboard = () => {
         durationMinutes: 45,
         problemsSolved: 3
       });
-      showToast('🌅 Morning Sprint Complete! +45 mins');
+      showToast('Morning Sprint Complete! +45 mins');
     } catch (e) {
       console.error(e);
     }
@@ -279,9 +279,9 @@ export const Dashboard = () => {
         avgFocusScore: Number(avgFoc),
         ...insightData
       });
-      showToast(`🎯 Daily insights re-analyzed for ${todayLogs.length} sessions (${totalMins}m)!`);
+      showToast(`Daily insights re-analyzed for ${todayLogs.length} sessions (${totalMins}m)!`);
     } catch (err: any) {
-      showToast(`⚠️ Insight re-analysis notice: ${err.message || 'Failed'}`);
+      showToast(`Insight re-analysis notice: ${err.message || 'Failed'}`);
     } finally {
       setIsReanalyzingInsights(false);
     }
@@ -334,7 +334,7 @@ export const Dashboard = () => {
                 ) : (
                   <RotateCcw className="w-3.5 h-3.5" />
                 )}
-                <span>{isReanalyzingInsights ? 'Re-analyzing...' : '🔄 Re-analyze with Latest Logs'}</span>
+                <span>{isReanalyzingInsights ? 'Re-analyzing...' : 'Re-analyze with Latest Logs'}</span>
               </button>
             )}
             <input 
@@ -359,7 +359,7 @@ export const Dashboard = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-violet-200">
-                    Morning Revision Sprint 🌅
+                    Morning Revision Sprint 
                   </h2>
                   <p className="text-xs text-indigo-200/60 mt-0.5">
                     {format(new Date(), 'EEEE, MMMM do')} • 45 Min Interleaved Practice
@@ -535,7 +535,7 @@ export const Dashboard = () => {
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-[11px] text-zinc-300 transition-colors cursor-pointer"
                     title="Click to adjust daily target minutes"
                   >
-                    <span>🎯 Target: <strong>{elasticStreak?.targetMinutesDaily || 120}m</strong> / day</span>
+                    <span>Target: <strong>{elasticStreak?.targetMinutesDaily || 120}m</strong> / day</span>
                     <Sliders className="w-3 h-3 text-indigo-400" />
                   </button>
                 )}
@@ -558,7 +558,7 @@ export const Dashboard = () => {
               </div>
               <div className="bg-zinc-950/50 border border-zinc-800/70 rounded-lg p-2 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0" />
-                <span><strong>+25 HP & +1 🛡️</strong> Overdrive ({Math.round((elasticStreak?.targetMinutesDaily || 120) * 1.5)}m)</span>
+                <span><strong>+25 HP & +1 </strong> Overdrive ({Math.round((elasticStreak?.targetMinutesDaily || 120) * 1.5)}m)</span>
               </div>
               <div className="bg-zinc-950/50 border border-zinc-800/70 rounded-lg p-2 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
@@ -644,10 +644,10 @@ export const Dashboard = () => {
                           entry.status === 'partial_decay' ? 'bg-amber-950/60 border border-amber-500/40 text-amber-300' :
                           'bg-rose-950/60 border border-rose-500/40 text-rose-300'
                         }`}>
-                          {entry.status === 'surplus_overdrive' ? '⚡ Overdrive' :
-                           entry.status === 'target_met' ? '✅ Target Met' :
-                           entry.status === 'shield_defended' ? '🛡️ Shield Defended' :
-                           entry.status === 'partial_decay' ? '⚠️ Partial Study' : '❌ Missed Study'}
+                          {entry.status === 'surplus_overdrive' ? 'Overdrive' :
+                           entry.status === 'target_met' ? 'Target Met' :
+                           entry.status === 'shield_defended' ? 'Shield Defended' :
+                           entry.status === 'partial_decay' ? 'Partial Study' : 'Missed Study'}
                         </span>
                       </div>
 
@@ -984,7 +984,7 @@ export const Dashboard = () => {
             {/* Weak subject callout */}
             {weakSubjects.length > 0 && (
               <div className="rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 flex items-start gap-3">
-                <span className="text-amber-400 text-lg leading-none mt-0.5">⚠️</span>
+                <span className="text-amber-400 text-lg leading-none mt-0.5"></span>
                 <div>
                   <p className="text-xs font-bold text-amber-300">Weakest subject this week</p>
                   <p className="text-xs text-amber-200/70 mt-0.5">

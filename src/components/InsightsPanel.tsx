@@ -99,7 +99,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
         ...insightData
       });
 
-      setSuccessToast(`🎯 Insights updated with latest ${todayLogs.length} sessions (${totalMinutes}m)!`);
+      setSuccessToast(`Insights updated with latest ${todayLogs.length} sessions (${totalMinutes}m)!`);
       setTimeout(() => setSuccessToast(null), 4000);
     } catch (error: any) {
       console.error("Failed to generate insights", error);
@@ -176,7 +176,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
             </div>
           </div>
 
-          {/* R3: Explicit "🔄 Re-analyze with Latest Logs" Action Button */}
+          {/* R3: Explicit "Re-analyze with Latest Logs" Action Button */}
           <button
             type="button"
             onClick={handleGenerate}
@@ -189,7 +189,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
             ) : (
               <RotateCcw className="w-4 h-4 text-indigo-200" />
             )}
-            <span>{isGenerating ? 'Re-analyzing Latest Logs...' : '🔄 Re-analyze with Latest Logs'}</span>
+            <span>{isGenerating ? 'Re-analyzing Latest Logs...' : 'Re-analyze with Latest Logs'}</span>
           </button>
         </div>
 

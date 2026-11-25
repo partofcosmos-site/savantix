@@ -307,7 +307,7 @@ export const Settings = () => {
             <button
               onClick={() => {
                 YouTubeAudioService.setApiKey(ytApiKey);
-                setYtSavedMessage('✓ YouTube Data API v3 Key saved successfully.');
+                setYtSavedMessage('YouTube Data API v3 Key saved successfully.');
                 setTimeout(() => setYtSavedMessage(null), 3500);
               }}
               className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-md shadow-rose-600/20"

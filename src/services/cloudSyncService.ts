@@ -387,7 +387,7 @@ export class CloudSyncService {
           if (lowerEmailFirst === 'partofcosmmos@gmail.com' || lowerEmailFirst === 'debanjan8686@gmail.com') {
             localStorage.setItem('savantix_attendance_institutional_debanjan', serializedRemote);
           }
-          if (typeof window !== 'undefined') {
+          if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
             window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: remote.institutional_attendance }));
           }
         } else {
@@ -418,7 +418,7 @@ export class CloudSyncService {
           if (lowerEmail === 'partofcosmmos@gmail.com' || lowerEmail === 'debanjan8686@gmail.com') {
             localStorage.setItem('savantix_attendance_institutional_debanjan', serializedInst);
           }
-          if (typeof window !== 'undefined') {
+          if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
             window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: mergedInst }));
           }
         }
