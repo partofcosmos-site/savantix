@@ -1,11 +1,21 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 export const db = (firebaseConfig as any).firestoreDatabaseId ? getFirestore(app, (firebaseConfig as any).firestoreDatabaseId) : getFirestore(app);
 export const auth = getAuth(app);
+
+// Resolve any pending mobile OAuth redirect on page load
+if (typeof window !== 'undefined') {
+  getRedirectResult(auth).catch((err) => {
+    console.warn('[Firebase Auth] Redirect result notice:', err?.code || err?.message);
+  });
+}
+
+const isMobileBrowser = () =>
+  typeof navigator !== 'undefined' && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
 export const loginWithGoogle = async () => {
   const provider = new GoogleAuthProvider();
@@ -15,6 +25,15 @@ export const loginWithGoogle = async () => {
     return result.user;
   } catch (error: any) {
     if (error.code === 'auth/cancelled-popup-request' || error.code === 'auth/popup-closed-by-user') {
+      return null;
+    }
+    // Automatic mobile/popup-blocked fallback to redirect flow
+    if (
+      error.code === 'auth/popup-blocked' ||
+      error.code === 'auth/operation-not-supported-in-this-environment' ||
+      (isMobileBrowser() && error.code !== 'auth/unauthorized-domain')
+    ) {
+      await signInWithRedirect(auth, provider);
       return null;
     }
     throw error;

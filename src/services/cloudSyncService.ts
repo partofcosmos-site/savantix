@@ -498,8 +498,9 @@ export class CloudSyncService {
     try {
       await this.ensureAuth(email);
       const syncDocRef = doc(db, this.SYNC_COLLECTION, canonicalId);
+      const cleanSnapshot = JSON.parse(JSON.stringify(snapshot));
       await setDoc(syncDocRef, {
-        ...snapshot,
+        ...cleanSnapshot,
         updatedAt: serverTimestamp()
       }, { merge: true });
       apiSuccess = true;
@@ -529,34 +530,34 @@ export class CloudSyncService {
     const canonicalId = this.getCanonicalUid(email);
     let remoteData: CloudSyncPayload | null = null;
 
-    // 1. Primary: Serverless Sync Relay (/api/sync)
+    // 1. Primary: Durable Firestore sync partition (sync_hub)
     try {
-      const endpoint = typeof window !== 'undefined' 
-        ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}` 
-        : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
-
-      const response = await fetch(endpoint);
-      if (response.ok) {
-        const json = await response.json();
-        if (json.exists && json.payload) {
-          remoteData = json.payload as CloudSyncPayload;
-        }
+      await this.ensureAuth(email);
+      const syncDocRef = doc(db, this.SYNC_COLLECTION, canonicalId);
+      const snap = await getDoc(syncDocRef);
+      if (snap.exists()) {
+        remoteData = snap.data() as CloudSyncPayload;
       }
-    } catch (apiErr) {
-      console.warn('[CloudSyncService] Serverless pull notice:', apiErr);
+    } catch (fireErr) {
+      console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
     }
 
-    // 2. Secondary: Firestore sync partition
+    // 2. Secondary fallback: Serverless Sync Relay (/api/sync)
     if (!remoteData) {
       try {
-        await this.ensureAuth(email);
-        const syncDocRef = doc(db, this.SYNC_COLLECTION, canonicalId);
-        const snap = await getDoc(syncDocRef);
-        if (snap.exists()) {
-          remoteData = snap.data() as CloudSyncPayload;
+        const endpoint = typeof window !== 'undefined'
+          ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`
+          : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
+
+        const response = await fetch(endpoint);
+        if (response.ok) {
+          const json = await response.json();
+          if (json.exists && json.payload) {
+            remoteData = json.payload as CloudSyncPayload;
+          }
         }
-      } catch (fireErr) {
-        console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
+      } catch (apiErr) {
+        console.warn('[CloudSyncService] Serverless pull notice:', apiErr);
       }
     }
 
@@ -595,9 +596,17 @@ export class CloudSyncService {
       const gCount = payload.goals?.length || 0;
       const jCount = payload.journal?.length || 0;
       const iCount = payload.insights?.length || 0;
+      const aCount = payload.attendance?.length || 0;
+      const aSig = Array.isArray(payload.attendance)
+        ? payload.attendance.map((a: any) => `${a?.date || a?.id || ''}:${a?.status || ''}`).sort().join(',')
+        : '';
+      const inst = payload.institutional_attendance;
+      const instSig = inst
+        ? `${Object.keys(inst.absences || {}).sort().join(',')}|${Object.keys(inst.manualOverrides || {}).sort().join(',')}|${inst.updatedAt || ''}`
+        : '';
       const firstLog = payload.logs?.[0]?.id || payload.logs?.[0]?.date || '';
       const lastLog = payload.logs?.[payload.logs?.length - 1]?.id || '';
-      return `${lCount}_${gCount}_${jCount}_${iCount}_${firstLog}_${lastLog}`;
+      return `${lCount}_${gCount}_${jCount}_${iCount}_${aCount}_${firstLog}_${lastLog}_${aSig}_${instSig}`;
     };
 
     // 1. Gentle Background Poller (every 30s) — only triggers if content signature actually changes
