@@ -475,7 +475,7 @@ export class CloudSyncService {
     try {
       const endpoint = typeof window !== 'undefined' 
         ? `${window.location.origin}/api/sync` 
-        : 'https://savantix.vercel.app/api/sync';
+        : 'https://savantix.pages.dev/api/sync';
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -533,7 +533,7 @@ export class CloudSyncService {
     try {
       const endpoint = typeof window !== 'undefined' 
         ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}` 
-        : `https://savantix.vercel.app/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
+        : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
 
       const response = await fetch(endpoint);
       if (response.ok) {
@@ -606,7 +606,7 @@ export class CloudSyncService {
       try {
         const endpoint = typeof window !== 'undefined' 
           ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}` 
-          : `https://savantix.vercel.app/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
+          : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
 
         const response = await fetch(endpoint);
         if (response.ok) {
