@@ -106,6 +106,7 @@ export interface InstitutionalProfile {
   presentDays: number;
   absentDays: number;
   onDutyDays: number;
+  autoSyncWorkingDays?: boolean;
   subjects: SubjectAttendance[];
 }
 
@@ -146,6 +147,7 @@ export interface SimulationResult {
 export interface InstitutionalAttendanceState {
   profile: InstitutionalProfile;
   absences: AbsenceEntry[];
+  deletedAbsenceDates?: string[];
   holidays: HolidayEntry[];
   vacations: VacationEntry[];
   exams: ExamMilestone[];

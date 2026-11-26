@@ -186,6 +186,51 @@ export const NEUTRAL_DEFAULT_INITIAL_STATE: InstitutionalAttendanceState = {
 /**
  * Compute real-world live attendance metrics & reality math engine
  */
+
+/**
+ * Compute exact Mon–Fri school working days between startDate and endDate (inclusive),
+ * automatically excluding official holidays and vacation windows.
+ */
+export function computeWorkingDaysBetween(
+  startDate: string,
+  endDate: string,
+  holidays: HolidayEntry[] = DEFAULT_HOLIDAYS,
+  vacations: VacationEntry[] = DEFAULT_VACATIONS
+): number {
+  if (!startDate || !endDate || endDate < startDate) return 0;
+  const holidaySet = new Set((holidays || []).map((h) => h.date));
+  const isVacation = (iso: string) =>
+    (vacations || []).some((v) => v.startDate && v.endDate && iso >= v.startDate && iso <= v.endDate);
+
+  const cur = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+  if (isNaN(cur.getTime()) || isNaN(end.getTime())) return 0;
+
+  let count = 0;
+  while (cur <= end) {
+    const dow = cur.getUTCDay(); // 0=Sun, 6=Sat
+    if (dow >= 1 && dow <= 5) {
+      const iso = cur.toISOString().slice(0, 10);
+      if (!holidaySet.has(iso) && !isVacation(iso)) {
+        count++;
+      }
+    }
+    cur.setUTCDate(cur.getUTCDate() + 1);
+  }
+  return count;
+}
+
+export function computeWorkingDaysToToday(
+  state: InstitutionalAttendanceState,
+  asOfDate?: string
+): number {
+  const start = state.profile?.sessionStart || '2026-04-21';
+  const lock = state.profile?.lockDate || '2026-12-31';
+  const today = asOfDate || new Date().toISOString().slice(0, 10);
+  const effectiveEnd = today < lock ? today : lock;
+  return computeWorkingDaysBetween(start, effectiveEnd, state.holidays, state.vacations);
+}
+
 export function computeLiveMetrics(state: InstitutionalAttendanceState): AttendanceMetrics {
   const profile = state.profile || ({} as any);
   const tHeld = Math.max(1, profile.workingDaysHeld ?? 71);
@@ -456,17 +501,20 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
     if (rawData) {
       const parsed = JSON.parse(rawData);
 
+      const deletedDates = new Set<string>(
+        Array.isArray(parsed.deletedAbsenceDates) ? parsed.deletedAbsenceDates : []
+      );
       const absenceMap = new Map<string, AbsenceEntry>();
       if (isDebanjan) {
-        // Only merge verified institutional ground-truth absences for the verified owner account
+        // Only merge verified institutional ground-truth absences that were NOT explicitly deleted by the user
         DEFAULT_ABSENCES.forEach((a: AbsenceEntry) => {
-          if (a && a.date) absenceMap.set(a.date, a);
+          if (a && a.date && !deletedDates.has(a.date)) absenceMap.set(a.date, a);
         });
       }
 
       if (Array.isArray(parsed.absences)) {
         parsed.absences.forEach((a: AbsenceEntry) => {
-          if (a && a.date) {
+          if (a && a.date && !deletedDates.has(a.date)) {
             absenceMap.set(a.date, a);
           }
         });
@@ -474,13 +522,19 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
       const cleanAbsences = Array.from(absenceMap.values()).sort((a, b) => b.date.localeCompare(a.date));
 
       const mergedProfile = { ...baseline.profile, ...(parsed.profile || {}) };
+      if (!mergedProfile.schoolName) mergedProfile.schoolName = baseline.profile.schoolName;
+      if (!mergedProfile.board) mergedProfile.board = baseline.profile.board;
       mergedProfile.absentDays = cleanAbsences.length;
+      if (typeof mergedProfile.workingDaysHeld === 'number' && mergedProfile.workingDaysHeld > 0) {
+        mergedProfile.presentDays = Math.max(0, mergedProfile.workingDaysHeld - cleanAbsences.length);
+      }
 
       state = {
         ...baseline,
         ...parsed,
         profile: mergedProfile,
         absences: cleanAbsences,
+        deletedAbsenceDates: Array.from(deletedDates).sort(),
         holidays: Array.isArray(parsed.holidays) && parsed.holidays.length > 0 ? parsed.holidays : baseline.holidays,
         vacations: Array.isArray(parsed.vacations) && parsed.vacations.length > 0 ? parsed.vacations : baseline.vacations,
         exams: Array.isArray(parsed.exams) && parsed.exams.length > 0 ? parsed.exams : baseline.exams,

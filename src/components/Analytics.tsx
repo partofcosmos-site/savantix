@@ -1199,7 +1199,7 @@ export const Analytics = () => {
                 ) : (
                   <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <ScatterChart margin={{ top: 20, right: 25, bottom: 25, left: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#d5d3cb" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--sx-hairline)" />
                       <XAxis
                         type="number"
                         dataKey="velocityQpH"
@@ -2040,7 +2040,7 @@ export const Analytics = () => {
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#d5d3cb" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--sx-hairline)" vertical={false} />
                   <XAxis
                     dataKey="formattedDate"
                     stroke="#71717a"
@@ -2218,12 +2218,12 @@ export const Analytics = () => {
             <div className="h-64 w-full min-w-0 min-h-[256px]">
               <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <BarChart data={analyticsData.subjectList} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#d5d3cb" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--sx-hairline)" vertical={false} />
                   <XAxis dataKey="name" stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d5d3cb', borderRadius: '0.5rem', fontSize: '12px' }}
-                    cursor={{ fill: '#d5d3cb' }}
+                    cursor={{ fill: 'var(--sx-hover)' }}
                   />
                   <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
                   <Bar dataKey="hours" name="Hours" fill="#6366f1" radius={[4, 4, 0, 0]} />

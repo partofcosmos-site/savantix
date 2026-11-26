@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { Loader2, ArrowRight, Mail, AlertCircle } from 'lucide-react';
+import { Loader2, ArrowRight, Mail, AlertCircle, Sun, Moon } from 'lucide-react';
+import { getSavedTheme, toggleTheme, SavantixTheme } from '../utils/themeManager';
 
 export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, login, loginWithEmail, continueAsGuest } = useAppContext();
@@ -8,12 +9,15 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const [emailInput, setEmailInput] = useState('');
   const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [theme, setTheme] = useState<SavantixTheme>(() => getSavedTheme());
+
+  const handleToggleTheme = () => setTheme(toggleTheme());
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f4f3ef] flex flex-col items-center justify-center gap-3 text-[#141413]">
-        <Loader2 className="w-5 h-5 text-[#c2410c] animate-spin" />
-        <span className="font-mono text-xs uppercase tracking-widest text-[#575652]">
+      <div className="min-h-screen bg-[var(--sx-canvas)] flex flex-col items-center justify-center gap-3 text-[var(--sx-ink)]">
+        <Loader2 className="w-5 h-5 text-[var(--sx-signal-text)] animate-spin" />
+        <span className="font-mono text-xs uppercase tracking-widest text-[var(--sx-ink-secondary)]">
           Initializing Savantix
         </span>
       </div>
@@ -57,33 +61,44 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#f4f3ef] text-[#141413] flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-md bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] overflow-hidden">
+      <div className="min-h-screen bg-[var(--sx-canvas)] text-[var(--sx-ink)] flex flex-col items-center justify-center p-6">
+        <div className="w-full max-w-md bg-[var(--sx-surface)] border border-[var(--sx-border)] rounded-[8px] overflow-hidden shadow-lg">
           {/* Top Specification Strip */}
-          <div className="px-6 py-3 bg-[#f4f3ef] border-b border-[#d5d3cb] flex items-center justify-between">
-            <span className="font-mono text-[11px] text-[#c2410c] font-medium tracking-wider">
+          <div className="px-6 py-3 bg-[var(--sx-rail)] border-b border-[var(--sx-hairline)] flex items-center justify-between">
+            <span className="font-mono text-[11px] text-[var(--sx-signal-text)] font-medium tracking-wider">
               01 / WORKBENCH ACCESS
             </span>
-            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[#575652]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#15803d]" />
-              SYNC READY
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[var(--sx-ink-secondary)]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--sx-safe)]" />
+                SYNC READY
+              </span>
+              <button
+                type="button"
+                onClick={handleToggleTheme}
+                aria-label={theme === 'dark' ? 'Switch to daylight theme' : 'Switch to dark graphite theme'}
+                title={theme === 'dark' ? 'Switch to Daylight' : 'Switch to Dark Graphite'}
+                className="p-1 text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] border border-[var(--sx-hairline)] rounded-[4px] cursor-pointer"
+              >
+                {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+              </button>
+            </div>
           </div>
 
           <div className="p-6 sm:p-8 space-y-6">
             {/* Title Block */}
-            <div className="space-y-1.5 border-b border-[#d5d3cb] pb-5">
-              <h1 className="text-2xl font-semibold tracking-tight text-[#141413]">
+            <div className="space-y-1.5 border-b border-[var(--sx-hairline)] pb-5">
+              <h1 className="text-2xl font-semibold tracking-tight text-[var(--sx-ink)]">
                 Savantix
               </h1>
-              <p className="text-sm text-[#575652] leading-relaxed">
+              <p className="text-sm text-[var(--sx-ink-secondary)] leading-relaxed">
                 Academic telemetry, attendance ledger, and STEM study workbench.
               </p>
             </div>
 
             {errorMsg && (
-              <div className="p-3 bg-[#fff7ed] border border-[#ea580c]/40 rounded-[4px] text-[#9a3412] text-xs flex items-start gap-2 leading-relaxed">
-                <AlertCircle className="w-4 h-4 text-[#c2410c] flex-shrink-0 mt-0.5" />
+              <div className="p-3 bg-[var(--sx-signal-bg)] border border-[var(--sx-signal-border)] rounded-[5px] text-[var(--sx-signal-text)] text-xs flex items-start gap-2 leading-relaxed">
+                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                 <span>{errorMsg}</span>
               </div>
             )}
@@ -93,7 +108,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isGoogleLoading || isSubmittingEmail}
-              className="rams-btn-primary w-full flex items-center justify-center gap-3 px-4 py-3 rounded-[4px] font-medium text-sm transition-colors duration-150 cursor-pointer disabled:opacity-50"
+              className="sx-btn-primary w-full flex items-center justify-center gap-3 px-4 py-3 rounded-[5px] font-medium text-sm transition-colors duration-150 cursor-pointer disabled:opacity-50"
             >
               {isGoogleLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -110,56 +125,56 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
             {/* Hairline Divider */}
             <div className="relative flex items-center justify-center">
-              <div className="border-t border-[#d5d3cb] w-full" />
-              <span className="bg-[#ffffff] px-3 font-mono text-[10px] text-[#5f5e59] uppercase tracking-widest whitespace-nowrap">
+              <div className="border-t border-[var(--sx-hairline)] w-full" />
+              <span className="bg-[var(--sx-surface)] px-3 font-mono text-[10px] text-[var(--sx-ink-muted)] uppercase tracking-widest whitespace-nowrap">
                 Or email sync
               </span>
-              <div className="border-t border-[#d5d3cb] w-full" />
+              <div className="border-t border-[var(--sx-hairline)] w-full" />
             </div>
 
             {/* Email Sign-In Form */}
             <form onSubmit={handleEmailSubmit} className="space-y-3">
               <div className="relative">
-                <Mail className="w-4 h-4 text-[#5f5e59] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Mail className="w-4 h-4 text-[var(--sx-ink-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="email"
                   required
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
                   placeholder="name@domain.com"
-                  className="w-full pl-9 pr-3 py-2.5 text-sm rounded-[4px] border border-[#b8b5ac] bg-[#ffffff] text-[#141413]"
+                  className="w-full pl-9 pr-3 py-2.5 text-sm rounded-[5px] border border-[var(--sx-border)] bg-[var(--sx-elevated)] text-[var(--sx-ink)]"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isSubmittingEmail || isGoogleLoading}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[4px] border border-[#b8b5ac] bg-[#f4f3ef] hover:bg-[#eae8e2] text-[#141413] font-medium text-sm transition-colors duration-150 cursor-pointer disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[5px] border border-[var(--sx-border)] bg-[var(--sx-elevated)] hover:bg-[var(--sx-hover)] text-[var(--sx-ink)] font-medium text-sm transition-colors duration-150 cursor-pointer disabled:opacity-50"
               >
                 {isSubmittingEmail ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-[#c2410c]" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[var(--sx-signal-text)]" />
                 ) : (
                   <>
                     <span>Sign in with email</span>
-                    <ArrowRight className="w-4 h-4 text-[#575652]" />
+                    <ArrowRight className="w-4 h-4 text-[var(--sx-ink-secondary)]" />
                   </>
                 )}
               </button>
             </form>
 
             {/* Sandbox Demo Mode */}
-            <div className="pt-4 border-t border-[#d5d3cb] flex items-center justify-between">
-              <span className="text-xs text-[#5f5e59]">Local sandbox, no account</span>
+            <div className="pt-4 border-t border-[var(--sx-hairline)] flex items-center justify-between">
+              <span className="text-xs text-[var(--sx-ink-muted)]">Local sandbox, no account</span>
               <button
                 type="button"
                 onClick={continueAsGuest}
-                className="text-xs font-medium text-[#141413] hover:text-[#c2410c] underline underline-offset-4 cursor-pointer transition-colors"
+                className="text-xs font-medium text-[var(--sx-ink)] hover:text-[var(--sx-signal-text)] underline underline-offset-4 cursor-pointer transition-colors"
               >
                 Explore Demo Mode
               </button>
             </div>
           </div>
 
-          <div className="px-6 py-2.5 bg-[#f4f3ef] border-t border-[#d5d3cb] flex items-center justify-between font-mono text-[10px] text-[#5f5e59]">
+          <div className="px-6 py-2.5 bg-[var(--sx-rail)] border-t border-[var(--sx-hairline)] flex items-center justify-between font-mono text-[10px] text-[var(--sx-ink-muted)]">
             <span>PART OF COSMOS INITIATIVE</span>
             <span>OFFLINE-FIRST · CLOUD SYNC</span>
           </div>

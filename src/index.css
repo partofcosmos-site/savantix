@@ -1,32 +1,89 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-:root {
+/* ==========================================================================
+   SAVANTIX DUAL-THEME PRECISION DESIGN SYSTEM
+   Default: Precision Dark Graphite (Linear / Vercel / Raycast craft)
+   Optional: Architectural Daylight ([data-theme="light"])
+   Zero neon blur blobs. Crisp 1px hairlines. WCAG AA >= 4.5:1 contrast.
+   ========================================================================== */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --sx-canvas: #090a0c;
+  --sx-rail: #0d0f13;
+  --sx-surface: #12151b;
+  --sx-elevated: #181c24;
+  --sx-hover: #1f242f;
+  --sx-ink: #f3f4f6;
+  --sx-ink-secondary: #a1a7b5;
+  --sx-ink-muted: #7c8394;
+  --sx-hairline: #232732;
+  --sx-border: #323846;
+  --sx-signal: #f97316;
+  --sx-signal-text: #fb923c;
+  --sx-signal-bg: rgba(249, 115, 22, 0.12);
+  --sx-signal-border: rgba(249, 115, 22, 0.35);
+  --sx-safe: #34d399;
+  --sx-safe-bg: rgba(16, 185, 129, 0.12);
+  --sx-safe-border: rgba(16, 185, 129, 0.35);
+  --sx-caution: #fbbf24;
+  --sx-caution-bg: rgba(245, 158, 11, 0.12);
+  --sx-caution-border: rgba(245, 158, 11, 0.35);
+  --sx-fault: #f87171;
+  --sx-fault-bg: rgba(239, 68, 68, 0.12);
+  --sx-fault-border: rgba(239, 68, 68, 0.35);
+  --sx-sky: #38bdf8;
+  --sx-btn-primary-bg: #f3f4f6;
+  --sx-btn-primary-ink: #090a0c;
+  --sx-btn-primary-border: #f3f4f6;
+  --sx-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --sx-overlay: rgba(0, 0, 0, 0.65);
+}
+
+[data-theme="light"] {
   color-scheme: light;
-  --rams-paper: #f4f3ef;
-  --rams-canvas: #eceae3;
-  --rams-surface: #ffffff;
-  --rams-hover: #eae8e2;
-  --rams-ink: #141413;
-  --rams-ink-secondary: #575652;
-  --rams-ink-muted: #5f5e59;
-  --rams-hairline: #d5d3cb;
-  --rams-border: #b8b5ac;
-  --rams-signal: #ea580c;
-  --rams-signal-text: #c2410c;
-  --rams-safe: #15803d;
-  --rams-caution: #b45309;
-  --rams-fault: #b91c1c;
+  --sx-canvas: #f4f3ef;
+  --sx-rail: #eceae3;
+  --sx-surface: #ffffff;
+  --sx-elevated: #f4f3ef;
+  --sx-hover: #eae8e2;
+  --sx-ink: #141413;
+  --sx-ink-secondary: #575652;
+  --sx-ink-muted: #5f5e59;
+  --sx-hairline: #d5d3cb;
+  --sx-border: #b8b5ac;
+  --sx-signal: #ea580c;
+  --sx-signal-text: #c2410c;
+  --sx-signal-bg: rgba(234, 88, 12, 0.08);
+  --sx-signal-border: rgba(234, 88, 12, 0.35);
+  --sx-safe: #15803d;
+  --sx-safe-bg: rgba(21, 128, 61, 0.08);
+  --sx-safe-border: rgba(21, 128, 61, 0.30);
+  --sx-caution: #b45309;
+  --sx-caution-bg: rgba(180, 83, 9, 0.08);
+  --sx-caution-border: rgba(180, 83, 9, 0.35);
+  --sx-fault: #b91c1c;
+  --sx-fault-bg: rgba(185, 28, 28, 0.08);
+  --sx-fault-border: rgba(185, 28, 28, 0.35);
+  --sx-sky: #0369a1;
+  --sx-btn-primary-bg: #141413;
+  --sx-btn-primary-ink: #ffffff;
+  --sx-btn-primary-border: #141413;
+  --sx-shadow: 0 1px 2px rgba(20, 20, 19, 0.06);
+  --sx-overlay: rgba(20, 20, 19, 0.40);
 }
 
 html, body {
-  background-color: var(--rams-paper);
-  color: var(--rams-ink);
+  background-color: var(--sx-canvas);
+  color: var(--sx-ink);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
 code, pre, .font-mono, input[type="number"], td, th {
@@ -36,23 +93,21 @@ code, pre, .font-mono, input[type="number"], td, th {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #b8b5ac #f4f3ef;
+  scrollbar-color: var(--sx-border) var(--sx-canvas);
 }
 
 /* ==========================================================================
-   DIETER RAMS INDUSTRIAL DAYLIGHT — GLOBAL UNSLOP TOKEN REMAPPING
-   Replaces dark-mode bento-box neon slop with warm paper, 1px hairlines,
-   jet-black ink, and International Signal Orange functional accents.
+   SEMANTIC SURFACE & INK REMAPPING (Adapts Cleanly to Dark & Light)
    ========================================================================== */
 
-/* 1. Surfaces: Warm Architectural Paper & Crisp White Controls */
+/* 1. Surfaces */
 .bg-zinc-950,
 .bg-zinc-950\/95,
 .bg-zinc-950\/90,
 .bg-zinc-950\/80,
 .bg-black,
 .bg-black\/90 {
-  background-color: var(--rams-paper) !important;
+  background-color: var(--sx-canvas) !important;
 }
 
 .bg-zinc-900,
@@ -63,7 +118,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 .bg-zinc-900\/60,
 .bg-zinc-900\/50,
 .bg-zinc-900\/40 {
-  background-color: var(--rams-surface) !important;
+  background-color: var(--sx-surface) !important;
   backdrop-filter: none !important;
 }
 
@@ -74,14 +129,14 @@ code, pre, .font-mono, input[type="number"], td, th {
 .bg-zinc-800\/60,
 .bg-zinc-800\/50,
 .bg-zinc-800\/40 {
-  background-color: var(--rams-paper) !important;
+  background-color: var(--sx-elevated) !important;
 }
 
 .hover\:bg-zinc-800:hover,
 .hover\:bg-zinc-800\/80:hover,
 .hover\:bg-zinc-800\/60:hover,
 .hover\:bg-zinc-700:hover {
-  background-color: var(--rams-hover) !important;
+  background-color: var(--sx-hover) !important;
 }
 
 /* 2. Typography Ink Roles */
@@ -89,26 +144,26 @@ code, pre, .font-mono, input[type="number"], td, th {
 .text-zinc-50,
 .text-zinc-100,
 .text-zinc-200 {
-  color: var(--rams-ink) !important;
+  color: var(--sx-ink) !important;
 }
 
 .text-zinc-300,
 .text-zinc-400 {
-  color: var(--rams-ink-secondary) !important;
+  color: var(--sx-ink-secondary) !important;
 }
 
 .text-zinc-500,
 .text-zinc-600 {
-  color: var(--rams-ink-muted) !important;
+  color: var(--sx-ink-muted) !important;
 }
 
 .hover\:text-white:hover,
 .hover\:text-zinc-100:hover,
 .hover\:text-zinc-200:hover {
-  color: var(--rams-ink) !important;
+  color: var(--sx-ink) !important;
 }
 
-/* 3. Hairlines & Structural Dividers (Zero Neon Borders / Zero Box Fatigue) */
+/* 3. Crisp 1px Structural Hairlines */
 .border-zinc-900,
 .border-zinc-800,
 .border-zinc-800\/90,
@@ -119,26 +174,26 @@ code, pre, .font-mono, input[type="number"], td, th {
 .border-zinc-700\/80,
 .border-zinc-700\/60,
 .border-zinc-700\/50 {
-  border-color: var(--rams-hairline) !important;
+  border-color: var(--sx-hairline) !important;
 }
 
-/* 4. Crisp Architectural Radii & Quiet Elevation */
+/* 4. Architectural Radii & Quiet Elevation */
 .rounded-3xl {
-  border-radius: 6px !important;
+  border-radius: 8px !important;
 }
 .rounded-2xl {
-  border-radius: 6px !important;
+  border-radius: 8px !important;
 }
 .rounded-xl {
-  border-radius: 4px !important;
+  border-radius: 6px !important;
 }
 .shadow-2xl,
 .shadow-xl,
 .shadow-lg {
-  box-shadow: 0 1px 2px rgba(20, 20, 19, 0.05) !important;
+  box-shadow: var(--sx-shadow) !important;
 }
 
-/* 5. Kill AI Neon Gradients & Ambient Blur Blobs */
+/* 5. Kill AI Neon Blobs & Cheesy Gradients */
 .blur-3xl {
   display: none !important;
 }
@@ -150,14 +205,14 @@ code, pre, .font-mono, input[type="number"], td, th {
   background-image: none !important;
 }
 
-/* 6. Primary Signal Actions: Jet Black or Signal Orange with Pure White Ink */
+/* 6. Primary Signal Actions */
 .bg-indigo-600,
 .bg-indigo-500,
 .bg-violet-600,
 .bg-emerald-600 {
-  background-color: var(--rams-ink) !important;
-  color: #ffffff !important;
-  border-color: var(--rams-ink) !important;
+  background-color: var(--sx-btn-primary-bg) !important;
+  color: var(--sx-btn-primary-ink) !important;
+  border-color: var(--sx-btn-primary-border) !important;
 }
 .bg-indigo-600 *,
 .bg-indigo-500 *,
@@ -167,17 +222,22 @@ button.bg-indigo-600,
 button.bg-indigo-500,
 button.bg-violet-600,
 button.bg-emerald-600 {
-  color: #ffffff !important;
+  color: var(--sx-btn-primary-ink) !important;
 }
 .hover\:bg-indigo-500:hover,
 .hover\:bg-indigo-600:hover,
 .hover\:bg-violet-500:hover {
-  background-color: var(--rams-signal) !important;
-  border-color: var(--rams-signal) !important;
+  background-color: var(--sx-signal) !important;
+  border-color: var(--sx-signal) !important;
+  color: #ffffff !important;
+}
+.hover\:bg-indigo-500:hover *,
+.hover\:bg-indigo-600:hover *,
+.hover\:bg-violet-500:hover * {
   color: #ffffff !important;
 }
 
-/* Accent Tints -> Quiet Signal Orange Hairline Surfaces */
+/* Accent Tints -> Quiet Signal Orange Surfaces */
 .bg-indigo-500\/10,
 .bg-indigo-500\/15,
 .bg-indigo-500\/20,
@@ -185,8 +245,13 @@ button.bg-emerald-600 {
 .bg-indigo-600\/20,
 .bg-violet-500\/10,
 .bg-violet-500\/20,
-.bg-purple-500\/10 {
-  background-color: rgba(234, 88, 12, 0.08) !important;
+.bg-purple-500\/10,
+.bg-indigo-950,
+.bg-indigo-950\/80,
+.bg-indigo-950\/60,
+.bg-indigo-950\/40,
+.bg-indigo-950\/30 {
+  background-color: var(--sx-signal-bg) !important;
 }
 
 .border-indigo-500\/20,
@@ -194,8 +259,11 @@ button.bg-emerald-600 {
 .border-indigo-500\/40,
 .border-indigo-500\/50,
 .border-violet-500\/30,
-.border-violet-500\/40 {
-  border-color: rgba(234, 88, 12, 0.35) !important;
+.border-violet-500\/40,
+.border-indigo-800\/60,
+.border-indigo-800\/40,
+.border-indigo-800 {
+  border-color: var(--sx-signal-border) !important;
 }
 
 .text-indigo-200,
@@ -205,106 +273,87 @@ button.bg-emerald-600 {
 .text-violet-300,
 .text-violet-400,
 .text-purple-400 {
-  color: var(--rams-signal-text) !important;
+  color: var(--sx-signal-text) !important;
 }
 
-.bg-indigo-950,
-.bg-indigo-950\/80,
-.bg-indigo-950\/60,
-.bg-indigo-950\/40,
-.bg-indigo-950\/30 {
-  background-color: rgba(194, 65, 12, 0.08) !important;
-}
-.border-indigo-800\/60,
-.border-indigo-800\/40,
-.border-indigo-800 {
-  border-color: rgba(194, 65, 12, 0.3) !important;
-}
-.bg-emerald-950\/80,
-.bg-emerald-950\/60,
-.bg-emerald-950 {
-  background-color: rgba(21, 128, 61, 0.08) !important;
-}
-.text-emerald-200 {
-  color: var(--rams-safe) !important;
-}
-.bg-rose-950\/60,
-.bg-rose-950 {
-  background-color: rgba(185, 28, 28, 0.08) !important;
-}
-
-/* 7. Functional Physical Signals (High Contrast on Warm Paper) */
+/* 7. Functional Semantic Signals */
+.text-emerald-200,
 .text-emerald-300,
 .text-emerald-400,
 .text-green-400 {
-  color: var(--rams-safe) !important;
+  color: var(--sx-safe) !important;
 }
 .bg-emerald-500\/10,
 .bg-emerald-500\/20,
+.bg-emerald-950\/80,
+.bg-emerald-950\/60,
+.bg-emerald-950\/50,
 .bg-emerald-950\/40,
-.bg-emerald-950\/50 {
-  background-color: rgba(21, 128, 61, 0.08) !important;
+.bg-emerald-950 {
+  background-color: var(--sx-safe-bg) !important;
 }
 .border-emerald-500\/20,
 .border-emerald-500\/30,
 .border-emerald-800\/50 {
-  border-color: rgba(21, 128, 61, 0.3) !important;
+  border-color: var(--sx-safe-border) !important;
 }
 
 .text-amber-300,
 .text-amber-400,
 .text-yellow-400 {
-  color: var(--rams-caution) !important;
+  color: var(--sx-caution) !important;
 }
 .bg-amber-500\/10,
 .bg-amber-500\/20,
 .bg-amber-950\/40,
 .bg-amber-950\/50 {
-  background-color: rgba(180, 83, 9, 0.08) !important;
+  background-color: var(--sx-caution-bg) !important;
 }
 .border-amber-500\/30,
 .border-amber-800\/60 {
-  border-color: rgba(180, 83, 9, 0.35) !important;
+  border-color: var(--sx-caution-border) !important;
 }
 
 .text-rose-300,
 .text-rose-400,
 .text-red-300,
 .text-red-400 {
-  color: var(--rams-fault) !important;
+  color: var(--sx-fault) !important;
 }
 .bg-rose-500\/10,
 .bg-rose-500\/20,
+.bg-rose-950\/60,
+.bg-rose-950,
 .bg-red-500\/10,
 .bg-red-950\/40,
 .bg-red-950\/50 {
-  background-color: rgba(185, 28, 28, 0.08) !important;
+  background-color: var(--sx-fault-bg) !important;
 }
 .border-rose-500\/30,
 .border-red-500\/30,
 .border-red-800\/60 {
-  border-color: rgba(185, 28, 28, 0.35) !important;
+  border-color: var(--sx-fault-border) !important;
 }
 
 .text-sky-300,
 .text-sky-400,
 .text-cyan-400 {
-  color: #0369a1 !important;
+  color: var(--sx-sky) !important;
 }
 
 /* 8. Form Inputs & Focus States */
 input, textarea, select {
-  background-color: var(--rams-surface) !important;
-  color: var(--rams-ink) !important;
-  border-color: var(--rams-border) !important;
+  background-color: var(--sx-elevated) !important;
+  color: var(--sx-ink) !important;
+  border-color: var(--sx-border) !important;
 }
 input::placeholder, textarea::placeholder {
-  color: var(--rams-ink-muted) !important;
+  color: var(--sx-ink-muted) !important;
 }
 input:focus, textarea:focus, select:focus {
-  border-color: var(--rams-signal) !important;
+  border-color: var(--sx-signal) !important;
   outline: none !important;
-  box-shadow: 0 0 0 1px var(--rams-signal) !important;
+  box-shadow: 0 0 0 1px var(--sx-signal) !important;
 }
 
 /* 9. Calm Motion (No Pulsing/Bouncing AI Slop) */
@@ -312,21 +361,49 @@ input:focus, textarea:focus, select:focus {
   animation: none !important;
 }
 
-/* 10. Explicit Rams Ink Helpers */
-.rams-btn-primary {
-  background-color: #141413 !important;
-  color: #ffffff !important;
-  border: 1px solid #141413 !important;
+/* 10. Explicit Primary Action Button (High Contrast in Both Dark & Light) */
+.rams-btn-primary,
+.sx-btn-primary {
+  background-color: var(--sx-btn-primary-bg) !important;
+  color: var(--sx-btn-primary-ink) !important;
+  border: 1px solid var(--sx-btn-primary-border) !important;
 }
 .rams-btn-primary *,
-.rams-btn-primary span {
+.rams-btn-primary span,
+.sx-btn-primary *,
+.sx-btn-primary span {
+  color: var(--sx-btn-primary-ink) !important;
+}
+.rams-btn-primary:hover,
+.sx-btn-primary:hover {
+  background-color: var(--sx-signal) !important;
+  border-color: var(--sx-signal) !important;
   color: #ffffff !important;
 }
-.rams-btn-primary:hover {
-  background-color: #ea580c !important;
-  border-color: #ea580c !important;
+.rams-btn-primary:hover *,
+.rams-btn-primary:hover span,
+.sx-btn-primary:hover *,
+.sx-btn-primary:hover span {
+  color: #ffffff !important;
 }
 
+/* 11. Recharts Precision Theme Tokens */
 .recharts-legend-item-text {
-  color: var(--rams-ink) !important;
+  color: var(--sx-ink-secondary) !important;
+}
+.recharts-cartesian-axis-tick-value {
+  fill: var(--sx-ink-muted) !important;
+}
+.recharts-cartesian-grid line {
+  stroke: var(--sx-hairline) !important;
+}
+.recharts-default-tooltip {
+  background-color: var(--sx-surface) !important;
+  border: 1px solid var(--sx-border) !important;
+  border-radius: 6px !important;
+  color: var(--sx-ink) !important;
+}
+.recharts-tooltip-label {
+  color: var(--sx-ink) !important;
+  font-weight: 600;
 }

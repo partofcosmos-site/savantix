@@ -1,9 +1,21 @@
-﻿<!doctype html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#f4f3ef" />
+    <meta name="theme-color" content="#090a0c" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('savantix_theme') || 'dark';
+          if (t !== 'dark' && t !== 'light') t = 'dark';
+          document.documentElement.setAttribute('data-theme', t);
+          document.documentElement.style.colorScheme = t;
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', t === 'dark' ? '#090a0c' : '#f4f3ef');
+        } catch (e) {}
+      })();
+    </script>
     <title>Savantix — Academic Telemetry & Study Workbench</title>
     <meta name="description" content="Savantix is a precision STEM study workbench, attendance ledger, and cognitive telemetry instrument." />
     <meta name="keywords" content="study workbench, attendance tracker, spaced repetition, STEM, Olympiad, academic telemetry" />
@@ -11,7 +23,7 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Savantix" />
     <meta name="mobile-web-app-capable" content="yes" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +31,7 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
   </head>
-  <body class="antialiased selection:bg-[#ea580c] selection:text-white">
+  <body class="antialiased selection:bg-[#f97316] selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>

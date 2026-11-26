@@ -156,14 +156,14 @@ export const Settings = () => {
         </div>
 
         {/* Built-in Edge AI Status Strip */}
-        <div className="bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-[var(--sx-surface)] border border-[var(--sx-border)] rounded-[6px] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
             <span className="w-2 h-2 rounded-full bg-[#15803d] mt-1.5 shrink-0" />
             <div>
               <div className="font-mono text-[10px] text-[#ea580c] tracking-wider uppercase">
                 Built-In Edge AI — Active
               </div>
-              <p className="text-xs text-[#141413] font-medium mt-0.5">
+              <p className="text-xs text-[var(--sx-ink)] font-medium mt-0.5">
                 Cloudflare Workers AI (Llama 3.3 70B) is active by default — zero API key required.
               </p>
               <p className="text-xs text-[#575652] mt-0.5">

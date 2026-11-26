@@ -1,4 +1,4 @@
-﻿interface Env {
+interface Env {
   SAVANTIX_SYNC_KV?: {
     get: (key: string, type?: string) => Promise<any>;
     put: (key: string, value: string) => Promise<void>;
@@ -35,6 +35,20 @@ function mergeByKey(existing: any[], incoming: any[], getKey: (x: any) => string
   return Array.from(map.values());
 }
 
+function mergeDefined(base: Record<string, any>, patch: Record<string, any>): Record<string, any> {
+  const out: Record<string, any> = { ...(base || {}) };
+  if (patch && typeof patch === 'object') {
+    for (const [k, v] of Object.entries(patch)) {
+      if (v !== undefined && v !== null && v !== '') {
+        out[k] = v;
+      } else if (typeof v === 'number' && !Number.isNaN(v)) {
+        out[k] = v;
+      }
+    }
+  }
+  return out;
+}
+
 function mergePayloads(existing: any, incoming: any): any {
   if (!existing || typeof existing !== 'object') return incoming;
   if (!incoming || typeof incoming !== 'object') return existing;
@@ -54,20 +68,61 @@ function mergePayloads(existing: any, incoming: any): any {
 
   let mergedInst = incoming.institutional_attendance || existing.institutional_attendance || null;
   if (existing.institutional_attendance && incoming.institutional_attendance) {
-    const mergedAbsences = mergeByKey(
+    const existingDeleted = new Set<string>(
+      Array.isArray(existing.institutional_attendance.deletedAbsenceDates)
+        ? existing.institutional_attendance.deletedAbsenceDates
+        : []
+    );
+    const incomingDeleted = new Set<string>(
+      Array.isArray(incoming.institutional_attendance.deletedAbsenceDates)
+        ? incoming.institutional_attendance.deletedAbsenceDates
+        : []
+    );
+    const incomingActiveDates = new Set<string>(
+      (Array.isArray(incoming.institutional_attendance.absences)
+        ? incoming.institutional_attendance.absences
+        : []
+      )
+        .map((a: any) => (a?.date ? String(a.date) : ''))
+        .filter(Boolean)
+    );
+
+    // Tombstone reconciliation: union deletions, but if incoming explicitly re-added a date (present in incoming.absences and not in incomingDeleted), un-tombstone it.
+    const mergedDeletedSet = new Set<string>([...existingDeleted, ...incomingDeleted]);
+    for (const activeDate of incomingActiveDates) {
+      if (!incomingDeleted.has(activeDate)) {
+        mergedDeletedSet.delete(activeDate);
+      }
+    }
+
+    const rawMergedAbsences = mergeByKey(
       existing.institutional_attendance.absences,
       incoming.institutional_attendance.absences,
       (a) => (a?.date ? String(a.date) : a?.id ? String(a.id) : '')
     );
+    const mergedAbsences = rawMergedAbsences
+      .filter((a) => !a?.date || !mergedDeletedSet.has(String(a.date)))
+      .sort((a, b) => String(b?.date || '').localeCompare(String(a?.date || '')));
+
+    const mergedProfile = mergeDefined(
+      existing.institutional_attendance.profile || {},
+      incoming.institutional_attendance.profile || {}
+    );
+    const held = Math.max(
+      typeof mergedProfile.workingDaysHeld === 'number' ? mergedProfile.workingDaysHeld : 0,
+      mergedAbsences.length
+    );
+    mergedProfile.workingDaysHeld = held;
+    mergedProfile.absentDays = mergedAbsences.length;
+    mergedProfile.presentDays = Math.max(0, held - mergedAbsences.length);
+
     mergedInst = {
       ...existing.institutional_attendance,
       ...incoming.institutional_attendance,
-      profile: {
-        ...(existing.institutional_attendance.profile || {}),
-        ...(incoming.institutional_attendance.profile || {}),
-        absentDays: mergedAbsences.length,
-      },
+      profile: mergedProfile,
       absences: mergedAbsences,
+      deletedAbsenceDates: Array.from(mergedDeletedSet).sort(),
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -106,7 +161,7 @@ export async function onRequest(context: { request: Request; env: Env }) {
       );
     }
     const id = cleanKey(rawId);
-    let item = kv ? await kv.get(id, 'json') : memoryFallback[id];
+    const item = kv ? await kv.get(id, 'json') : memoryFallback[id];
 
     return new Response(
       JSON.stringify({
@@ -152,6 +207,7 @@ export async function onRequest(context: { request: Request; env: Env }) {
           canonicalId: id,
           updatedAt,
           absencesCount: mergedPayload?.institutional_attendance?.absences?.length || 0,
+          deletedCount: mergedPayload?.institutional_attendance?.deletedAbsenceDates?.length || 0,
         }),
         { status: 200, headers: corsHeaders }
       );

@@ -26,7 +26,9 @@ import {
   launchGeminiRegulator,
   DEFAULT_INITIAL_STATE,
   NEUTRAL_DEFAULT_INITIAL_STATE,
-  isDebanjanAccount
+  isDebanjanAccount,
+  computeWorkingDaysToToday,
+  detectConsecutiveAbsenceRisk
 } from '../services/attendanceRegulatorService';
 import { WidgetSyncService } from '../services/widgetSyncService';
 import { GoogleCalendarSyncService } from '../services/googleCalendarSyncService';
@@ -111,15 +113,22 @@ export const AttendanceTracker: React.FC = () => {
       }
     }
     const merged = Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
-    setState((prev) => ({
-      ...prev,
-      absences: merged,
-      profile: {
-        ...prev.profile,
-        absentDays: merged.length,
-        presentDays: Math.max(0, prev.profile.workingDaysHeld - merged.length)
-      }
-    }));
+    const addedSet = new Set(matches);
+    setState((prev) => {
+      const nextDeleted = (prev.deletedAbsenceDates || []).filter((d) => !addedSet.has(d));
+      const held = Math.max(prev.profile.workingDaysHeld, merged.length);
+      return {
+        ...prev,
+        absences: merged,
+        deletedAbsenceDates: nextDeleted,
+        profile: {
+          ...prev.profile,
+          workingDaysHeld: held,
+          absentDays: merged.length,
+          presentDays: Math.max(0, held - merged.length)
+        }
+      };
+    });
     setIsBulkOpen(false);
     setBulkDatesInput('');
     showToast(`Added ${added} new absence date(s) — saved`);
@@ -291,18 +300,23 @@ export const AttendanceTracker: React.FC = () => {
       // Deduplicate to avoid adding the same date multiple times
       const existingFiltered = prev.absences.filter(a => a.date !== newAbsDate);
       const updatedAbsences = [newEntry, ...existingFiltered].sort((a, b) => b.date.localeCompare(a.date));
+      const held = Math.max(prev.profile.workingDaysHeld, updatedAbsences.length);
+      const nextDeleted = (prev.deletedAbsenceDates || []).filter((d) => d !== newAbsDate);
       const updatedProfile = {
         ...prev.profile,
+        workingDaysHeld: held,
         absentDays: updatedAbsences.length,
-        workingDaysHeld: Math.max(prev.profile.workingDaysHeld, 105)
+        presentDays: Math.max(0, held - updatedAbsences.length)
       };
       const newState = {
         ...prev,
         profile: updatedProfile,
-        absences: updatedAbsences
+        absences: updatedAbsences,
+        deletedAbsenceDates: nextDeleted
       };
-      // CRITICAL: Synchronously commit to persistent storage immediately before React state transition
+      isSelfSavingRef.current = true;
       saveInstitutionalState(newState, userIdentifier);
+      setTimeout(() => { isSelfSavingRef.current = false; }, 120);
       return newState;
     });
 
@@ -311,22 +325,32 @@ export const AttendanceTracker: React.FC = () => {
     showToast(`Logged absence for ${newAbsDate}`);
   };
 
-  // Remove absence
+  // Remove absence (records tombstone so deleted date never resurrects across cloud syncs)
   const handleDeleteAbsence = (id: string) => {
     setState(prev => {
+      const target = prev.absences.find(a => a.id === id);
       const updatedAbsences = prev.absences.filter(a => a.id !== id);
+      const nextDeleted = target?.date
+        ? Array.from(new Set([...(prev.deletedAbsenceDates || []), target.date])).sort()
+        : (prev.deletedAbsenceDates || []);
+      const held = Math.max(prev.profile.workingDaysHeld, updatedAbsences.length);
       const newState = {
         ...prev,
         absences: updatedAbsences,
+        deletedAbsenceDates: nextDeleted,
         profile: {
           ...prev.profile,
-          absentDays: updatedAbsences.length
+          workingDaysHeld: held,
+          absentDays: updatedAbsences.length,
+          presentDays: Math.max(0, held - updatedAbsences.length)
         }
       };
+      isSelfSavingRef.current = true;
       saveInstitutionalState(newState, userIdentifier);
+      setTimeout(() => { isSelfSavingRef.current = false; }, 120);
       return newState;
     });
-    showToast('Absence record removed.');
+    showToast('Absence removed and synced across devices.');
   };
 
   // Add Subject
@@ -579,18 +603,23 @@ export const AttendanceTracker: React.FC = () => {
       // Deduplicate to avoid adding the same date multiple times
       const existingFiltered = prev.absences.filter(a => a.date !== day.dateStr);
       const updatedAbsences = [newEntry, ...existingFiltered].sort((a, b) => b.date.localeCompare(a.date));
+      const held = Math.max(prev.profile.workingDaysHeld, updatedAbsences.length);
+      const nextDeleted = (prev.deletedAbsenceDates || []).filter((d) => d !== day.dateStr);
       const updatedProfile = {
         ...prev.profile,
+        workingDaysHeld: held,
         absentDays: updatedAbsences.length,
-        workingDaysHeld: Math.max(prev.profile.workingDaysHeld, 105)
+        presentDays: Math.max(0, held - updatedAbsences.length)
       };
       const newState = {
         ...prev,
         profile: updatedProfile,
-        absences: updatedAbsences
+        absences: updatedAbsences,
+        deletedAbsenceDates: nextDeleted
       };
-      // CRITICAL: Synchronously commit to persistent storage immediately before React state transition
+      isSelfSavingRef.current = true;
       saveInstitutionalState(newState, userIdentifier);
+      setTimeout(() => { isSelfSavingRef.current = false; }, 120);
       return newState;
     });
 
@@ -721,7 +750,7 @@ export const AttendanceTracker: React.FC = () => {
                 }}
                 disabled={syncStatus?.isSyncing}
                 title="Sync attendance immediately with Cloudflare KV"
-                className="flex items-center gap-1.5 px-3 py-2 bg-[#ffffff] hover:bg-[#eae8e2] border border-[#b8b5ac] text-[#141413] rounded-[4px] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-2 bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] border border-[var(--sx-border)] text-[var(--sx-ink)] rounded-[4px] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
                 <span>{syncStatus?.isSyncing ? 'Syncing...' : 'Sync Now'}</span>
               </button>
@@ -777,6 +806,102 @@ export const AttendanceTracker: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Instant "Can I Skip Tomorrow?" Decision Engine & Auto-Calendar Held-Days Sync */}
+        {(() => {
+          const computedHeldToday = computeWorkingDaysToToday(state);
+          const streakRisk = detectConsecutiveAbsenceRisk(state.absences);
+          const canSkipSafe = metrics.effectivePct >= 75 && metrics.safeLeaves75 > 0;
+          const isTightBuffer = metrics.effectivePct >= 75 && metrics.safeLeaves75 <= 3;
+          const heldOutOfSync = computedHeldToday > 0 && state.profile.workingDaysHeld !== computedHeldToday;
+
+          return (
+            <div className="relative z-10 mt-5 pt-4 border-t border-[var(--sx-hairline)] grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+              <div className={clsx(
+                'lg:col-span-8 flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-[6px] border',
+                !canSkipSafe
+                  ? 'bg-[var(--sx-fault-bg)] border-[var(--sx-fault-border)]'
+                  : isTightBuffer
+                    ? 'bg-[var(--sx-caution-bg)] border-[var(--sx-caution-border)]'
+                    : 'bg-[var(--sx-safe-bg)] border-[var(--sx-safe-border)]'
+              )}>
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className={clsx(
+                      'font-mono text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border',
+                      !canSkipSafe
+                        ? 'text-[var(--sx-fault)] border-[var(--sx-fault-border)]'
+                        : isTightBuffer
+                          ? 'text-[var(--sx-caution)] border-[var(--sx-caution-border)]'
+                          : 'text-[var(--sx-safe)] border-[var(--sx-safe-border)]'
+                    )}>
+                      {!canSkipSafe ? 'DO NOT SKIP — RECOVERY MODE' : isTightBuffer ? 'CAUTION — TIGHT BUFFER' : 'SAFE TO SKIP TOMORROW'}
+                    </span>
+                    <span className="font-mono text-xs text-[var(--sx-ink)] font-semibold">
+                      {metrics.effectivePct}% Effective ({metrics.rawPct}% Raw)
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--sx-ink-secondary)]">
+                    {!canSkipSafe
+                      ? `Attend ${metrics.consecutiveRecoveryEffective} consecutive school day(s) to restore 75% compliance.`
+                      : `${metrics.safeLeaves75} safe leave(s) left to stay ≥75% (${metrics.safeLeaves60} at 60% condonation floor).`}
+                    {streakRisk.hasCriticalStreak && (
+                      <span className="ml-2 text-[var(--sx-fault)] font-medium">
+                        · {streakRisk.consecutiveAbsenceStreak}-day streak flagged
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 font-mono text-xs">
+                  <div className="text-right">
+                    <div className="text-[10px] text-[var(--sx-ink-muted)] uppercase">Held / Present / Absent</div>
+                    <div className="font-semibold text-[var(--sx-ink)]">
+                      {metrics.workingDaysHeld} / {metrics.presentDays}{metrics.onDutyDays > 0 ? `+${metrics.onDutyDays} OD` : ''} / {metrics.absentDays}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-4 flex flex-wrap items-center justify-between lg:justify-end gap-2 px-3.5 py-2.5 rounded-[6px] bg-[var(--sx-elevated)] border border-[var(--sx-hairline)]">
+                <div className="text-xs">
+                  <div className="font-mono text-[10px] text-[var(--sx-ink-muted)] uppercase">Calendar Held to Today</div>
+                  <div className="font-mono text-xs font-semibold text-[var(--sx-ink)]">
+                    {computedHeldToday} working days
+                    {!heldOutOfSync && <span className="ml-1.5 text-[var(--sx-safe)]">· In Sync</span>}
+                  </div>
+                </div>
+                {heldOutOfSync && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setState(prev => {
+                        const held = Math.max(computedHeldToday, prev.absences.length);
+                        const nextState = {
+                          ...prev,
+                          profile: {
+                            ...prev.profile,
+                            workingDaysHeld: held,
+                            presentDays: Math.max(0, held - prev.absences.length),
+                            absentDays: prev.absences.length,
+                            totalWorkingDays: Math.max(prev.profile.totalWorkingDays, held)
+                          }
+                        };
+                        isSelfSavingRef.current = true;
+                        saveInstitutionalState(nextState, userIdentifier);
+                        setTimeout(() => { isSelfSavingRef.current = false; }, 120);
+                        return nextState;
+                      });
+                      showToast(`Synced working days held to ${computedHeldToday} days`);
+                    }}
+                    className="sx-btn-primary px-3 py-1.5 rounded-[5px] text-[11px] font-medium cursor-pointer shrink-0"
+                  >
+                    Sync to {computedHeldToday}d
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Navigation Tabs */}
         <div className="relative z-10 flex items-center gap-2 mt-6 pt-4 border-t border-zinc-800/60 overflow-x-auto no-scrollbar">
@@ -2629,21 +2754,21 @@ export const AttendanceTracker: React.FC = () => {
       )}
       {isBulkOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[#d5d3cb] pb-3">
+          <div className="w-full max-w-md bg-[var(--sx-surface)] border border-[var(--sx-border)] rounded-[6px] p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--sx-hairline)] pb-3">
               <div>
                 <span className="font-mono text-[10px] text-[#c2410c] tracking-wider">BULK ABSENCE ENTRY</span>
-                <h3 className="text-base font-semibold text-[#141413]">Add multiple missed dates</h3>
+                <h3 className="text-base font-semibold text-[var(--sx-ink)]">Add multiple missed dates</h3>
               </div>
               <button
                 onClick={() => setIsBulkOpen(false)}
-                className="text-xs text-[#575652] hover:text-[#141413] px-2 py-1 border border-[#d5d3cb] rounded-[4px] cursor-pointer"
+                className="text-xs text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] px-2 py-1 border border-[var(--sx-hairline)] rounded-[4px] cursor-pointer"
               >
                 Close
               </button>
             </div>
             <div className="space-y-2">
-              <label className="block text-xs font-medium text-[#575652]">
+              <label className="block text-xs font-medium text-[var(--sx-ink-secondary)]">
                 Dates (YYYY-MM-DD, DD/MM/YYYY, or Nov 12 2026 — comma or newline separated)
               </label>
               <textarea
@@ -2651,14 +2776,14 @@ export const AttendanceTracker: React.FC = () => {
                 value={bulkDatesInput}
                 onChange={(e) => setBulkDatesInput(e.target.value)}
                 placeholder="2026-11-04, 12/11/2026, Nov 19 2026"
-                className="w-full p-2.5 text-xs font-mono border border-[#b8b5ac] rounded-[4px]"
+                className="w-full p-2.5 text-xs font-mono border border-[var(--sx-border)] rounded-[4px]"
               />
               {bulkDatesInput.trim().length > 0 && (() => {
                 const parsed = parseFlexibleAbsenceDates(bulkDatesInput);
                 const existingSet = new Set(state.absences.map(a => a.date));
                 const newCount = parsed.filter(d => !existingSet.has(d)).length;
                 return (
-                  <p role="status" className="text-[11px] font-mono text-[#115e59] bg-[#f4f3ef] border border-[#d5d3cb] px-2.5 py-1.5 rounded-[4px]">
+                  <p role="status" className="text-[11px] font-mono text-[var(--sx-safe)] bg-[var(--sx-elevated)] border border-[var(--sx-hairline)] px-2.5 py-1.5 rounded-[4px]">
                     {parsed.length > 0
                       ? `Parsed ${parsed.length} valid date(s) (${newCount} new): ${parsed.slice(0, 4).join(', ')}${parsed.length > 4 ? '...' : ''}`
                       : 'No valid dates detected yet — try 12/11/2026 or 2026-11-12'}
@@ -2667,18 +2792,18 @@ export const AttendanceTracker: React.FC = () => {
               })()}
             </div>
             <div className="space-y-2">
-              <label className="block text-xs font-medium text-[#575652]">Reason</label>
+              <label className="block text-xs font-medium text-[var(--sx-ink-secondary)]">Reason</label>
               <input
                 type="text"
                 value={bulkReasonInput}
                 onChange={(e) => setBulkReasonInput(e.target.value)}
-                className="w-full p-2.5 text-xs border border-[#b8b5ac] rounded-[4px]"
+                className="w-full p-2.5 text-xs border border-[var(--sx-border)] rounded-[4px]"
               />
             </div>
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#d5d3cb]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--sx-hairline)]">
               <button
                 onClick={() => setIsBulkOpen(false)}
-                className="px-3.5 py-2 text-xs font-medium border border-[#b8b5ac] rounded-[4px] bg-[#f4f3ef] text-[#141413] cursor-pointer"
+                className="px-3.5 py-2 text-xs font-medium border border-[var(--sx-border)] rounded-[4px] bg-[var(--sx-elevated)] text-[var(--sx-ink)] cursor-pointer"
               >
                 Cancel
               </button>

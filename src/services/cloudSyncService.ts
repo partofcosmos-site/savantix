@@ -391,7 +391,11 @@ export class CloudSyncService {
             window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: remote.institutional_attendance }));
           }
         } else {
-          // Robust Map-based deduplication by unique absence date/id to prevent exponential duplication loops
+          // Tombstone-aware Map-based deduplication so deleted absences never resurrect across devices
+          const localDeleted = new Set<string>(Array.isArray(localInst.deletedAbsenceDates) ? localInst.deletedAbsenceDates : []);
+          const remoteDeleted = new Set<string>(Array.isArray(remote.institutional_attendance.deletedAbsenceDates) ? remote.institutional_attendance.deletedAbsenceDates : []);
+          const mergedDeleted = new Set<string>([...localDeleted, ...remoteDeleted]);
+
           const absenceMap = new Map<string, any>();
           const remoteAbs = Array.isArray(remote.institutional_attendance.absences) ? remote.institutional_attendance.absences : [];
           const localAbs = Array.isArray(localInst.absences) ? localInst.absences : [];
@@ -399,16 +403,28 @@ export class CloudSyncService {
           [...localAbs, ...remoteAbs].forEach(a => {
             if (a && (a.date || a.id)) {
               const sig = a.date || a.id;
-              absenceMap.set(sig, a);
+              if (!a.date || !mergedDeleted.has(a.date)) {
+                absenceMap.set(sig, a);
+              }
             }
           });
 
-          const deduplicatedAbsences = Array.from(absenceMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+          const deduplicatedAbsences = Array.from(absenceMap.values()).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+          const mergedProfile = {
+            ...(localInst.profile || {}),
+            ...(remote.institutional_attendance.profile || {}),
+          };
+          const held = Math.max(mergedProfile.workingDaysHeld || 0, deduplicatedAbsences.length);
+          mergedProfile.workingDaysHeld = held;
+          mergedProfile.absentDays = deduplicatedAbsences.length;
+          mergedProfile.presentDays = Math.max(0, held - deduplicatedAbsences.length);
 
           const mergedInst = {
             ...localInst,
             ...remote.institutional_attendance,
-            absences: deduplicatedAbsences
+            profile: mergedProfile,
+            absences: deduplicatedAbsences,
+            deletedAbsenceDates: Array.from(mergedDeleted).sort(),
           };
 
           const serializedInst = JSON.stringify(mergedInst);
@@ -663,7 +679,7 @@ export class CloudSyncService {
         : '';
       const inst = payload.institutional_attendance;
       const instSig = inst
-        ? `${Object.keys(inst.absences || {}).sort().join(',')}|${Object.keys(inst.manualOverrides || {}).sort().join(',')}|${inst.updatedAt || ''}`
+        ? `${(Array.isArray(inst.absences) ? inst.absences.map((a: any) => a?.date || a?.id || '') : []).sort().join(',')}|${(Array.isArray(inst.deletedAbsenceDates) ? inst.deletedAbsenceDates : []).sort().join(',')}|${inst.profile?.workingDaysHeld || 0}|${inst.lastUpdated || inst.updatedAt || ''}`
         : '';
       const firstLog = payload.logs?.[0]?.id || payload.logs?.[0]?.date || '';
       const lastLog = payload.logs?.[payload.logs?.length - 1]?.id || '';
