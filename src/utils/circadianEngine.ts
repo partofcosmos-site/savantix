@@ -52,7 +52,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'peak_working_memory',
     label: 'Peak Working Memory',
     brainState: 'Peak Working Memory',
-    icon: '🧠',
+    icon: 'WAKE',
     startMinutes: 5 * 60 + 30,
     endMinutes:   9 * 60,
     defaultRecommendations: [
@@ -70,7 +70,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'high_analytical',
     label: 'High Analytical',
     brainState: 'High Analytical',
-    icon: '⚡',
+    icon: 'DEEP',
     startMinutes: 9 * 60,
     endMinutes:   12 * 60,
     defaultRecommendations: [
@@ -88,7 +88,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'post_lunch_dip',
     label: 'Post-Lunch Dip',
     brainState: 'Post-Lunch Dip',
-    icon: '😴',
+    icon: 'PRAC',
     startMinutes: 12 * 60,
     endMinutes:   14 * 60,
     defaultRecommendations: [
@@ -106,7 +106,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'visual_spatial',
     label: 'Visual-Spatial Energy',
     brainState: 'Visual-Spatial Energy',
-    icon: '👁️',
+    icon: 'CONS',
     startMinutes: 14 * 60,
     endMinutes:   17 * 60,
     defaultRecommendations: [
@@ -124,7 +124,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'applied_practice',
     label: 'Applied Practice',
     brainState: 'Applied Practice',
-    icon: '🎯',
+    icon: 'WIND',
     startMinutes: 17 * 60,
     endMinutes:   20 * 60,
     defaultRecommendations: [
@@ -142,7 +142,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'consolidation_recall',
     label: 'Consolidation & Recall',
     brainState: 'Consolidation & Recall',
-    icon: '🔁',
+    icon: 'REST',
     startMinutes: 20 * 60,
     endMinutes:   22 * 60,
     defaultRecommendations: [
@@ -160,7 +160,7 @@ export const CIRCADIAN_ZONES: CircadianZone[] = [
     id: 'recovery',
     label: 'Recovery',
     brainState: 'Recovery',
-    icon: '🌙',
+    icon: 'SYNC',
     startMinutes: 22 * 60,
     endMinutes:   5 * 60 + 30, // next day
     defaultRecommendations: [
