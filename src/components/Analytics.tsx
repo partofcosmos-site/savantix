@@ -49,7 +49,7 @@ const PALETTE = [
   '#10b981', // Emerald
   '#f43f5e', // Rose
   '#a855f7', // Purple
-  '#06b6d4'  // Cyan
+  '#06b6d4' // Cyan
 ];
 
 type TimeRangeOption = '7d' | '30d' | '90d' | '365d' | 'all';
@@ -80,7 +80,7 @@ const SACMCustomTooltip = ({ active, payload }: any) => {
   if (!data) return null;
 
   return (
-    <div className="bg-zinc-900/95 backdrop-blur-md border border-zinc-700/80 rounded-xl p-3.5 shadow-2xl text-xs max-w-xs space-y-2 z-50 pointer-events-none">
+    <div className="bg-zinc-900/95 border border-zinc-700/80 rounded-xl p-3.5 shadow-2xl text-xs max-w-xs space-y-2 z-50 pointer-events-none">
       <div className="flex items-start justify-between gap-2 border-b border-zinc-800 pb-2">
         <div>
           <span className="font-bold text-zinc-100 text-sm block">{data.topic}</span>
@@ -809,7 +809,7 @@ export const Analytics = () => {
                   onClick={() => setTimeRange(option.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     timeRange === option.id
-                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/50'
+                      ? 'bg-indigo-600 text-white shadow-sm '
                       : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
                   }`}
                 >
@@ -844,7 +844,7 @@ export const Analytics = () => {
             {/* Import Data Modal Trigger */}
             <button
               onClick={() => setIsImportModalOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition-all shadow-md cursor-pointer"
             >
               <Upload className="w-3.5 h-3.5" />
               <span>Import</span>
@@ -856,7 +856,7 @@ export const Analytics = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Total Study Time */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Study Time</span>
               <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
@@ -874,7 +874,7 @@ export const Analytics = () => {
           </div>
 
           {/* Problems Solved & Solve Velocity */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Problems Solved</span>
               <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
@@ -892,7 +892,7 @@ export const Analytics = () => {
           </div>
 
           {/* Consistency & Active Days */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Consistency Rate</span>
               <div className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20 text-amber-400">
@@ -910,7 +910,7 @@ export const Analytics = () => {
           </div>
 
           {/* Peak Productivity & Focus */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Peak Day & Focus</span>
               <div className="p-2 bg-purple-500/10 rounded-xl border border-purple-500/20 text-purple-400">
@@ -929,9 +929,9 @@ export const Analytics = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* R3: SPEED VS. ACCURACY CALIBRATION MATRIX (SACM)                         */}
+        {/* R3: SPEED VS. ACCURACY CALIBRATION MATRIX (SACM) */}
         {/* ========================================================================= */}
-        <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
+        <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
           
           {/* SACM Section Header & Controls */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-800/80 pb-5">
@@ -1442,9 +1442,9 @@ export const Analytics = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* R4: DYNAMIC SUBJECT EQUILIBRIUM MATRIX (PID REBALANCER)                   */}
+        {/* R4: DYNAMIC SUBJECT EQUILIBRIUM MATRIX (PID REBALANCER) */}
         {/* ========================================================================= */}
-        <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
+        <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
           
           {/* Section Header & Controls */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-800/80 pb-5">
@@ -1856,7 +1856,7 @@ export const Analytics = () => {
         <StudyHeatmap logs={logs} />
 
         {/* Velocity Forecast & Exam Readiness Intelligence */}
-        <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
+        <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
@@ -1988,7 +1988,7 @@ export const Analytics = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Study Timeline & Velocity Trends (Span 2) */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-5">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl lg:col-span-2 space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">
               <div>
                 <h3 className="text-base font-bold text-zinc-100">Study Velocity & Volume Timeline</h3>
@@ -2091,7 +2091,7 @@ export const Analytics = () => {
           </div>
 
           {/* Subject Distribution Donut (Span 1) */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
             <div className="border-b border-zinc-800/80 pb-3">
               <h3 className="text-base font-bold text-zinc-100">Subject Distribution</h3>
               <p className="text-xs text-zinc-400 mt-0.5">Real percentage breakdown</p>
@@ -2162,7 +2162,7 @@ export const Analytics = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* Top Topics by Study Time */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
             <div className="border-b border-zinc-800/80 pb-3">
               <h3 className="text-base font-bold text-zinc-100">Top Topic Velocity Breakdown</h3>
               <p className="text-xs text-zinc-400 mt-0.5">Hours invested & questions completed per topic</p>
@@ -2209,7 +2209,7 @@ export const Analytics = () => {
           </div>
 
           {/* Time & Problems by Subject Comparison Chart */}
-          <div className="bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
+          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
             <div className="border-b border-zinc-800/80 pb-3">
               <h3 className="text-base font-bold text-zinc-100">Subject Comparison (Hours vs Problems)</h3>
               <p className="text-xs text-zinc-400 mt-0.5">Comparative load distribution</p>
@@ -2236,7 +2236,7 @@ export const Analytics = () => {
 
         {/* Data Import & Export Modal */}
         {isImportModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
             <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6">
               
               <div className="flex items-start justify-between border-b border-zinc-800 pb-4">
@@ -2364,7 +2364,7 @@ export const Analytics = () => {
                   <button
                     type="button"
                     onClick={handleExecuteImport}
-                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 cursor-pointer flex items-center gap-1.5"
+                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-lg cursor-pointer flex items-center gap-1.5"
                   >
                     <Check className="w-4 h-4" />
                     <span>Confirm Import ({importPreview.length} logs)</span>

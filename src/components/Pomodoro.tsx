@@ -948,7 +948,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
       {/* Header Bar */}
       <div className="w-full max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-cyan-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg ">
             {engineMode === 'flowmodoro' ? (
               <Zap className="w-5 h-5 text-white animate-pulse" />
             ) : (
@@ -979,7 +979,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
           {setIsFortressMode && (
             <button
               onClick={() => setIsFortressMode(true)}
-              className="px-3.5 py-2 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-3.5 py-2 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg transition-all flex items-center gap-2 cursor-pointer"
               title="Enter Deep Focus Session"
             >
               <span className="hidden sm:inline">Enter Fortress</span>
@@ -991,7 +991,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
             onClick={() => setShowAudioDrawer(!showAudioDrawer)}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${
               isAudioPlaying 
-                ? 'bg-indigo-600/20 border border-indigo-500/50 text-indigo-300 shadow-lg shadow-indigo-500/20 animate-pulse' 
+                ? 'bg-indigo-600/20 border border-indigo-500/50 text-indigo-300 shadow-lg animate-pulse' 
                 : showAudioDrawer 
                   ? 'bg-zinc-800 text-zinc-100 border border-zinc-700' 
                   : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800'
@@ -1024,7 +1024,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
 
       {/* Engine Paradigm Selector (Pomodoro vs Flowmodoro) */}
       <div className="w-full max-w-6xl mx-auto mt-6">
-        <div className="p-1 bg-zinc-900/90 border border-zinc-800/80 rounded-2xl flex items-center gap-1 shadow-lg backdrop-blur-xl">
+        <div className="p-1 bg-zinc-900/90 border border-zinc-800/80 rounded-2xl flex items-center gap-1 shadow-lg ">
           <button
             onClick={() => {
               if (engineMode !== 'pomodoro') {
@@ -1040,7 +1040,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
             }}
             className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
               engineMode === 'pomodoro'
-                ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-600/30'
+                ? 'bg-indigo-600 text-white shadow-md '
                 : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
             }`}
           >
@@ -1107,7 +1107,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
           {/* FLOWMODORO ENGINE CARD */}
           {/* ============================================================ */}
           {engineMode === 'flowmodoro' && (
-            <div className={`bg-zinc-900/90 border border-zinc-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl ${
+            <div className={`bg-zinc-900/90 border border-zinc-800/80 rounded-md p-6 sm:p-8 shadow-2xl relative overflow-hidden ${
               isFortressMode ? 'border-indigo-500/30' : ''
             }`}>
               {/* Background Ambient Glow */}
@@ -1234,7 +1234,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                     {/* Main Play / Pause Count-Up Button */}
                     <button
                       onClick={toggleFlowTimer}
-                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer ${
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer ${
                         flowIsActive
                           ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-amber-500/25 ring-4 ring-amber-500/20'
                           : 'bg-gradient-to-tr from-cyan-600 to-teal-500 hover:from-cyan-500 hover:to-teal-400 text-white shadow-cyan-600/30 ring-4 ring-cyan-500/20'
@@ -1305,7 +1305,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
           {/* CLASSICAL POMODORO CARD */}
           {/* ============================================================ */}
           {engineMode === 'pomodoro' && (
-            <div className={`bg-zinc-900/90 border border-zinc-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl ${
+            <div className={`bg-zinc-900/90 border border-zinc-800/80 rounded-md p-6 sm:p-8 shadow-2xl relative overflow-hidden ${
               isFortressMode ? 'border-indigo-500/30' : ''
             }`}>
               {/* Background Ambient Glow */}
@@ -1319,7 +1319,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                   onClick={() => switchMode('focus')}
                   className={`flex-1 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
                     mode === 'focus'
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                      ? 'bg-indigo-600 text-white shadow-lg '
                       : 'text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
@@ -1378,7 +1378,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                   <div 
                     className={`h-full transition-all duration-300 rounded-full ${
                       mode === 'focus' 
-                        ? 'bg-gradient-to-r from-indigo-500 to-cyan-400' 
+                        ? 'bg-indigo-600' 
                         : mode === 'short_break' 
                           ? 'bg-gradient-to-r from-emerald-500 to-teal-400' 
                           : 'bg-gradient-to-r from-cyan-500 to-blue-400'
@@ -1402,11 +1402,11 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                 {/* Main Play / Pause Button */}
                 <button
                   onClick={toggleTimer}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-xl cursor-pointer ${
                     isActive
                       ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-amber-500/25 ring-4 ring-amber-500/20'
                       : mode === 'focus'
-                        ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30 ring-4 ring-indigo-500/20'
+                        ? 'bg-indigo-600 hover:bg-indigo-500 text-white ring-4 ring-indigo-500/20'
                         : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/30 ring-4 ring-emerald-500/20'
                   }`}
                   title={isActive ? "Pause Session" : "Start Focus Session"}
@@ -1447,7 +1447,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
           {triageModeActive && <TriageMode />}
 
           {/* Active Focus Session Target & Quick Logger Card */}
-          <div className="bg-zinc-900/90 border border-zinc-800/80 rounded-3xl p-6 shadow-xl backdrop-blur-xl space-y-4">
+          <div className="bg-zinc-900/90 border border-zinc-800/80 rounded-md p-6 shadow-xl space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-indigo-400" />
@@ -1525,7 +1525,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
         <div className="lg:col-span-5 space-y-6">
           
           {/* Audio Synthesizer & Distraction-Free YouTube Suite Card */}
-          <div className="bg-zinc-900/90 border border-zinc-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-xl space-y-5">
+          <div className="bg-zinc-900/90 border border-zinc-800/80 rounded-md p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
                 <Headphones className="w-5 h-5 text-indigo-400" />
@@ -1597,7 +1597,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       onClick={handleToggleAudioPlay}
                       className={`flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
                         isAudioPlaying
-                          ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                          ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white shadow-lg '
                           : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200'
                       }`}
                     >
@@ -1657,7 +1657,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                           onClick={() => handleSelectPreset(preset.id)}
                           className={`p-3 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between cursor-pointer ${
                             isSelected
-                              ? 'bg-indigo-950/70 border-indigo-500/80 text-white shadow-lg shadow-indigo-500/10'
+                              ? 'bg-indigo-950/70 border-indigo-500/80 text-white shadow-lg '
                               : 'bg-zinc-950/60 hover:bg-zinc-800/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200'
                           }`}
                         >
@@ -1892,7 +1892,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
           </div>
 
           {/* Pomodoro Task Checklist Card */}
-          <div className="bg-zinc-900/90 border border-zinc-800/80 rounded-3xl p-6 shadow-2xl backdrop-blur-xl space-y-4">
+          <div className="bg-zinc-900/90 border border-zinc-800/80 rounded-md p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
                 <ListTodo className="w-5 h-5 text-emerald-400" />
@@ -1968,7 +1968,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       key={t.id}
                       className={`p-3 rounded-2xl border transition-all flex items-center justify-between gap-2.5 ${
                         isTaskActive 
-                          ? 'bg-indigo-950/40 border-indigo-500/70 shadow-md shadow-indigo-500/10' 
+                          ? 'bg-indigo-950/40 border-indigo-500/70 shadow-md ' 
                           : t.isCompleted 
                             ? 'bg-zinc-950/40 border-zinc-800/40 opacity-60' 
                             : 'bg-zinc-950/60 border-zinc-800/80 hover:border-zinc-700'
@@ -2060,9 +2060,9 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
       {/* FLOWMODORO BREAK CONFIRMATION MODAL */}
       {/* ============================================================ */}
       {showBreakPromptModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 space-y-6 text-center">
-            <div className="w-16 h-16 rounded-3xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-600/20">
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-md p-6 sm:p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 space-y-6 text-center">
+            <div className="w-16 h-16 rounded-md bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-600/20">
               <Coffee className="w-8 h-8" />
             </div>
 
@@ -2116,7 +2116,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
       {/* ============================================================ */}
       {showSettingsDrawer && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl animate-in zoom-in-95 space-y-6 max-h-[90vh] overflow-y-auto">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-md p-6 sm:p-8 max-w-lg w-full shadow-2xl animate-in zoom-in-95 space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
               <div className="flex items-center gap-2.5">
                 <Sliders className="w-5 h-5 text-indigo-400" />
@@ -2314,7 +2314,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       onClick={() => setLongBreakInterval(num)}
                       className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                         longBreakInterval === num
-                          ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/30'
+                          ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg '
                           : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                       }`}
                     >
@@ -2350,7 +2350,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
 
             <button
               onClick={() => setShowSettingsDrawer(false)}
-              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold rounded-2xl transition-all shadow-lg shadow-indigo-600/20 cursor-pointer"
+              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-2xl transition-all shadow-lg cursor-pointer"
             >
               Apply All Settings
             </button>
@@ -2359,11 +2359,11 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
       )}
 
       {/* ================================================================= */}
-      {/* SESSION LOG CONFIRMATION MODAL (ASK BEFORE SAVING)               */}
+      {/* SESSION LOG CONFIRMATION MODAL (ASK BEFORE SAVING) */}
       {/* ================================================================= */}
       {showLogPromptModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-700/80 rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-zinc-700/80 rounded-md p-6 sm:p-7 max-w-lg w-full shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2.5">
                 <div className="p-2.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">

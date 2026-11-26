@@ -111,7 +111,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
 
   if (!todayInsight) {
     return (
-      <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[320px] shadow-xl relative">
+      <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center min-h-[320px] shadow-xl relative">
         <Brain className="w-12 h-12 text-indigo-400/60 mb-4 animate-pulse" />
         <h3 className="text-lg font-bold text-zinc-100 mb-2">No Daily Insights Yet</h3>
         <p className="text-sm text-zinc-400 max-w-md mb-6 leading-relaxed">
@@ -126,7 +126,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
           type="button"
           onClick={handleGenerate}
           disabled={todayLogs.length === 0 || isGenerating}
-          className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl transition-all font-semibold shadow-lg shadow-indigo-600/20 cursor-pointer"
+          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl transition-all font-semibold shadow-lg cursor-pointer"
         >
           {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
           {isGenerating ? 'Analyzing Cumulative Sessions...' : 'Generate Daily Analysis'}
@@ -142,7 +142,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
     <div className="space-y-6">
       
       {/* Top Interactive Control Bar */}
-      <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/80 to-zinc-950 border border-zinc-800/90 rounded-2xl p-5 shadow-2xl backdrop-blur-md space-y-4 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/80 to-zinc-950 border border-zinc-800/90 rounded-2xl p-5 shadow-2xl space-y-4 relative overflow-hidden">
         
         {/* Toast Alert */}
         {successToast && (
@@ -182,7 +182,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
             onClick={handleGenerate}
             disabled={todayLogs.length === 0 || isGenerating}
             title="Re-evaluate cumulative daily performance, recalculate mistake patterns, and refresh next-day plan with your latest study logs."
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:from-zinc-800 disabled:to-zinc-800 disabled:text-zinc-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98] cursor-pointer shrink-0"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 animate-spin text-white" />
@@ -231,7 +231,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
       </div>
 
       {/* Performance Summary Card */}
-      <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-3">
+      <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-3">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
             <TrendingUp className="w-5 h-5 text-indigo-400" />
@@ -243,7 +243,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
 
       {/* Diagnostics Grid: Weaknesses & Next Day Plan */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20">
               <AlertTriangle className="w-5 h-5 text-rose-400" />
@@ -262,7 +262,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
           </div>
         </div>
 
-        <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
               <Target className="w-5 h-5 text-emerald-400" />

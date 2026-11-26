@@ -92,7 +92,7 @@ interface DecisionModalProps {
 const DecisionModal: React.FC<DecisionModalProps> = ({ problemName, onCommit, onBail }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-sm" />
-    <div className="relative w-full max-w-sm bg-zinc-900 border border-amber-500/50 rounded-3xl p-5 sm:p-6 shadow-2xl shadow-amber-500/20 animate-in zoom-in-95 duration-200">
+    <div className="relative w-full max-w-sm bg-zinc-900 border border-amber-500/50 rounded-md p-5 sm:p-6 shadow-2xl shadow-amber-500/20 animate-in zoom-in-95 duration-200">
       <div className="flex items-center justify-center mb-4">
         <span className="px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold tracking-wider uppercase flex items-center gap-2">
           <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
@@ -108,7 +108,7 @@ const DecisionModal: React.FC<DecisionModalProps> = ({ problemName, onCommit, on
       <div className="grid grid-cols-2 gap-3">
         <button
           onClick={onCommit}
-          className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-600/30 cursor-pointer"
+          className="flex flex-col items-center gap-2 p-3 sm:p-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
         >
           <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
           <span className="text-xs sm:text-sm">Yes — Commit </span>
@@ -323,7 +323,7 @@ const TriageMode: React.FC = () => {
   const eff = efficiencyPct(sessionLog);
 
   return (
-    <div className="bg-zinc-950 border border-amber-500/30 rounded-3xl p-4 sm:p-6 shadow-2xl shadow-amber-500/10 relative overflow-hidden mt-2">
+    <div className="bg-zinc-950 border border-amber-500/30 rounded-md p-4 sm:p-6 shadow-2xl shadow-amber-500/10 relative overflow-hidden mt-2">
       <div className="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-red-500/8 blur-3xl pointer-events-none" />
 

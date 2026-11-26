@@ -41,9 +41,10 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
-  const { user, logout, syncStatus, forceSyncNow } = useAppContext();
+  const { user, isGuest, logout, syncStatus, forceSyncNow } = useAppContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMicroLoggerOpen, setIsMicroLoggerOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const isFounder = ['debanjan8686@gmail.com', 'partofcosmmos@gmail.com'].includes(user?.email || '');
 
   useEffect(() => {
@@ -64,6 +65,11 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           e.preventDefault();
           setActiveTab(target);
         }
+      } else if (e.key === '?' && !['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName || '')) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      } else if (e.key === 'Escape' && isShortcutsOpen) {
+        setIsShortcutsOpen(false);
       }
     };
 
@@ -243,7 +249,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
               )}
             />
             <span className="font-mono text-[10px] text-[#575652] truncate">
-              {syncStatus.isSyncing ? 'Syncing cloud...' : `Synced · ${syncStatus.lastSyncedAt || 'Live'}`}
+              {isGuest ? 'Local Demo Sandbox' : syncStatus.isSyncing ? 'Syncing cloud...' : `Synced · ${syncStatus.lastSyncedAt || 'Live'}`}
             </span>
           </div>
           <button
@@ -268,13 +274,26 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
               {isFounder ? 'Core Researcher' : user?.email || 'Local Sandbox'}
             </span>
           </div>
-          <button
-            onClick={logout}
-            className="p-2 text-[#575652] hover:text-[#b91c1c] hover:bg-[#eae8e2] rounded-[4px] transition-colors cursor-pointer"
-            title="Sign out"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setIsShortcutsOpen(true)}
+              aria-label="Keyboard shortcuts"
+              title="Keyboard shortcuts (?)"
+              className="px-2 py-1.5 font-mono text-[11px] font-semibold text-[#575652] hover:text-[#141413] hover:bg-[#eae8e2] border border-[#d5d3cb] rounded-[4px] transition-colors cursor-pointer"
+            >
+              ?
+            </button>
+            <button
+              type="button"
+              onClick={logout}
+              aria-label="Sign out"
+              className="p-2 text-[#575652] hover:text-[#b91c1c] hover:bg-[#eae8e2] rounded-[4px] transition-colors cursor-pointer"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -284,6 +303,48 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           className="fixed inset-0 bg-[#141413]/30 z-30 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
+      )}
+
+      {isShortcutsOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-[#141413]/40 flex items-center justify-center p-4"
+          onClick={() => setIsShortcutsOpen(false)}
+        >
+          <div
+            className="w-full max-w-md bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] p-6 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-[#d5d3cb] pb-3">
+              <div>
+                <span className="font-mono text-[10px] text-[#c2410c] tracking-wider uppercase">WORKBENCH COMMANDS</span>
+                <h2 className="text-base font-semibold text-[#141413]">Keyboard Shortcuts</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsShortcutsOpen(false)}
+                aria-label="Close keyboard shortcuts"
+                title="Close (Esc)"
+                className="px-2 py-1 text-xs font-mono text-[#575652] hover:text-[#141413] border border-[#d5d3cb] rounded-[4px] cursor-pointer"
+              >
+                Esc
+              </button>
+            </div>
+            <div className="divide-y divide-[#d5d3cb] text-xs">
+              {[
+                ['Alt + 1 .. 8', 'Switch workspace tabs (Dashboard to Contact)'],
+                ['Alt + L  /  Ctrl + K', 'Toggle Micro-Logger quick session HUD'],
+                ['Alt + G', 'Open AI Gateway & KaTeX STEM Solver'],
+                ['?', 'Toggle this keyboard shortcuts sheet'],
+                ['Esc', 'Close active modal or overlay'],
+              ].map(([k, desc]) => (
+                <div key={k} className="py-2.5 flex items-center justify-between gap-4">
+                  <span className="text-[#575652]">{desc}</span>
+                  <kbd className="font-mono text-[11px] font-semibold px-2 py-0.5 bg-[#f4f3ef] border border-[#b8b5ac] text-[#141413] rounded-[3px] shrink-0">{k}</kbd>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Main Content Stage */}

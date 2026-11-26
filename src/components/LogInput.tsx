@@ -265,7 +265,7 @@ export const LogInput = ({ selectedDate }: { selectedDate: string }) => {
   const currentSubjectStyle = SUBJECT_COLORS[parsedMicro.subject] || SUBJECT_COLORS.General;
 
   return (
-    <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-lg relative space-y-3">
+    <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-lg relative space-y-3">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Quick Log & Dictate</h2>

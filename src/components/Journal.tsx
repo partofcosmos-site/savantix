@@ -360,7 +360,7 @@ export const Journal = () => {
 
           <button
             onClick={handleOpenNew}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-medium rounded-xl shadow-lg shadow-indigo-600/20 transition-all active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl shadow-lg transition-all active:scale-95 shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>New Reflection</span>
@@ -369,7 +369,7 @@ export const Journal = () => {
 
         {/* Stats & Today's Reminder Card */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Reflections</p>
               <p className="text-2xl sm:text-3xl font-bold text-zinc-100 mt-1">{totalEntriesCount}</p>
@@ -379,7 +379,7 @@ export const Journal = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Avg Mood</p>
               <p className="text-2xl sm:text-3xl font-bold text-emerald-400 mt-1 flex items-center gap-1">
@@ -392,7 +392,7 @@ export const Journal = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Avg Energy</p>
               <p className="text-2xl sm:text-3xl font-bold text-cyan-400 mt-1 flex items-center gap-1">
@@ -405,7 +405,7 @@ export const Journal = () => {
             </div>
           </div>
 
-          <div className={`backdrop-blur-md border rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg transition-all ${
+          <div className={` border rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg transition-all ${
             hasLoggedToday
               ? 'bg-emerald-950/20 border-emerald-500/30'
               : 'bg-indigo-950/20 border-indigo-500/30'
@@ -428,7 +428,7 @@ export const Journal = () => {
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 space-y-4">
+        <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
           
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Search Input */}
@@ -519,7 +519,7 @@ export const Journal = () => {
 
         {/* Reflection Editor Modal / Card */}
         {isFormOpen && (
-          <div className="bg-zinc-900/90 backdrop-blur-xl p-6 rounded-2xl border border-indigo-500/30 shadow-2xl shadow-indigo-950/40 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-zinc-900/90 p-6 rounded-2xl border border-indigo-500/30 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
@@ -826,7 +826,7 @@ export const Journal = () => {
               <button
                 type="button"
                 onClick={handleSaveEntry}
-                className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition-all"
+                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg transition-all"
               >
                 {editingId ? 'Update Reflection' : 'Save Daily Reflection'}
               </button>
@@ -844,7 +844,7 @@ export const Journal = () => {
             return (
               <div
                 key={entry.id}
-                className="bg-zinc-900/60 backdrop-blur-md rounded-2xl border border-zinc-800/80 hover:border-zinc-700/80 transition-all p-5 sm:p-6 shadow-lg space-y-4 relative"
+                className="bg-zinc-900/60 rounded-2xl border border-zinc-800/80 hover:border-zinc-700/80 transition-all p-5 sm:p-6 shadow-lg space-y-4 relative"
               >
                 {/* Header: Title, Date, Badges & Actions */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4">

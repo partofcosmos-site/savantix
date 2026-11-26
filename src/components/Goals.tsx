@@ -502,7 +502,7 @@ export const Goals = () => {
           
           <button
             onClick={handleOpenCreate}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-medium rounded-xl shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl shadow-lg transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>New Goal</span>
@@ -511,7 +511,7 @@ export const Goals = () => {
 
         {/* Stats Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Total Goals</p>
               <p className="text-2xl sm:text-3xl font-bold text-zinc-100 mt-1">{totalGoalsCount}</p>
@@ -521,7 +521,7 @@ export const Goals = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Active Targets</p>
               <p className="text-2xl sm:text-3xl font-bold text-indigo-400 mt-1">{activeGoalsCount}</p>
@@ -531,7 +531,7 @@ export const Goals = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Completed</p>
               <p className="text-2xl sm:text-3xl font-bold text-emerald-400 mt-1">{completedGoalsCount}</p>
@@ -541,7 +541,7 @@ export const Goals = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-lg">
             <div>
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Mastery Rate</p>
               <p className="text-2xl sm:text-3xl font-bold text-cyan-400 mt-1">{overallProgressAvg}%</p>
@@ -553,7 +553,7 @@ export const Goals = () => {
         </div>
 
         {/* Filter, Search and Category Pills */}
-        <div className="bg-zinc-900/40 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 space-y-4">
+        <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
           
           {/* Top Bar: Search, Status Tabs & Sorting */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
@@ -675,7 +675,7 @@ export const Goals = () => {
 
         {/* Goal Creator / Editor Modal */}
         {isFormOpen && (
-          <div className="bg-zinc-900/90 backdrop-blur-xl p-6 rounded-2xl border border-indigo-500/30 shadow-2xl shadow-indigo-950/40 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-zinc-900/90 p-6 rounded-2xl border border-indigo-500/30 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
                 {editingGoalId ? <Edit3 className="w-5 h-5 text-indigo-400" /> : <Plus className="w-5 h-5 text-indigo-400" />}
@@ -923,7 +923,7 @@ export const Goals = () => {
                 type="button"
                 onClick={handleSaveGoal}
                 disabled={!title.trim()}
-                className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:opacity-50 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition-all"
+                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold rounded-xl shadow-lg transition-all"
               >
                 {editingGoalId ? 'Update Target Goal' : 'Save New Goal'}
               </button>
@@ -954,7 +954,7 @@ export const Goals = () => {
             return (
               <div
                 key={goal.id}
-                className={`bg-zinc-900/60 backdrop-blur-md rounded-2xl border transition-all p-5 shadow-lg relative overflow-hidden ${
+                className={`bg-zinc-900/60 rounded-2xl border transition-all p-5 shadow-lg relative overflow-hidden ${
                   isCompleted
                     ? 'border-emerald-500/30 bg-emerald-950/10'
                     : 'border-zinc-800 hover:border-zinc-700'

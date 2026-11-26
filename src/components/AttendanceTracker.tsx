@@ -33,14 +33,14 @@ import { GoogleCalendarSyncService } from '../services/googleCalendarSyncService
 import { useAppContext } from '../context/AppContext';
 
 const COLOR_MAP: Record<string, { bg: string; border: string; text: string; ring: string }> = {
-  indigo:  { bg: 'bg-indigo-500/10',  border: 'border-indigo-500/30',  text: 'text-indigo-400',  ring: 'ring-indigo-500/40' },
+  indigo: { bg: 'bg-indigo-500/10', border: 'border-indigo-500/30', text: 'text-indigo-400', ring: 'ring-indigo-500/40' },
   emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400', ring: 'ring-emerald-500/40' },
-  rose:    { bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    text: 'text-rose-400',    ring: 'ring-rose-500/40' },
-  amber:   { bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   text: 'text-amber-400',   ring: 'ring-amber-500/40' },
-  sky:     { bg: 'bg-sky-500/10',     border: 'border-sky-500/30',     text: 'text-sky-400',     ring: 'ring-sky-500/40' },
-  purple:  { bg: 'bg-purple-500/10',  border: 'border-purple-500/30',  text: 'text-purple-400',  ring: 'ring-purple-500/40' },
-  orange:  { bg: 'bg-orange-500/10',  border: 'border-orange-500/30',  text: 'text-orange-400',  ring: 'ring-orange-500/40' },
-  teal:    { bg: 'bg-teal-500/10',    border: 'border-teal-500/30',    text: 'text-teal-400',    ring: 'ring-teal-500/40' },
+  rose: { bg: 'bg-rose-500/10', border: 'border-rose-500/30', text: 'text-rose-400', ring: 'ring-rose-500/40' },
+  amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400', ring: 'ring-amber-500/40' },
+  sky: { bg: 'bg-sky-500/10', border: 'border-sky-500/30', text: 'text-sky-400', ring: 'ring-sky-500/40' },
+  purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400', ring: 'ring-purple-500/40' },
+  orange: { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400', ring: 'ring-orange-500/40' },
+  teal: { bg: 'bg-teal-500/10', border: 'border-teal-500/30', text: 'text-teal-400', ring: 'ring-teal-500/40' },
 };
 
 export type ActiveTab = 'locked_matrix' | 'overview' | 'calendar' | 'absences' | 'subjects' | 'ai_regulator';
@@ -595,14 +595,14 @@ export const AttendanceTracker: React.FC = () => {
     <div className="w-full min-h-screen bg-zinc-950 text-zinc-100 px-3 sm:px-6 py-6 max-w-7xl mx-auto space-y-6">
       {/* Top Toast Banner */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 bg-zinc-900/95 border border-indigo-500/40 text-zinc-100 rounded-xl shadow-2xl shadow-indigo-950/50 backdrop-blur-md text-sm animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 bg-zinc-900/95 border border-indigo-500/40 text-zinc-100 rounded-xl shadow-2xl text-sm animate-in fade-in slide-in-from-top-4 duration-300">
           <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {/* Header & Institutional Identity */}
-      <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/80 to-indigo-950/40 border border-zinc-800/80 rounded-3xl p-6 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/80 to-indigo-950/40 border border-zinc-800/80 rounded-md p-6 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
         <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-emerald-600/5 rounded-full blur-2xl pointer-events-none" />
 
@@ -650,7 +650,7 @@ export const AttendanceTracker: React.FC = () => {
             {isDebanjan ? (
               <button
                 onClick={handleLaunchGemini}
-                className="relative group flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-indigo-700 hover:from-violet-500 hover:to-indigo-600 text-white rounded-2xl font-bold text-sm shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all duration-300 cursor-pointer active:scale-95 border border-indigo-400/30"
+                className="relative group flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-indigo-700 hover:from-violet-500 hover:to-indigo-600 text-white rounded-2xl font-bold text-sm shadow-xl hover: transition-all duration-300 cursor-pointer active:scale-95 border border-indigo-400/30"
               >
                 <Sparkles className="w-4 h-4 text-violet-200 animate-pulse" />
                 <span>Launch Attendance AI Regulator</span>
@@ -790,7 +790,7 @@ export const AttendanceTracker: React.FC = () => {
                 className={clsx(
                   'flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer',
                   isActive
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400/40'
+                    ? 'bg-indigo-600 text-white shadow-lg border border-indigo-400/40'
                     : 'bg-zinc-900/60 hover:bg-zinc-800/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
                 )}
               >
@@ -811,7 +811,7 @@ export const AttendanceTracker: React.FC = () => {
       </div>
 
       {/* Mobile Top Quick-Stat & Action Bar (Visible on mobile viewports) */}
-      <div className="md:hidden bg-zinc-900/95 border border-zinc-800/90 rounded-2xl p-3 backdrop-blur-xl shadow-2xl flex items-center justify-between gap-2">
+      <div className="md:hidden bg-zinc-900/95 border border-zinc-800/90 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <div className={clsx(
             "px-2.5 py-1 rounded-xl text-xs font-extrabold font-mono",
@@ -841,7 +841,7 @@ export const AttendanceTracker: React.FC = () => {
       {activeTab === 'locked_matrix' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Mobile-Optimized Hero Bar */}
-          <div className="bg-gradient-to-r from-rose-950/40 via-zinc-900/90 to-zinc-900/90 border border-rose-500/30 rounded-3xl p-5 shadow-2xl backdrop-blur-md">
+          <div className="bg-gradient-to-r from-rose-950/40 via-zinc-900/90 to-zinc-900/90 border border-rose-500/30 rounded-md p-5 shadow-2xl ">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-2xl text-rose-400 shrink-0">
@@ -928,7 +928,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Interactive Month Navigation Bar */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-4 backdrop-blur-md flex items-center justify-between">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-4 flex items-center justify-between">
             <button
               onClick={() => {
                 if (calMonth === 0) {
@@ -974,7 +974,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* 7-Column Calendar Matrix Grid */}
-          <div className="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-3 sm:p-5 backdrop-blur-md space-y-2 shadow-2xl">
+          <div className="bg-zinc-900/90 border border-zinc-800 rounded-md p-3 sm:p-5 space-y-2 shadow-2xl">
             {/* Days Header */}
             <div className="grid grid-cols-7 gap-1 sm:gap-2 text-center text-zinc-500 font-bold text-[11px] uppercase tracking-wider pb-2 border-b border-zinc-800/80">
               <div>Mon</div>
@@ -1059,7 +1059,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Quick Lock-In Form & Preset Launcher */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 sm:p-6 backdrop-blur-md space-y-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-sm sm:text-base font-bold text-zinc-100 flex items-center gap-2">
                 <Plus className="w-4 h-4 text-rose-400" />
@@ -1129,8 +1129,8 @@ export const AttendanceTracker: React.FC = () => {
 
       {/* Date Inspection & Quick Lock/Unlock Modal */}
       {selectedCalDate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-md p-6 max-w-md w-full space-y-4 shadow-2xl relative">
             <button
               onClick={() => setSelectedCalDate(null)}
               className="absolute top-5 right-5 p-1.5 text-zinc-400 hover:text-zinc-200 rounded-xl hover:bg-zinc-800 cursor-pointer"
@@ -1288,7 +1288,7 @@ export const AttendanceTracker: React.FC = () => {
       {activeTab === 'overview' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Approved On-Duty Deputation Spotlight Card */}
-          <div className="bg-gradient-to-r from-emerald-950/30 via-zinc-900/80 to-zinc-900/80 border border-emerald-500/30 rounded-3xl p-5 shadow-xl backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-gradient-to-r from-emerald-950/30 via-zinc-900/80 to-zinc-900/80 border border-emerald-500/30 rounded-md p-5 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-2xl text-emerald-400 shrink-0">
                 <Award className="w-6 h-6" />
@@ -1319,7 +1319,7 @@ export const AttendanceTracker: React.FC = () => {
           {/* Primary Reality Math KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Live Effective Attendance */}
-            <div className="bg-zinc-900/80 border border-emerald-500/30 rounded-3xl p-5 backdrop-blur-md shadow-xl relative overflow-hidden">
+            <div className="bg-zinc-900/80 border border-emerald-500/30 rounded-md p-5 shadow-xl relative overflow-hidden">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Effective Attendance</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
@@ -1345,7 +1345,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
 
             {/* Raw Physical Attendance */}
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 backdrop-blur-md shadow-xl">
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-5 shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Raw Physical Attended</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30">
@@ -1371,7 +1371,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
 
             {/* Safe Leaves to Dec 31 (75% Safe Threshold) */}
-            <div className="bg-zinc-900/80 border border-indigo-500/30 rounded-3xl p-5 backdrop-blur-md shadow-xl">
+            <div className="bg-zinc-900/80 border border-indigo-500/30 rounded-md p-5 shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Safe Leaves (75% Target)</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
@@ -1394,7 +1394,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
 
             {/* Safe Leaves to Dec 31 (60% Medical Condonation) */}
-            <div className="bg-zinc-900/80 border border-violet-500/30 rounded-3xl p-5 backdrop-blur-md shadow-xl">
+            <div className="bg-zinc-900/80 border border-violet-500/30 rounded-md p-5 shadow-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider">60% Condonation Limit</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-violet-500/15 text-violet-300 border border-violet-500/30">
@@ -1418,7 +1418,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Session Progress & Visual Gauge Bar */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md space-y-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
@@ -1491,7 +1491,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Interactive What-If Reality Simulator */}
-          <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-900/70 to-indigo-950/20 border border-indigo-500/30 rounded-3xl p-6 backdrop-blur-md space-y-5 shadow-2xl">
+          <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-900/70 to-indigo-950/20 border border-indigo-500/30 rounded-md p-6 space-y-5 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
@@ -1614,7 +1614,7 @@ export const AttendanceTracker: React.FC = () => {
       {activeTab === 'calendar' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Vacation Windows Ledger */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md space-y-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
@@ -1648,7 +1648,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Examination & PTM Milestones */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md space-y-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 space-y-4">
             <div>
               <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
                 <Award className="w-5 h-5 text-emerald-400" />
@@ -1727,7 +1727,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* 28 Institutional Holidays Table */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md space-y-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
@@ -1818,7 +1818,7 @@ export const AttendanceTracker: React.FC = () => {
       {activeTab === 'absences' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Header & Log Action */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-400" />
@@ -1830,7 +1830,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
             <button
               onClick={() => setIsAddingAbsence(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-lg shadow-indigo-600/30 cursor-pointer shrink-0"
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-lg cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" /> Log Absence Record
             </button>
@@ -1838,7 +1838,7 @@ export const AttendanceTracker: React.FC = () => {
 
           {/* Add Absence Modal Form */}
           {isAddingAbsence && (
-            <div className="bg-zinc-900/90 border border-indigo-500/40 rounded-3xl p-6 space-y-4 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-zinc-900/90 border border-indigo-500/40 rounded-md p-6 space-y-4 animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
                   <Plus className="w-4 h-4 text-indigo-400" /> Log New Academic Absence / Self-Study Date
@@ -1958,7 +1958,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden md:block overflow-x-auto rounded-3xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-md">
+          <div className="hidden md:block overflow-x-auto rounded-md border border-zinc-800 bg-zinc-900/80 ">
             <table className="w-full text-left text-xs text-zinc-300">
               <thead className="bg-zinc-950 text-zinc-400 font-semibold border-b border-zinc-800">
                 <tr>
@@ -2017,7 +2017,7 @@ export const AttendanceTracker: React.FC = () => {
           {/* Mobile Touch Card Stream */}
           <div className="md:hidden space-y-3">
             {filteredAbsences.length === 0 ? (
-              <div className="p-8 text-center bg-zinc-900/60 rounded-3xl border border-zinc-800 space-y-2">
+              <div className="p-8 text-center bg-zinc-900/60 rounded-md border border-zinc-800 space-y-2">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto" />
                 <p className="text-sm font-semibold text-zinc-200">No absences matching selected filter</p>
                 <p className="text-xs text-zinc-500">All working days in this view are credited as attended.</p>
@@ -2026,7 +2026,7 @@ export const AttendanceTracker: React.FC = () => {
               filteredAbsences.map((abs: AbsenceEntry, idx: number) => (
                 <div
                   key={abs.id}
-                  className="bg-zinc-900/90 border border-zinc-800/90 hover:border-zinc-700 rounded-2xl p-4 space-y-2.5 shadow-lg backdrop-blur-md"
+                  className="bg-zinc-900/90 border border-zinc-800/90 hover:border-zinc-700 rounded-2xl p-4 space-y-2.5 shadow-lg "
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -2089,7 +2089,7 @@ export const AttendanceTracker: React.FC = () => {
       {/* TAB 4: SUBJECT ROSTER & MICRO-TRACKER */}
       {activeTab === 'subjects' && (
         <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-indigo-400" />
@@ -2101,7 +2101,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
             <button
               onClick={() => setIsAddingSubject(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-lg shadow-indigo-600/30 cursor-pointer shrink-0"
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-lg cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" /> Add Subject
             </button>
@@ -2109,7 +2109,7 @@ export const AttendanceTracker: React.FC = () => {
 
           {/* Add Subject Modal */}
           {isAddingSubject && (
-            <div className="bg-zinc-900/90 border border-indigo-500/40 rounded-3xl p-6 space-y-4 backdrop-blur-md">
+            <div className="bg-zinc-900/90 border border-indigo-500/40 rounded-md p-6 space-y-4 ">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-zinc-100">Add New Academic Subject</h4>
                 <button onClick={() => setIsAddingSubject(false)} className="p-1 text-zinc-500 hover:text-zinc-300 cursor-pointer">
@@ -2219,7 +2219,7 @@ export const AttendanceTracker: React.FC = () => {
                 <div
                   key={subj.id}
                   className={clsx(
-                    'bg-zinc-900/80 backdrop-blur-md border rounded-3xl p-5 shadow-xl transition-all',
+                    'bg-zinc-900/80 border rounded-md p-5 shadow-xl transition-all',
                     colors.border
                   )}
                 >
@@ -2442,7 +2442,7 @@ export const AttendanceTracker: React.FC = () => {
       {isDebanjan && activeTab === 'ai_regulator' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Action Header Card */}
-          <div className="bg-gradient-to-r from-violet-950/40 via-indigo-950/30 to-zinc-900 border border-violet-500/40 rounded-3xl p-6 backdrop-blur-md space-y-4 shadow-2xl">
+          <div className="bg-gradient-to-r from-violet-950/40 via-indigo-950/30 to-zinc-900 border border-violet-500/40 rounded-md p-6 space-y-4 shadow-2xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
@@ -2472,7 +2472,7 @@ export const AttendanceTracker: React.FC = () => {
 
                 <button
                   onClick={handleLaunchGemini}
-                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/30 transition-all cursor-pointer border border-indigo-400/40"
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-2xl text-xs sm:text-sm font-bold shadow-lg transition-all cursor-pointer border border-indigo-400/40"
                 >
                   <Sparkles className="w-4 h-4 text-violet-200" />
                   <span>Launch in Gemini Web</span>
@@ -2531,7 +2531,7 @@ export const AttendanceTracker: React.FC = () => {
           </div>
 
           {/* Dossier Preview Container */}
-          <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 backdrop-blur-md space-y-3">
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-md p-6 space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-bold text-zinc-200 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-zinc-400" /> AI Regulatory Prompt Payload
@@ -2551,7 +2551,7 @@ export const AttendanceTracker: React.FC = () => {
       {/* Institution Profile Customization Modal */}
       {isEditingProfile && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-md max-w-md w-full p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
               <div className="flex items-center gap-2.5">
                 <School className="w-5 h-5 text-indigo-400" />

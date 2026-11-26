@@ -232,10 +232,10 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
       const problems = entry?.problems || 0;
 
       let level = 0;
-      if (minutes >= 240) level = 4;      // 4+ hours (Mastery)
+      if (minutes >= 240) level = 4; // 4+ hours (Mastery)
       else if (minutes >= 150) level = 3; // 2.5h - 4h (Deep Focus)
-      else if (minutes >= 60) level = 2;  // 1h - 2.5h (Solid Session)
-      else if (minutes > 0) level = 1;    // < 1h (Review / Quick)
+      else if (minutes >= 60) level = 2; // 1h - 2.5h (Solid Session)
+      else if (minutes > 0) level = 1; // < 1h (Review / Quick)
 
       currentWeek.push({
         date: day,
@@ -280,7 +280,7 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
         const monthKey = format(validDay.date, 'MMM-yyyy');
         if (monthKey !== lastMonthKey) {
           const monthAbbr = format(validDay.date, 'MMM');
-          const yearNum   = validDay.date.getFullYear();
+          const yearNum = validDay.date.getFullYear();
           const yearShort = String(yearNum).slice(-2);
           // Show year when year changes (Jan boundary OR first label)
           const showYear = yearNum !== lastYear;
@@ -432,7 +432,7 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
   const modalFormattedDate = modalDate && isValid(parseISO(modalDate)) ? format(parseISO(modalDate), 'EEEE, MMMM dd, yyyy') : modalDate;
 
   return (
-    <div className={`bg-zinc-900/70 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-5 ${className}`}>
+    <div className={`bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-5 ${className}`}>
       {/* Top Metrics Header Row */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-zinc-800/80 pb-4">
         <div className="flex items-center gap-3">
@@ -570,7 +570,7 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
               <div className="w-3 h-3 rounded-sm bg-indigo-950 border border-indigo-900/60" title="1-59 min" />
               <div className="w-3 h-3 rounded-sm bg-indigo-800 border border-indigo-700" title="1h - 2.5h" />
               <div className="w-3 h-3 rounded-sm bg-indigo-600 border border-indigo-500" title="2.5h - 4h" />
-              <div className="w-3 h-3 rounded-sm bg-indigo-500 border border-indigo-400 shadow-sm shadow-indigo-500/50" title="4h+ (Mastery)" />
+              <div className="w-3 h-3 rounded-sm bg-indigo-500 border border-indigo-400 shadow-sm " title="4h+ (Mastery)" />
               <span className="text-zinc-400">More (4h+)</span>
             </div>
           </div>
@@ -579,7 +579,7 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
 
       {/* Date Inspector & Editor Modal */}
       {modalDate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 animate-in fade-in duration-200">
           <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6">
             
             {/* Modal Header */}

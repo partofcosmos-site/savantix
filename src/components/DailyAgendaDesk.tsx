@@ -186,7 +186,7 @@ export const DailyAgendaDesk: React.FC<{ selectedDate: string }> = ({ selectedDa
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
       {/* 1. Daily Study Agenda Checklist */}
-      <div className="lg:col-span-2 bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
+      <div className="lg:col-span-2 bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
@@ -209,7 +209,7 @@ export const DailyAgendaDesk: React.FC<{ selectedDate: string }> = ({ selectedDa
             <button
               type="button"
               onClick={() => setIsAddingOpen(!isAddingOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-md shadow-indigo-600/20"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-md "
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Target</span>
@@ -220,7 +220,7 @@ export const DailyAgendaDesk: React.FC<{ selectedDate: string }> = ({ selectedDa
         {/* Progress Bar */}
         <div className="w-full bg-zinc-950/80 rounded-full h-2 border border-zinc-800/80 overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-indigo-500 via-indigo-400 to-emerald-400 transition-all duration-500"
+            className="h-full bg-indigo-600 transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>

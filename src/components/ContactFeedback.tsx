@@ -434,7 +434,7 @@ export const ContactFeedback: React.FC = () => {
       color: 'text-indigo-400',
       bgColor: 'bg-indigo-500/10',
       borderColor: 'border-indigo-500/30',
-      activeBg: 'bg-indigo-600/20 text-indigo-300 border-indigo-500/50 shadow-indigo-500/10',
+      activeBg: 'bg-indigo-600/20 text-indigo-300 border-indigo-500/50 ',
       description: 'IPhO Physics, JEE Advanced, STEM research, or pedagogy'
     },
     {
@@ -480,10 +480,10 @@ export const ContactFeedback: React.FC = () => {
         {/* Floating Toast Notification */}
         {toastMessage && (
           <div className={clsx(
-            "fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2.5 backdrop-blur-md transition-all animate-in fade-in slide-in-from-top-3 border",
+            "fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2.5 transition-all animate-in fade-in slide-in-from-top-3 border",
             toastMessage.type === 'success' && "bg-emerald-950/90 text-emerald-200 border-emerald-500/50 shadow-emerald-900/30",
             toastMessage.type === 'error' && "bg-rose-950/90 text-rose-200 border-rose-500/50 shadow-rose-900/30",
-            toastMessage.type === 'info' && "bg-indigo-950/90 text-indigo-200 border-indigo-500/50 shadow-indigo-900/30"
+            toastMessage.type === 'info' && "bg-indigo-950/90 text-indigo-200 border-indigo-500/50 "
           )}>
             {toastMessage.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
             {toastMessage.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />}
@@ -571,7 +571,7 @@ export const ContactFeedback: React.FC = () => {
             
             {/* VIEW 1: FORM SUBMISSION */}
             {activeView === 'form' && (
-              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
                 
                 {/* Category Pills */}
                 <div className="mb-6">
@@ -934,7 +934,7 @@ export const ContactFeedback: React.FC = () => {
                           "px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer",
                           isSubmitting
                             ? "bg-indigo-700 text-indigo-200 cursor-not-allowed opacity-75"
-                            : "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-500/20"
+                            : "bg-indigo-600 hover:bg-indigo-500 text-white "
                         )}
                       >
                         {isSubmitting ? (
@@ -958,7 +958,7 @@ export const ContactFeedback: React.FC = () => {
 
             {/* VIEW 2: SUBMISSION HISTORY */}
             {activeView === 'history' && (
-              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
                   <div>
                     <h2 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
@@ -1106,7 +1106,7 @@ export const ContactFeedback: React.FC = () => {
 
             {/* VIEW 3: FAQ & GUARANTEES */}
             {activeView === 'faq' && (
-              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+              <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
                 <div className="pb-4 border-b border-zinc-800">
                   <h2 className="text-lg font-bold text-zinc-100 flex items-center gap-2">
                     <HelpCircle className="w-5 h-5 text-indigo-400" />
@@ -1158,7 +1158,7 @@ export const ContactFeedback: React.FC = () => {
               
               <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-0.5 shadow-lg shadow-indigo-500/20">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-600 p-0.5 shadow-lg ">
                     <div className="w-full h-full bg-zinc-950 rounded-[14px] flex items-center justify-center">
                       <Zap className="w-6 h-6 text-indigo-400" />
                     </div>

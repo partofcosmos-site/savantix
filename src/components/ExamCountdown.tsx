@@ -85,7 +85,7 @@ export const ExamCountdown: React.FC = () => {
   };
 
   return (
-    <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
+    <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-xl space-y-6">
       <div className="flex items-center justify-between border-b border-zinc-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
@@ -190,7 +190,7 @@ export const ExamCountdown: React.FC = () => {
             return (
               <div
                 key={exam.id}
-                className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-5 space-y-4 relative group hover:border-zinc-700 transition-all shadow-md"
+                className="bg-zinc-950/60 border border-zinc-800/80 rounded-2xl p-5 space-y-4 relative group hover:border-zinc-700 transition-all shadow-md"
               >
                 {isEditing === exam.id ? (
                   <div className="space-y-3">

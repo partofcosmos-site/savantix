@@ -276,7 +276,7 @@ export const MicroLoggerModal: React.FC<MicroLoggerModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/70 backdrop-blur-md transition-all duration-200"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/70 transition-all duration-200"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

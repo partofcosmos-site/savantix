@@ -90,7 +90,7 @@ export const DeepWorkFortress: React.FC<DeepWorkFortressProps> = ({ onClose }) =
         </button>
         
         {showFormulas && (
-          <div className="flex-1 bg-zinc-900/80 backdrop-blur-md rounded-xl border border-zinc-800 p-4 overflow-y-auto scrollbar-thin text-sm text-zinc-300 prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+          <div className="flex-1 bg-zinc-900/80 rounded-xl border border-zinc-800 p-4 overflow-y-auto scrollbar-thin text-sm text-zinc-300 prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
             <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
               {FORMULA_SHEET}
             </ReactMarkdown>
@@ -99,7 +99,7 @@ export const DeepWorkFortress: React.FC<DeepWorkFortressProps> = ({ onClose }) =
       </div>
 
       <div className="absolute top-24 bottom-6 right-6 w-80 flex flex-col z-[55]">
-        <div className="flex-1 bg-zinc-900/80 backdrop-blur-md rounded-xl border border-zinc-800 flex flex-col overflow-hidden">
+        <div className="flex-1 bg-zinc-900/80 rounded-xl border border-zinc-800 flex flex-col overflow-hidden">
           <div className="p-3 border-b border-zinc-800 flex items-center gap-2 text-zinc-400 font-medium text-sm">
             <Edit3 className="w-4 h-4" /> KaTeX Scratchpad
           </div>

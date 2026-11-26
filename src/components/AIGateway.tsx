@@ -22,7 +22,7 @@ export interface AIService {
   name: string;
   shortName: string;
   description: string;
-  color: string;       // Tailwind gradient class
+  color: string; // Tailwind gradient class
   textColor: string;
   emoji: string;
   // If provided, query is appended to this URL directly
@@ -611,14 +611,14 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 animate-fadeIn">
       <div className="bg-zinc-900 border border-zinc-700/80 rounded-2xl w-full max-w-4xl max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
         
         {/* Header */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-zinc-800 bg-zinc-950/70 space-y-2 sm:space-y-0">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-600/30 shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shrink-0">
                 <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <div className="min-w-0">
@@ -791,7 +791,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                   type="button"
                   onClick={handleSolveInApp}
                   disabled={!query.trim()}
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/30 flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer disabled:cursor-not-allowed shrink-0"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                   <span>Solve In-App (KaTeX)</span>
@@ -858,7 +858,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
             isSolvingInApp ? (
               /* Live Socratic Synthesis Loader */
               <div className="bg-zinc-950/90 border border-indigo-500/40 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 text-center animate-fadeIn min-h-[320px]">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shadow-lg shadow-indigo-500/20 animate-pulse">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shadow-lg animate-pulse">
                   <Sparkles className="w-7 h-7 text-indigo-400 animate-spin" />
                 </div>
                 <div className="space-y-1 max-w-md">
@@ -1150,7 +1150,7 @@ export const AIGatewayButton: React.FC<AIGatewayButtonProps> = ({ query }) => {
       {/* Floating Button — compact icon on mobile, pill with label on desktop */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center gap-2 p-3 sm:px-4 sm:py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-full sm:rounded-2xl shadow-2xl shadow-indigo-600/30 transition-all hover:scale-105 active:scale-95 cursor-pointer font-semibold text-sm"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center justify-center gap-2 p-3 sm:px-4 sm:py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full sm:rounded-2xl shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer font-semibold text-sm"
         title="AI Gateway & Socratic STEM Solver (Alt+G)"
       >
         <Globe className="w-5 h-5 sm:w-4 sm:h-4" />

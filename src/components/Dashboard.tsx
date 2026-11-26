@@ -297,8 +297,8 @@ export const Dashboard = () => {
   }, []);
 
   const currentZone = useMemo(() => getCurrentZone(now), [now]);
-  const nextZone    = useMemo(() => getNextZone(currentZone), [currentZone]);
-  const minsLeft    = useMemo(() => getMinutesUntilNextZone(now, currentZone), [now, currentZone]);
+  const nextZone = useMemo(() => getNextZone(currentZone), [currentZone]);
+  const minsLeft = useMemo(() => getMinutesUntilNextZone(now, currentZone), [now, currentZone]);
   const weakSubjects = useMemo(() => getWeakSubjectsFromLogs(logs), [logs]);
   const circadianRecs = useMemo(() => getPersonalizedRecommendations(currentZone, weakSubjects), [currentZone, weakSubjects]);
   const circadianTimeline = useMemo(() => buildTimeline(currentZone), [currentZone]);
@@ -327,7 +327,7 @@ export const Dashboard = () => {
                 onClick={handleQuickReanalyzeInsights}
                 disabled={isReanalyzingInsights}
                 title="Re-evaluate cumulative daily performance with latest logs"
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white rounded-full text-xs font-bold transition-all shadow-md shadow-indigo-600/20 hover:scale-[1.02] cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-xs font-bold transition-all shadow-md hover:scale-[1.02] cursor-pointer"
               >
                 {isReanalyzingInsights ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -341,7 +341,7 @@ export const Dashboard = () => {
               type="date" 
               value={selectedDate} 
               onChange={(e) => handleDateChange(e.target.value)}
-              className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-full px-4 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-inner"
+              className="bg-zinc-900/60 border border-zinc-800/80 rounded-full px-4 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-inner"
             />
           </div>
         </header>
@@ -354,11 +354,11 @@ export const Dashboard = () => {
           <div className="p-6 relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl shadow-lg">
+                <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg">
                   <Sun className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-violet-200">
+                  <h2 className="text-lg font-bold text-transparent bg-clip-text bg-indigo-600">
                     Morning Revision Sprint 
                   </h2>
                   <p className="text-xs text-indigo-200/60 mt-0.5">
@@ -433,7 +433,7 @@ export const Dashboard = () => {
         {/* ========================================================================= */}
         {/* R5: ELASTIC STREAK HEALTH BAR & RESILIENCE TOKEN ENGINE HUB */}
         {/* ========================================================================= */}
-        <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-900/70 to-zinc-950 border border-zinc-800/90 rounded-2xl p-6 shadow-2xl backdrop-blur-md space-y-6 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-900/70 to-zinc-950 border border-zinc-800/90 rounded-2xl p-6 shadow-2xl space-y-6 relative overflow-hidden">
           
           {/* Ambient Glow Background Accent */}
           <div 
@@ -671,7 +671,7 @@ export const Dashboard = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
             <div className="p-3 bg-blue-500/10 rounded-full border border-blue-500/20">
               <Clock className="w-6 h-6 text-blue-400" />
             </div>
@@ -680,7 +680,7 @@ export const Dashboard = () => {
               <p className="text-2xl font-bold text-zinc-100">{Math.floor(totalMinutes / 60)}h {totalMinutes % 60}m</p>
             </div>
           </div>
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
             <div className="p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
               <CheckCircle2 className="w-6 h-6 text-emerald-400" />
             </div>
@@ -689,7 +689,7 @@ export const Dashboard = () => {
               <p className="text-2xl font-bold text-zinc-100">{totalProblems}</p>
             </div>
           </div>
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
             <div className="p-3 bg-purple-500/10 rounded-full border border-purple-500/20">
               <BookOpen className="w-6 h-6 text-purple-400" />
             </div>
@@ -698,7 +698,7 @@ export const Dashboard = () => {
               <p className="text-2xl font-bold text-zinc-100">{subjects.length}</p>
             </div>
           </div>
-          <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
             <div className="p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
               <Scale className="w-6 h-6 text-emerald-400" />
             </div>
@@ -724,7 +724,7 @@ export const Dashboard = () => {
         </div>
 
         {/* 52-Week Study Streak Heatmap */}
-        <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-xl">
+        <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-xl">
           <StudyHeatmap logs={logs} selectedDate={selectedDate} onSelectDate={handleDateChange} />
         </div>
 
@@ -735,7 +735,7 @@ export const Dashboard = () => {
           <div className="lg:col-span-2 space-y-8">
             
             {/* Subject Equilibrium Status & PID Next-Day Prescription Banner */}
-            <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/70 to-zinc-950 border border-zinc-800/90 rounded-2xl p-5 shadow-xl space-y-4 backdrop-blur-md relative overflow-hidden">
+            <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/70 to-zinc-950 border border-zinc-800/90 rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 shrink-0">
@@ -780,7 +780,7 @@ export const Dashboard = () => {
           <div className="space-y-6">
             
             {/* Recent Logs */}
-            <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-6 shadow-lg">
+            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Sessions</h3>
@@ -895,7 +895,7 @@ export const Dashboard = () => {
 
 
         {/* ================================================================= */}
-        {/* CIRCADIAN COGNITIVE LOAD SCHEDULER                                */}
+        {/* CIRCADIAN COGNITIVE LOAD SCHEDULER */}
         {/* ================================================================= */}
         <div className={`relative rounded-2xl overflow-hidden shadow-2xl border ${currentZone.borderColor} ${currentZone.bgColor}`}>
           <div

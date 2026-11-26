@@ -216,7 +216,7 @@ export const Settings = () => {
                 key={prov.id}
                 className={`p-4 rounded-xl border transition-all ${
                   prov.isDefault
-                    ? 'bg-zinc-950/80 border-indigo-500/50 shadow-sm shadow-indigo-500/10'
+                    ? 'bg-zinc-950/80 border-indigo-500/50 shadow-sm '
                     : 'bg-zinc-950/40 border-zinc-800/80 hover:border-zinc-700'
                 }`}
               >
@@ -389,7 +389,7 @@ export const Settings = () => {
                   }
                 }}
                 disabled={syncStatus?.isSyncing}
-                className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-xs font-semibold transition-all shadow-md shadow-indigo-600/20 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-xs font-semibold transition-all shadow-md cursor-pointer"
                 title="Force instant bidirectional cloud synchronization across all devices"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${syncStatus?.isSyncing ? 'animate-spin' : ''}`} />
