@@ -552,6 +552,41 @@ export const Goals = () => {
           </div>
         </div>
 
+        {/* GOALS EXECUTION TELEMETRY STRIP */}
+        {(() => {
+          const allG = goals || [];
+          const doneG = allG.filter((g: any) => g.completed).length;
+          const activeG = allG.length - doneG;
+          const pct = allG.length > 0 ? Math.round((doneG / allG.length) * 100) : 0;
+          const todayIso = new Date().toISOString().slice(0, 10);
+          const overdueG = allG.filter((g: any) => !g.completed && g.targetDate && String(g.targetDate) < todayIso).length;
+          return (
+            <div className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-[8px] p-4 grid grid-cols-2 sm:grid-cols-4 gap-4 items-center">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">Active Goals</div>
+                <div className="font-mono text-lg font-semibold text-[var(--sx-ink)] mt-0.5">{activeG}</div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">Completed</div>
+                <div className="font-mono text-lg font-semibold text-[var(--sx-safe)] mt-0.5">{doneG} / {allG.length}</div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">Overdue</div>
+                <div className={`font-mono text-lg font-semibold mt-0.5 ${overdueG > 0 ? 'text-[var(--sx-fault)]' : 'text-[var(--sx-ink-secondary)]'}`}>{overdueG}</div>
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">
+                  <span>Completion</span>
+                  <span className="text-[var(--sx-ink)] font-semibold">{pct}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-[var(--sx-elevated)] border border-[var(--sx-hairline)] overflow-hidden">
+                  <div className="h-full transition-all duration-300" style={{ width: `${pct}%`, backgroundColor: 'var(--sx-safe)' }} />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Filter, Search and Category Pills */}
         <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
           
