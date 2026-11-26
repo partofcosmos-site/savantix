@@ -31,6 +31,17 @@ export const Settings = () => {
   // Paste / Snippet Importer State
   const [snippetText, setSnippetText] = useState('');
   const [showSnippetModal, setShowSnippetModal] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowSnippetModal(false);
+        setEditingProvider(null);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const [snippetMessage, setSnippetMessage] = useState<string | null>(null);
 
   useEffect(() => {

@@ -68,8 +68,9 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
       } else if (e.key === '?' && !['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement)?.tagName || '')) {
         e.preventDefault();
         setIsShortcutsOpen((prev) => !prev);
-      } else if (e.key === 'Escape' && isShortcutsOpen) {
+      } else if (e.key === 'Escape') {
         setIsShortcutsOpen(false);
+        setIsMicroLoggerOpen(false);
       }
     };
 
