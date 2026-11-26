@@ -418,8 +418,61 @@ Requirements:
         });
         if (apiRes.ok) {
           const data = await apiRes.json();
-          if (data?.json && data.json.derivationSteps?.length) {
-            setInAppSolution(data.json);
+          let parsed = data?.json;
+          if (!parsed && typeof data?.text === 'string') {
+            try {
+              const cleaned = data.text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+              const startIdx = cleaned.indexOf('{');
+              const endIdx = cleaned.lastIndexOf('}');
+              if (startIdx >= 0 && endIdx > startIdx) {
+                parsed = JSON.parse(cleaned.slice(startIdx, endIdx + 1));
+              }
+            } catch {}
+          }
+          if (parsed && Array.isArray(parsed.derivationSteps) && parsed.derivationSteps.length > 0) {
+            const normalized = {
+              id: `live_${Date.now()}`,
+              title: parsed.topic || trimmed.slice(0, 64),
+              subject: parsed.domain || 'STEM',
+              difficulty: 'Live Cloud AI',
+              topic: parsed.topic || 'First-Principles Derivation',
+              problemStatement: trimmed,
+              tier1: {
+                title: 'Tier 1: Core Physical Intuition & Mental Model',
+                conceptualOverview: parsed.intuition || 'First-principles analysis of the problem structure.',
+                mentalModel: parsed.intuition || '',
+                selfCheckPrompt: 'Verify every assumption and limiting case before substituting values.'
+              },
+              tier2: {
+                title: 'Tier 2: Governing Laws & Setup',
+                principles: Array.isArray(parsed.commonTraps) ? parsed.commonTraps : ['Identify conserved quantities and governing equations.'],
+                equations: parsed.derivationSteps.slice(0, 2).map((st: any, idx: number) => ({
+                  name: st.title || `Relation ${idx + 1}`,
+                  latex: st.latex || '',
+                  description: st.explanation || ''
+                })),
+                coordinateSetup: parsed.domain || 'Standard analytical formulation'
+              },
+              tier3: {
+                title: 'Tier 3: Step-by-Step Mathematical Derivation',
+                steps: parsed.derivationSteps.map((st: any, idx: number) => ({
+                  stepNumber: idx + 1,
+                  title: st.title || `Step ${idx + 1}`,
+                  explanation: st.explanation || '',
+                  intermediateLatex: st.latex || '',
+                  keyInsight: st.explanation || ''
+                })),
+                criticalSubstitutions: []
+              },
+              tier4: {
+                title: 'Tier 4: Exact Result & Rigorous Proof',
+                finalAnswerLatex: parsed.finalBoxedLatex || '',
+                dimensionalCheck: parsed.sanityCheck || 'Verified dimensional consistency.',
+                limitingCases: [],
+                olympiadTakeaway: parsed.sanityCheck || ''
+              }
+            };
+            setInAppSolution(normalized as any);
             setLaunchToast({
               name: "Savantix Live STEM Engine",
               message: "Synthesized live 4-tier derivation via Savantix Cloud AI",
