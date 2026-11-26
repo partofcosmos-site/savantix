@@ -1,5 +1,5 @@
 import { parseFlexibleAbsenceDates } from '../utils/dateParser';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo , useRef } from 'react';
 import {
   School, Calendar, Award, Sparkles, TrendingUp, TrendingDown,
   AlertTriangle, CheckCircle2, Clock, ShieldAlert, FileText, Copy,
@@ -77,6 +77,7 @@ export const AttendanceTracker: React.FC = () => {
   const isDebanjan = isDebanjanAccount(userIdentifier);
 
   const [state, setState] = useState<InstitutionalAttendanceState>(() => loadInstitutionalState(userIdentifier));
+  const isSelfSavingRef = useRef<boolean>(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>('locked_matrix');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
@@ -150,6 +151,7 @@ export const AttendanceTracker: React.FC = () => {
   // Reload state if active account changes (e.g. login/logout) or another tab updates
   useEffect(() => {
     const refreshFromStorage = () => {
+      if (isSelfSavingRef.current) return;
       setState(loadInstitutionalState(userIdentifier));
     };
 
@@ -218,7 +220,12 @@ export const AttendanceTracker: React.FC = () => {
 
   // Save to storage on changes and sync to Native Android/iOS Widget
   useEffect(() => {
-    saveInstitutionalState(state, userIdentifier);
+    isSelfSavingRef.current = true;
+    try {
+      saveInstitutionalState(state, userIdentifier);
+    } finally {
+      isSelfSavingRef.current = false;
+    }
     const m = computeLiveMetrics(state);
     WidgetSyncService.syncToNativeWidget({
       effectivePct: m.effectivePct,

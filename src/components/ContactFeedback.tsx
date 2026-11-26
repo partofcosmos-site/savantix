@@ -374,11 +374,13 @@ export const ContactFeedback: React.FC = () => {
         throw new Error(data.message || 'FormSubmit endpoint returned an error response.');
       }
     } catch (err: any) {
-      console.error('FormSubmit dispatch failed:', err);
-      setSubmitError(
-        err.message || 'Network dispatch encountered an issue. You can instantly use the 1-Click Mailto or Clipboard fallback below!'
-      );
-      showToast('Submission issue detected. Fallback options available.', 'error');
+      console.warn('FormSubmit relay unavailable, saved locally:', err?.message || err);
+      const localTicket = saveTicketToHistory('Clipboard Export');
+      setSubmitSuccess(localTicket);
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      setHasDraft(false);
+      setSubmitError(null);
+      showToast('Saved to local ticket history. Use 1-Click Mailto or Copy to send directly.', 'info');
     } finally {
       setIsSubmitting(false);
     }
