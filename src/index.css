@@ -407,3 +407,13 @@ input:focus, textarea:focus, select:focus {
   color: var(--sx-ink) !important;
   font-weight: 600;
 }
+
+
+/* 12. Guarantee Gradient-Clipped Text Never Becomes Invisible */
+.text-transparent.bg-clip-text,
+.bg-clip-text.text-transparent {
+  color: var(--sx-ink) !important;
+  -webkit-text-fill-color: var(--sx-ink) !important;
+  background-color: transparent !important;
+  background-clip: border-box !important;
+}

@@ -7,6 +7,7 @@ import { ExamCountdown } from './ExamCountdown';
 import { useAppContext } from '../context/AppContext';
 import { format, subDays, parseISO, isValid, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
 import { generateMorningRevisionSprint } from '../utils/fsrsEngine';
+import { parseQuickStudyLog } from '../utils/quickLogParser';
 import { UniversalAIService } from '../services/universalAIService';
 import {
   Clock,
@@ -82,6 +83,33 @@ export const Dashboard = () => {
   const [targetInput, setTargetInput] = useState(String(elasticStreak?.targetMinutesDaily || 120));
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isReanalyzingInsights, setIsReanalyzingInsights] = useState(false);
+  const [quickLogInput, setQuickLogInput] = useState('');
+  const [isQuickLogging, setIsQuickLogging] = useState(false);
+  const parsedQuickLog = useMemo(() => parseQuickStudyLog(quickLogInput), [quickLogInput]);
+
+  const handleQuickLogSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!parsedQuickLog || isQuickLogging) return;
+    setIsQuickLogging(true);
+    try {
+      await addLog({
+        date: selectedDate || format(new Date(), 'yyyy-MM-dd'),
+        subject: parsedQuickLog.subject,
+        topic: parsedQuickLog.topic,
+        durationMinutes: parsedQuickLog.durationMinutes,
+        problemsSolved: parsedQuickLog.problemsSolved,
+        accuracyPercent: parsedQuickLog.accuracyPercent,
+        rawText: quickLogInput.trim(),
+      });
+      setQuickLogInput('');
+      showToast(`Logged ${parsedQuickLog.durationMinutes}m · ${parsedQuickLog.subject} (${parsedQuickLog.topic})`);
+    } catch (err) {
+      console.error('Quick log failed:', err);
+      showToast('Could not save quick log.');
+    } finally {
+      setIsQuickLogging(false);
+    }
+  };
 
   // Rolling 7-Day Logs for Dynamic Subject Equilibrium Matrix
   const logs7Days = useMemo(() => {
@@ -346,6 +374,73 @@ export const Dashboard = () => {
           </div>
         </header>
 
+        {/* DAILY FOCUS COMMAND STRIP — Target Progress + 1-Line Quick Log */}
+        {(() => {
+          const targetMins = Math.max(15, elasticStreak?.targetMinutesDaily || 120);
+          const pct = Math.min(100, Math.round((totalMinutes / targetMins) * 100));
+          const rem = Math.max(0, targetMins - totalMinutes);
+          return (
+            <section className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-[8px] p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+              <div className="lg:col-span-5 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">
+                    Daily Target Progress
+                  </span>
+                  <span className="font-mono font-semibold text-[var(--sx-ink)]">
+                    {totalMinutes}m / {targetMins}m ({pct}%)
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-[var(--sx-elevated)] overflow-hidden border border-[var(--sx-hairline)]">
+                  <div
+                    className="h-full transition-all duration-300"
+                    style={{
+                      width: `${pct}%`,
+                      backgroundColor: pct >= 100 ? 'var(--sx-safe)' : 'var(--sx-signal)',
+                    }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-[var(--sx-ink-secondary)]">
+                  <span>{rem === 0 ? 'Daily target hit.' : `${rem}m left to hit today's target`}</span>
+                  <span className="font-mono">{totalProblems} Qs · {todayLogs.length} session(s)</span>
+                </div>
+              </div>
+
+              <form onSubmit={handleQuickLogSubmit} className="lg:col-span-7 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={quickLogInput}
+                    onChange={(e) => setQuickLogInput(e.target.value)}
+                    placeholder='Quick log: "45m physics optics 15q 85%" or "1.5h math calculus"'
+                    aria-label="Natural language quick study log"
+                    className="flex-1 px-3 py-2 text-xs sm:text-sm rounded-[5px] border border-[var(--sx-border)] bg-[var(--sx-elevated)] text-[var(--sx-ink)]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!parsedQuickLog || isQuickLogging}
+                    className="sx-btn-primary px-4 py-2 rounded-[5px] text-xs font-semibold cursor-pointer disabled:opacity-40 shrink-0"
+                  >
+                    {isQuickLogging ? 'Saving...' : 'Quick Log'}
+                  </button>
+                </div>
+                {parsedQuickLog ? (
+                  <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-[var(--sx-safe)]">
+                    <span>Parsed: {parsedQuickLog.durationMinutes}m</span>
+                    <span>· {parsedQuickLog.subject}</span>
+                    <span>· {parsedQuickLog.topic}</span>
+                    {parsedQuickLog.problemsSolved > 0 && <span>· {parsedQuickLog.problemsSolved}Q</span>}
+                    {parsedQuickLog.accuracyPercent !== undefined && <span>· {parsedQuickLog.accuracyPercent}%</span>}
+                  </div>
+                ) : (
+                  <p className="font-mono text-[10px] text-[var(--sx-ink-muted)]">
+                    Press Enter to log directly to {selectedDate}
+                  </p>
+                )}
+              </form>
+            </section>
+          );
+        })()}
+
         {/* ========================================================================= */}
         {/* FSRS-STEM NEURO-INTERLEAVED SPRINT */}
         {/* ========================================================================= */}
@@ -358,7 +453,7 @@ export const Dashboard = () => {
                   <Sun className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-transparent bg-clip-text bg-indigo-600">
+                  <h2 className="text-lg font-bold text-[var(--sx-ink)]">
                     Morning Revision Sprint 
                   </h2>
                   <p className="text-xs text-indigo-200/60 mt-0.5">

@@ -853,7 +853,79 @@ export const Analytics = () => {
         </div>
 
         {/* Dynamic Key Performance Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* WEEK-OVER-WEEK STUDY MOMENTUM STRIP */}
+        {(() => {
+          const now = new Date();
+          const curStart = startOfDay(subDays(now, 6));
+          const curEnd = endOfDay(now);
+          const prevStart = startOfDay(subDays(now, 13));
+          const prevEnd = endOfDay(subDays(now, 7));
+
+          let curMins = 0, prevMins = 0, curProbs = 0, prevProbs = 0;
+          const activeDays = new Set<string>();
+          const subjMins = new Map<string, number>();
+
+          (logs || []).forEach((l: any) => {
+            if (!l?.date) return;
+            const d = parseISO(String(l.date).slice(0, 10));
+            if (!isValid(d)) return;
+            const m = Math.max(0, Number(l.durationMinutes) || 0);
+            const p = Math.max(0, Number(l.problemsSolved) || 0);
+            if (isWithinInterval(d, { start: curStart, end: curEnd })) {
+              curMins += m;
+              curProbs += p;
+              activeDays.add(String(l.date).slice(0, 10));
+              const s = (l.subject || 'General').trim();
+              subjMins.set(s, (subjMins.get(s) || 0) + m);
+            } else if (isWithinInterval(d, { start: prevStart, end: prevEnd })) {
+              prevMins += m;
+              prevProbs += p;
+            }
+          });
+
+          const curHrs = (curMins / 60).toFixed(1);
+          const deltaHrs = ((curMins - prevMins) / 60).toFixed(1);
+          const deltaProbs = curProbs - prevProbs;
+          const sortedSubj = Array.from(subjMins.entries()).sort((a, b) => b[1] - a[1]);
+          const topSubj = sortedSubj[0] ? `${sortedSubj[0][0]} (${(sortedSubj[0][1] / 60).toFixed(1)}h)` : 'No logs yet';
+
+          return (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-[8px] p-4">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">7-Day Focus Volume</div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="font-mono text-lg font-semibold text-[var(--sx-ink)]">{curHrs}h</span>
+                  <span className={`font-mono text-xs font-medium ${curMins >= prevMins ? 'text-[var(--sx-safe)]' : 'text-[var(--sx-fault)]'}`}>
+                    {curMins >= prevMins ? '+' : ''}{deltaHrs}h vs prior 7d
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">7-Day Problems Solved</div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="font-mono text-lg font-semibold text-[var(--sx-ink)]">{curProbs}</span>
+                  <span className={`font-mono text-xs font-medium ${deltaProbs >= 0 ? 'text-[var(--sx-safe)]' : 'text-[var(--sx-fault)]'}`}>
+                    {deltaProbs >= 0 ? '+' : ''}{deltaProbs} vs prior 7d
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">Consistency (Last 7d)</div>
+                <div className="font-mono text-lg font-semibold text-[var(--sx-ink)] mt-1">
+                  {activeDays.size} / 7 <span className="text-xs font-normal text-[var(--sx-ink-secondary)]">active days</span>
+                </div>
+              </div>
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">Top Focus Subject</div>
+                <div className="font-mono text-sm font-semibold text-[var(--sx-signal-text)] mt-1.5 truncate">
+                  {topSubj}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Total Study Time */}
           <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-2xl p-5 relative overflow-hidden group hover:border-zinc-700 transition-all shadow-lg">
