@@ -125,6 +125,18 @@ export const AttendanceTracker: React.FC = () => {
 
   // Institution Profile Edit Modal State
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isEditingProfile && !isBulkOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsEditingProfile(false);
+        setIsBulkOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isEditingProfile, isBulkOpen]);
   const [editSchoolName, setEditSchoolName] = useState<string>('');
   const [editAffiliationNo, setEditAffiliationNo] = useState<string>('');
   const [editStream, setEditStream] = useState<string>('');
@@ -2525,6 +2537,9 @@ export const AttendanceTracker: React.FC = () => {
                 <h3 className="font-bold text-base text-zinc-100">Institution & Stream Settings</h3>
               </div>
               <button
+                type="button"
+                aria-label="Close institution profile modal"
+                title="Close"
                 onClick={() => setIsEditingProfile(false)}
                 className="p-1 text-zinc-400 hover:text-zinc-200 rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
               >

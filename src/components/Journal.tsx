@@ -716,6 +716,8 @@ export const Journal = () => {
                         <button
                           type="button"
                           onClick={() => handleRemoveTag(t)}
+                          aria-label={`Remove tag ${t}`}
+                          title={`Remove tag ${t}`}
                           className="hover:text-rose-400 transition-colors"
                         >
                           <X className="w-3 h-3" />

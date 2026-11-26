@@ -28,7 +28,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'binaural',
     tagline: 'Deep Cognitive Entrainment',
     description: '200Hz carrier with 40Hz binaural shift. Proven to enhance problem solving, working memory, and intense focus.',
-    icon: '🧠',
+    icon: '40HZ',
     freqLabel: '40 Hz Binaural'
   },
   {
@@ -37,7 +37,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'binaural',
     tagline: 'Flow State & Relaxed Alertness',
     description: '196Hz carrier with 10Hz binaural beat. Fosters effortless flow state, sustained calm, and creative thinking.',
-    icon: '🌊',
+    icon: '10HZ',
     freqLabel: '10 Hz Binaural'
   },
   {
@@ -46,7 +46,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'noise',
     tagline: 'Soothing Cosmic Rumble',
     description: 'Low-frequency 1/f² Brownian noise filtered at 400Hz. Perfect for blocking chatter, traffic, and ADHD restlessness.',
-    icon: '🪐',
+    icon: 'BRWN',
     freqLabel: '1/f² Brownian'
   },
   {
@@ -55,7 +55,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'noise',
     tagline: 'Gentle Waterfall Masking',
     description: 'Equal energy per octave (1/f). Mimics steady rainfall and leaves rustling for acoustic comfort.',
-    icon: '🍃',
+    icon: 'PINK',
     freqLabel: '1/f Pink'
   },
   {
@@ -64,7 +64,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'noise',
     tagline: 'Full Acoustic Isolation',
     description: 'Uniform spectral density across frequencies to completely mask sharp background spikes.',
-    icon: '❄️',
+    icon: 'WHTE',
     freqLabel: 'Full Spectrum'
   },
   {
@@ -73,7 +73,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'ambient',
     tagline: 'Subtle Rain & Distant Thunder',
     description: 'Synthesized organic rain textures with soft low-pass air dynamics for peaceful studying.',
-    icon: '🌧️',
+    icon: 'RAIN',
     freqLabel: 'Bio-Acoustic'
   },
   {
@@ -82,7 +82,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'ambient',
     tagline: 'Warm Harmonic Ambience',
     description: 'Subtle warm analog pad undertones combined with deep acoustic room warmth.',
-    icon: '☕',
+    icon: 'CAFE',
     freqLabel: 'Atmospheric'
   },
   {
@@ -91,7 +91,7 @@ export const SOUND_PRESETS: SoundPreset[] = [
     category: 'stream',
     tagline: 'Mellow Downtempo Lo-Fi',
     description: 'Continuous high-fidelity chill beats stream with auto-fallback to brown noise if offline.',
-    icon: '🎧',
+    icon: 'LOFI',
     freqLabel: 'Online Stream',
     isStream: true
   }

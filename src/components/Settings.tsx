@@ -487,7 +487,7 @@ export const Settings = () => {
                           window.location.reload();
                         }
                       } catch (err) {
-                        alert('Failed to parse backup JSON file.');
+                        setProfileMessage({ type: 'error', text: 'Failed to parse backup JSON file. Please select a valid Savantix JSON backup.' });
                       }
                     };
                     reader.readAsText(file);
