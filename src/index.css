@@ -1,4 +1,4 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 :root {
@@ -9,10 +9,11 @@
   --rams-hover: #eae8e2;
   --rams-ink: #141413;
   --rams-ink-secondary: #575652;
-  --rams-ink-muted: #8c8a84;
+  --rams-ink-muted: #5f5e59;
   --rams-hairline: #d5d3cb;
   --rams-border: #b8b5ac;
   --rams-signal: #ea580c;
+  --rams-signal-text: #c2410c;
   --rams-safe: #15803d;
   --rams-caution: #b45309;
   --rams-fault: #b91c1c;
@@ -197,12 +198,39 @@ button.bg-emerald-600 {
   border-color: rgba(234, 88, 12, 0.35) !important;
 }
 
+.text-indigo-200,
+.text-indigo-200\/90,
 .text-indigo-300,
 .text-indigo-400,
 .text-violet-300,
 .text-violet-400,
 .text-purple-400 {
-  color: var(--rams-signal) !important;
+  color: var(--rams-signal-text) !important;
+}
+
+.bg-indigo-950,
+.bg-indigo-950\/80,
+.bg-indigo-950\/60,
+.bg-indigo-950\/40,
+.bg-indigo-950\/30 {
+  background-color: rgba(194, 65, 12, 0.08) !important;
+}
+.border-indigo-800\/60,
+.border-indigo-800\/40,
+.border-indigo-800 {
+  border-color: rgba(194, 65, 12, 0.3) !important;
+}
+.bg-emerald-950\/80,
+.bg-emerald-950\/60,
+.bg-emerald-950 {
+  background-color: rgba(21, 128, 61, 0.08) !important;
+}
+.text-emerald-200 {
+  color: var(--rams-safe) !important;
+}
+.bg-rose-950\/60,
+.bg-rose-950 {
+  background-color: rgba(185, 28, 28, 0.08) !important;
 }
 
 /* 7. Functional Physical Signals (High Contrast on Warm Paper) */

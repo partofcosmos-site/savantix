@@ -105,7 +105,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           <span className="w-2.5 h-2.5 rounded-full bg-[#ea580c]" />
           <div>
             <h1 className="text-sm font-semibold tracking-tight text-[#141413] leading-none">Savantix</h1>
-            <p className="font-mono text-[9px] text-[#8c8a84] uppercase tracking-wider mt-0.5">
+            <p className="font-mono text-[9px] text-[#5f5e59] uppercase tracking-wider mt-0.5">
               An initiative of Part of Cosmos
             </p>
           </div>
@@ -118,7 +118,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
             className="p-2 text-[#575652] hover:text-[#141413] bg-[#ffffff] border border-[#d5d3cb] rounded-[4px] transition-colors cursor-pointer"
             title={`Cloud Sync: ${syncStatus.lastSyncedAt || 'Live'}`}
           >
-            <RefreshCw className={clsx('w-4 h-4', syncStatus.isSyncing && 'animate-spin text-[#ea580c]')} />
+            <RefreshCw className={clsx('w-4 h-4', syncStatus.isSyncing && 'animate-spin text-[#c2410c]')} />
           </button>
 
           <button
@@ -126,7 +126,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
             className="p-2 text-[#141413] bg-[#ffffff] hover:bg-[#eae8e2] border border-[#d5d3cb] rounded-[4px] transition-colors cursor-pointer"
             title="Open Micro-Logger (Alt+L)"
           >
-            <Zap className="w-4 h-4 text-[#ea580c]" />
+            <Zap className="w-4 h-4 text-[#c2410c]" />
           </button>
 
           <button
@@ -153,7 +153,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
               <span className="w-2 h-2 rounded-full bg-[#ea580c]" />
               <h1 className="text-base font-semibold tracking-tight text-[#141413]">Savantix</h1>
             </div>
-            <p className="font-mono text-[9px] text-[#8c8a84] uppercase tracking-wider mt-1">
+            <p className="font-mono text-[9px] text-[#5f5e59] uppercase tracking-wider mt-1">
               An initiative of Part of Cosmos
             </p>
           </div>
@@ -178,7 +178,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
 
         {/* Primary Workspace Navigation */}
         <nav className="flex-1 py-3 overflow-y-auto">
-          <div className="px-5 pb-1.5 font-mono text-[10px] text-[#8c8a84] tracking-wider">
+          <div className="px-5 pb-1.5 font-mono text-[10px] text-[#5f5e59] tracking-wider">
             01 / WORKSPACE
           </div>
           <div className="space-y-0.5">
@@ -199,7 +199,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
                   )}
                 >
                   <tab.icon
-                    className={clsx('w-4 h-4 shrink-0', isActive ? 'text-[#ea580c]' : 'text-[#8c8a84]')}
+                    className={clsx('w-4 h-4 shrink-0', isActive ? 'text-[#c2410c]' : 'text-[#5f5e59]')}
                     strokeWidth={1.75}
                   />
                   <span className="truncate">{tab.label}</span>
@@ -210,7 +210,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
 
           {/* Cosmic Knowledge Suite */}
           <div className="mt-4 pt-3 border-t border-[#d5d3cb]">
-            <div className="px-5 pb-1.5 font-mono text-[10px] text-[#8c8a84] tracking-wider">
+            <div className="px-5 pb-1.5 font-mono text-[10px] text-[#5f5e59] tracking-wider">
               02 / KNOWLEDGE SUITE
             </div>
             <div className="space-y-0.5">
@@ -223,10 +223,10 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
                   className="w-full flex items-center justify-between px-5 py-2 text-xs font-medium text-[#575652] hover:text-[#141413] hover:bg-[#eae8e2]/60 transition-colors duration-150"
                 >
                   <span className="flex items-center gap-2.5">
-                    <item.icon className="w-3.5 h-3.5 text-[#8c8a84]" strokeWidth={1.75} />
+                    <item.icon className="w-3.5 h-3.5 text-[#5f5e59]" strokeWidth={1.75} />
                     <span>{item.label}</span>
                   </span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-[#8c8a84]" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#5f5e59]" />
                 </a>
               ))}
             </div>
@@ -252,7 +252,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
             className="p-1 text-[#575652] hover:text-[#141413] hover:bg-[#eae8e2] rounded-[4px] transition-colors cursor-pointer"
             title="Sync now"
           >
-            <RefreshCw className={clsx('w-3.5 h-3.5', syncStatus.isSyncing && 'animate-spin text-[#ea580c]')} />
+            <RefreshCw className={clsx('w-3.5 h-3.5', syncStatus.isSyncing && 'animate-spin text-[#c2410c]')} />
           </button>
         </div>
 
@@ -264,7 +264,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
                 ? user.displayName
                 : 'Lead Scholar'}
             </span>
-            <span className="font-mono text-[10px] text-[#8c8a84] truncate">
+            <span className="font-mono text-[10px] text-[#5f5e59] truncate">
               {isFounder ? 'Core Researcher' : user?.email || 'Local Sandbox'}
             </span>
           </div>

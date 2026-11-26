@@ -12,7 +12,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#f4f3ef] flex flex-col items-center justify-center gap-3 text-[#141413]">
-        <Loader2 className="w-5 h-5 text-[#ea580c] animate-spin" />
+        <Loader2 className="w-5 h-5 text-[#c2410c] animate-spin" />
         <span className="font-mono text-xs uppercase tracking-widest text-[#575652]">
           Initializing Savantix
         </span>
@@ -61,7 +61,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
         <div className="w-full max-w-md bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] overflow-hidden">
           {/* Top Specification Strip */}
           <div className="px-6 py-3 bg-[#f4f3ef] border-b border-[#d5d3cb] flex items-center justify-between">
-            <span className="font-mono text-[11px] text-[#ea580c] font-medium tracking-wider">
+            <span className="font-mono text-[11px] text-[#c2410c] font-medium tracking-wider">
               01 / WORKBENCH ACCESS
             </span>
             <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[#575652]">
@@ -83,7 +83,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
             {errorMsg && (
               <div className="p-3 bg-[#fff7ed] border border-[#ea580c]/40 rounded-[4px] text-[#9a3412] text-xs flex items-start gap-2 leading-relaxed">
-                <AlertCircle className="w-4 h-4 text-[#ea580c] flex-shrink-0 mt-0.5" />
+                <AlertCircle className="w-4 h-4 text-[#c2410c] flex-shrink-0 mt-0.5" />
                 <span>{errorMsg}</span>
               </div>
             )}
@@ -111,7 +111,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
             {/* Hairline Divider */}
             <div className="relative flex items-center justify-center">
               <div className="border-t border-[#d5d3cb] w-full" />
-              <span className="bg-[#ffffff] px-3 font-mono text-[10px] text-[#8c8a84] uppercase tracking-widest whitespace-nowrap">
+              <span className="bg-[#ffffff] px-3 font-mono text-[10px] text-[#5f5e59] uppercase tracking-widest whitespace-nowrap">
                 Or email sync
               </span>
               <div className="border-t border-[#d5d3cb] w-full" />
@@ -120,7 +120,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
             {/* Email Sign-In Form */}
             <form onSubmit={handleEmailSubmit} className="space-y-3">
               <div className="relative">
-                <Mail className="w-4 h-4 text-[#8c8a84] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Mail className="w-4 h-4 text-[#5f5e59] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="email"
                   required
@@ -136,7 +136,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[4px] border border-[#b8b5ac] bg-[#f4f3ef] hover:bg-[#eae8e2] text-[#141413] font-medium text-sm transition-colors duration-150 cursor-pointer disabled:opacity-50"
               >
                 {isSubmittingEmail ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-[#ea580c]" />
+                  <Loader2 className="w-4 h-4 animate-spin text-[#c2410c]" />
                 ) : (
                   <>
                     <span>Sign in with email</span>
@@ -148,18 +148,18 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
             {/* Sandbox Demo Mode */}
             <div className="pt-4 border-t border-[#d5d3cb] flex items-center justify-between">
-              <span className="text-xs text-[#8c8a84]">Local sandbox, no account</span>
+              <span className="text-xs text-[#5f5e59]">Local sandbox, no account</span>
               <button
                 type="button"
                 onClick={continueAsGuest}
-                className="text-xs font-medium text-[#141413] hover:text-[#ea580c] underline underline-offset-4 cursor-pointer transition-colors"
+                className="text-xs font-medium text-[#141413] hover:text-[#c2410c] underline underline-offset-4 cursor-pointer transition-colors"
               >
                 Explore Demo Mode
               </button>
             </div>
           </div>
 
-          <div className="px-6 py-2.5 bg-[#f4f3ef] border-t border-[#d5d3cb] flex items-center justify-between font-mono text-[10px] text-[#8c8a84]">
+          <div className="px-6 py-2.5 bg-[#f4f3ef] border-t border-[#d5d3cb] flex items-center justify-between font-mono text-[10px] text-[#5f5e59]">
             <span>PART OF COSMOS INITIATIVE</span>
             <span>OFFLINE-FIRST · CLOUD SYNC</span>
           </div>

@@ -2610,7 +2610,7 @@ export const AttendanceTracker: React.FC = () => {
           <div className="w-full max-w-md bg-[#ffffff] border border-[#b8b5ac] rounded-[6px] p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-[#d5d3cb] pb-3">
               <div>
-                <span className="font-mono text-[10px] text-[#ea580c] tracking-wider">BULK ABSENCE ENTRY</span>
+                <span className="font-mono text-[10px] text-[#c2410c] tracking-wider">BULK ABSENCE ENTRY</span>
                 <h3 className="text-base font-semibold text-[#141413]">Add multiple missed dates</h3>
               </div>
               <button
