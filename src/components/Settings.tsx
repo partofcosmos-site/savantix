@@ -278,8 +278,11 @@ export const Settings = () => {
 
                     {providers.length > 1 && (
                       <button
+                        type="button"
                         onClick={() => handleDeleteProvider(prov.id)}
-                        className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-zinc-800 rounded-lg transition-colors"
+                        aria-label={`Delete ${prov.name} provider`}
+                        title={`Delete ${prov.name} provider`}
+                        className="p-1.5 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -356,10 +359,17 @@ export const Settings = () => {
               <div>
                 <h3 className="text-lg font-semibold text-zinc-100 flex items-center gap-2">
                   Multi-Device Cloud Sync & Backup
-                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Live Synced
-                  </span>
+                  {(!user || user.email === 'guest@savantix.app' || user.uid?.startsWith('demo_')) ? (
+                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-700 border border-amber-500/30 rounded-full flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                      Local Demo Sandbox
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      Live Synced
+                    </span>
+                  )}
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">
                   Connected as <span className="text-zinc-200 font-mono font-medium">{user?.email || 'Guest'}</span> • Last Synced: <span className="text-indigo-300 font-mono">{syncStatus?.lastSyncedAt || 'Just now'}</span>
@@ -529,7 +539,11 @@ export const Settings = () => {
             </div>
             <div>
               <h3 className="text-base font-medium text-zinc-100">{user?.email || 'Active User'}</h3>
-              <p className="text-xs text-zinc-500">Synced to Google Cloud Firestore</p>
+              <p className="text-xs text-zinc-500">
+                {(!user || user.email === 'guest@savantix.app' || user.uid?.startsWith('demo_'))
+                  ? 'Local browser sandbox (sign in with Google to enable cloud sync)'
+                  : 'Synced via Cloudflare KV & multi-device backup'}
+              </p>
             </div>
           </div>
 

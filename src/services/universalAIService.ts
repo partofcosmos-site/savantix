@@ -855,7 +855,7 @@ export class UniversalAIService {
     const p = prompt.toLowerCase();
 
     if (hasImages) {
-      return `### 🖼️ Multimodal Diagram & Problem Analysis
+      return `### Multimodal Diagram & Problem Analysis
 
 I have received your attached problem diagram / image for: **"${prompt.trim() || 'Uploaded STEM Question'}"**.
 
@@ -872,7 +872,7 @@ Use the **Socratic STEM Solver** scratchpad to sketch your free-body diagram or 
     }
 
     if (p.includes('rotation') || p.includes('torque') || p.includes('angular momentum') || p.includes('physics')) {
-      return `### 🌌 Physics & Mechanics Strategic Breakdown
+      return `### Physics & Mechanics Strategic Breakdown
 
 Here is the analytical framework for mastering **${prompt.trim()}**:
 
@@ -893,7 +893,7 @@ $$a_{cm} = \\frac{g \\sin\\theta}{1 + \\frac{I_{cm}}{mR^2}}$$
     }
 
     if (p.includes('calculus') || p.includes('integration') || p.includes('derivative') || p.includes('math')) {
-      return `### 📐 Mathematics & Advanced Calculus Analysis
+      return `### Mathematics & Advanced Calculus Analysis
 
 Here is the strategic solution guide for **${prompt.trim()}**:
 
@@ -910,7 +910,7 @@ $$\\frac{d}{dx} \\left[ \\int_{u(x)}^{v(x)} f(x, t)\\,dt \\right] = f(x, v(x))v'
     }
 
     if (p.includes('plan') || p.includes('schedule') || p.includes('routine') || p.includes('optimize') || p.includes('time')) {
-      return `### ⚡ Savantix Peak Study Velocity Framework
+      return `### Savantix Peak Study Velocity Framework
 
 To maximize problem-solving velocity and achieve top-percentile consistency:
 
@@ -933,7 +933,7 @@ How can I assist you right now? You can:
 * Explore learning pathways or analyze your study velocity across exam milestones.`;
     }
 
-    return `### 🧠 Savantix Strategic Recommendation
+    return `### Savantix Strategic Recommendation
 
 Regarding **"${prompt.trim()}"**:
 

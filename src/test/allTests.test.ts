@@ -110,6 +110,7 @@ async function runAllSuites() {
   console.log('===============================================================');
   if (failures === 0) {
     console.log(`✅ ALL 9 TEST SUITES (62/62 TESTS) PASSED CLEANLY IN ${elapsed}ms! (0 failures)`);
+    process.exit(0);
   } else {
     console.error(`❌ ${failures} TEST SUITE(S) FAILED`);
     process.exit(1);

@@ -21,7 +21,7 @@ export class WidgetSyncService {
         ? `Today: ${data.todayMinutes} min`
         : 'Today: Active';
       const streakStr = data.activeStreak !== undefined && data.activeStreak > 0
-        ? `🔥 ${data.activeStreak}d Streak`
+        ? `${data.activeStreak}d Streak`
         : 'CBSE XI-Science';
 
       await Preferences.set({ key: 'savantix_widget_pct', value: pctStr });

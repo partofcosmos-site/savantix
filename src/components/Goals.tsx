@@ -673,7 +673,10 @@ export const Goals = () => {
                 <span>{editingGoalId ? 'Edit Goal & Milestones' : 'Create New Target Goal'}</span>
               </h3>
               <button
-                onClick={handleCloseForm}
+                  type="button"
+                  onClick={handleCloseForm}
+                  aria-label="Close goal modal"
+                  title="Close modal"
                 className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />

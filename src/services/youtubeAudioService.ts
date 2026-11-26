@@ -30,14 +30,14 @@ export interface YouTubeTrack {
 }
 
 export const DEFAULT_USER_TAGS: string[] = [
-  '⛩️ Ghibli Piano',
-  '🍜 Naruto Lo-Fi',
-  '⚔️ Attack on Titan',
-  '🎮 Minecraft Ambience',
-  '☕ 4 A.M Study Session',
-  '🧠 40Hz Gamma Focus',
-  '🌌 Synthwave Beats',
-  '🌧️ Heavy Rain Thunder'
+  'Ghibli Piano',
+  'Naruto Lo-Fi',
+  'Attack on Titan',
+  'Minecraft Ambience',
+  '4 A.M Study Session',
+  '40Hz Gamma Focus',
+  'Synthwave Beats',
+  'Heavy Rain Thunder'
 ];
 
 export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
@@ -210,7 +210,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   // ─── LO-FI & CHILLHOP ────────────────────────────────────────────────
   {
     id: 'yt_lofi_morning_coffee',
-    title: 'Morning Coffee ☕️ [lofi hip hop]',
+    title: 'Morning Coffee [lofi hip hop]',
     artist: 'Lofi Girl',
     category: 'lofi',
     youtubeId: '1fueZCTYkpA',
@@ -219,7 +219,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   },
   {
     id: 'yt_lofi_4am_session',
-    title: '4 A.M Study Session 📚 [lofi hip hop]',
+    title: '4 A.M Study Session [lofi hip hop]',
     artist: 'Lofi Girl',
     category: 'lofi',
     youtubeId: 'TURbeWK2wwg',
@@ -228,7 +228,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   },
   {
     id: 'yt_lofi_1am_session',
-    title: '1 A.M Study Session 📚 [lofi hip hop]',
+    title: '1 A.M Study Session [lofi hip hop]',
     artist: 'Lofi Girl',
     category: 'lofi',
     youtubeId: 'lTRiuFIWV54',
@@ -246,7 +246,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   },
   {
     id: 'yt_lofi_radio',
-    title: 'lofi hip hop radio 📚 beats to relax/study to',
+    title: 'lofi hip hop radio beats to relax/study to',
     artist: 'Lofi Girl',
     category: 'lofi',
     youtubeId: 'jfKfPfyJRdk',
@@ -255,7 +255,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   },
   {
     id: 'yt_lofi_calm_piano',
-    title: 'calm piano radio 🎹 peaceful piano music',
+    title: 'calm piano radio peaceful piano music',
     artist: 'Abao in Tokyo',
     category: 'lofi',
     youtubeId: 'tfBVp0Zi2iE',
@@ -302,7 +302,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   },
   {
     id: 'yt_classical_best_of',
-    title: 'The Best of Classical Music 🎻 Mozart, Beethoven, Bach, Vivaldi',
+    title: 'The Best of Classical Music Mozart, Beethoven, Bach, Vivaldi',
     artist: 'Just Instrumental Music',
     category: 'classical',
     youtubeId: 'jgpJVI3tDbY',
@@ -389,7 +389,7 @@ export const CURATED_FOCUS_TRACKS: YouTubeTrack[] = [
   // ─── SYNTHWAVE & CYBERPUNK ────────────────────────────────────────────
   {
     id: 'yt_synthwave_radio',
-    title: 'synthwave radio 🌌 beats to chill/game to',
+    title: 'synthwave radio beats to chill/game to',
     artist: 'Lofi Girl',
     category: 'synthwave',
     youtubeId: '4xDzrJKXOOY',

@@ -328,7 +328,7 @@ export function generateGeminiRegulatoryPrompt(
     ? state.onDuty.map(od => `${od.description} (${od.startDate} to ${od.endDate}, ${od.workingDays} school days credit)`).join('; ')
     : 'None';
 
-  return `# 🏛️ SAVANTIX AEGIS: INSTITUTIONAL ATTENDANCE REGULATOR & STRATEGIC DOSSIER
+  return `# SAVANTIX AEGIS: INSTITUTIONAL ATTENDANCE REGULATOR & STRATEGIC DOSSIER
 **System Identity:** Savantix Aegis — Academic Attendance Portal
 **Generated At:** ${new Date().toISOString()} (Live Academic Ledger)
 

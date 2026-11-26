@@ -524,7 +524,10 @@ export const Journal = () => {
                 </p>
               </div>
               <button
-                onClick={handleCloseForm}
+                  type="button"
+                  onClick={handleCloseForm}
+                  aria-label="Close reflection modal"
+                  title="Close modal"
                 className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -592,7 +595,7 @@ export const Journal = () => {
                               : 'bg-zinc-900/80 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
                           }`}
                         >
-                          <span className="text-xl mb-1">{opt.emoji}</span>
+                          <span className="font-mono text-xs font-bold mb-1 px-1.5 py-0.5 rounded border border-current opacity-80">{opt.level}/5</span>
                           <span className="text-[10px] font-bold">{opt.level}</span>
                         </button>
                       );
@@ -847,7 +850,7 @@ export const Journal = () => {
                   <div className="flex flex-wrap items-center gap-2">
                     {/* Mood Badge */}
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold border ${entryMood.color}`}>
-                      <span>{entryMood.emoji}</span>
+                      <span className="font-mono text-[10px] font-bold">{entryMood.level}/5</span>
                       <span>Mood: {entryMood.level}/5</span>
                     </span>
 

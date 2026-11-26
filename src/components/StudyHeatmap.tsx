@@ -529,13 +529,23 @@ export const StudyHeatmap: React.FC<StudyHeatmapProps> = ({
                       ? `${day.dateKey}: ${hours}h (${day.minutes}m), ${day.problems} problems\nSubjects: ${day.subjects.join(', ') || 'None'}\nClick to view/edit logs`
                       : '';
 
+                    if (day.level === -1) {
+                      return (
+                        <div
+                          key={day.dateKey}
+                          aria-hidden="true"
+                          className="w-3 h-3 rounded-sm opacity-0 pointer-events-none"
+                        />
+                      );
+                    }
+
                     return (
                       <button
                         type="button"
                         key={day.dateKey}
-                        onClick={() => day.level >= 0 && handleCellClick(day.dateKey)}
-                        disabled={day.level === -1}
+                        onClick={() => handleCellClick(day.dateKey)}
                         title={tooltip}
+                        aria-label={tooltip || day.dateKey}
                         className={`w-3 h-3 rounded-sm cursor-pointer transition-all ${getLevelColor(day.level, isSelected)}`}
                       />
                     );

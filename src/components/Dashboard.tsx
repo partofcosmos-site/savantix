@@ -513,6 +513,8 @@ export const Dashboard = () => {
                     <button
                       type="button"
                       onClick={handleSaveTarget}
+                        aria-label="Save daily target"
+                        title="Save daily target"
                       className="p-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px] ml-1"
                     >
                       <Check className="w-3 h-3" />

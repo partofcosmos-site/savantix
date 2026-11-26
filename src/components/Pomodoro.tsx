@@ -1844,7 +1844,9 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                           </div>
                           <button
                             type="button"
-                            className={`p-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-colors ${
+                            aria-label={`Play ${track.title}`}
+                              title={`Play ${track.title}`}
+                              className={`p-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-colors ${
                               isSelected
                                 ? 'bg-rose-600 text-white'
                                 : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
@@ -2371,6 +2373,8 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
               <button
                 type="button"
                 onClick={handleDiscardSessionLog}
+                  aria-label="Close session summary"
+                  title="Close"
                 className="p-2 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-xl transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />

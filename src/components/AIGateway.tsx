@@ -771,7 +771,6 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                     onClick={() => handleApplyStrategy(mod)}
                     className="px-2 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded-lg text-[10px] font-medium transition-colors cursor-pointer shrink-0 flex items-center gap-1"
                   >
-                    <span>{mod.emoji}</span>
                     <span>{mod.label}</span>
                   </button>
                 ))}
@@ -821,7 +820,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                   title={`Launch ${service.name}`}
                 >
                   <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gradient-to-tr ${service.color} flex items-center justify-center shrink-0 text-xs shadow`}>
-                    <span>{service.emoji}</span>
+                    <span className="font-mono text-[10px] font-bold tracking-tight text-white">{service.shortName.slice(0, 2).toUpperCase()}</span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-xs font-semibold text-zinc-200 truncate group-hover:text-white flex items-center gap-0.5">
@@ -1008,7 +1007,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                               className="px-2.5 py-1.5 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 hover:border-indigo-500/40 rounded-lg text-xs text-zinc-200 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer group shadow-sm"
                               title={`Cross-verify derivation on ${svc.name} (Copies full proof & audit directives)`}
                             >
-                              <span>{svc.emoji}</span>
+                              <span className="font-mono text-[10px] font-bold tracking-tight text-indigo-400">{svc.shortName.slice(0, 2).toUpperCase()}</span>
                               <span className="font-medium">{svc.shortName}</span>
                               <ArrowUpRight className="w-3 h-3 text-zinc-500 group-hover:text-indigo-400 transition-colors" />
                             </button>
@@ -1065,7 +1064,7 @@ Final Analytical Result: $$${inAppSolution.tier4.finalAnswerLatex}$$
                     className="group flex items-start gap-3.5 p-3.5 bg-zinc-950/70 hover:bg-zinc-800/80 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all text-left cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
                   >
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${service.color} flex items-center justify-center shrink-0 shadow-md`}>
-                      <span className="text-lg">{service.emoji}</span>
+                      <span className="font-mono text-xs font-bold tracking-tight text-white">{service.shortName.slice(0, 2).toUpperCase()}</span>
                     </div>
 
                     <div className="flex-1 min-w-0">
