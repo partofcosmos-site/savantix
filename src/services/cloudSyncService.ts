@@ -20,6 +20,9 @@ export interface CloudSyncPayload {
   goals: any[];
   journal: any[];
   insights?: any[];
+  deletedLogIds?: string[];
+  deletedGoalIds?: string[];
+  deletedJournalIds?: string[];
   attendance: any[];
   institutional_attendance?: any;
   flashcards: any[];
@@ -143,6 +146,26 @@ export class CloudSyncService {
   /**
    * Collects all local storage data into a unified sync snapshot.
    */
+  public static getDeletionTombstones(canonicalId: string, kind: 'logs' | 'goals' | 'journal'): string[] {
+    try {
+      const raw = localStorage.getItem(`savantix_tombstones_${kind}_${canonicalId}`);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  }
+
+  public static recordDeletionTombstone(canonicalId: string, kind: 'logs' | 'goals' | 'journal', id: string): string[] {
+    if (!canonicalId || !id) return [];
+    const existing = this.getDeletionTombstones(canonicalId, kind);
+    const next = Array.from(new Set([...existing, String(id)])).slice(-500);
+    try {
+      localStorage.setItem(`savantix_tombstones_${kind}_${canonicalId}`, JSON.stringify(next));
+    } catch {}
+    return next;
+  }
+
   public static getLocalSnapshot(email: string, uid: string): CloudSyncPayload {
     const canonicalId = this.getCanonicalUid(email);
     const userUidKey = uid || canonicalId;
@@ -220,6 +243,9 @@ export class CloudSyncService {
       goals,
       journal,
       insights,
+      deletedLogIds: this.getDeletionTombstones(canonicalId, 'logs'),
+      deletedGoalIds: this.getDeletionTombstones(canonicalId, 'goals'),
+      deletedJournalIds: this.getDeletionTombstones(canonicalId, 'journal'),
       attendance,
       institutional_attendance,
       flashcards,
@@ -259,14 +285,22 @@ export class CloudSyncService {
       return `${d}_${s}_${dur}_${txt}`;
     };
 
+    const mergedDelLogs = new Set<string>([
+      ...this.getDeletionTombstones(canonicalId, 'logs'),
+      ...(Array.isArray(remote.deletedLogIds) ? remote.deletedLogIds : []),
+    ]);
+    try {
+      localStorage.setItem(`savantix_tombstones_logs_${canonicalId}`, JSON.stringify(Array.from(mergedDelLogs).slice(-500)));
+    } catch {}
+
     const logsMap = new Map<string, any>();
     (remote.logs || []).forEach(l => {
       const sig = getLogSig(l);
-      if (sig) logsMap.set(sig, l);
+      if (sig && (!l?.id || !mergedDelLogs.has(String(l.id)))) logsMap.set(sig, l);
     });
     localLogs.forEach(l => {
       const sig = getLogSig(l);
-      if (sig && !logsMap.has(sig)) logsMap.set(sig, l);
+      if (sig && !logsMap.has(sig) && (!l?.id || !mergedDelLogs.has(String(l.id)))) logsMap.set(sig, l);
     });
 
     const mergedLogs = Array.from(logsMap.values()).sort((a, b) => {

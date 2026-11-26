@@ -53,15 +53,34 @@ function mergePayloads(existing: any, incoming: any): any {
   if (!existing || typeof existing !== 'object') return incoming;
   if (!incoming || typeof incoming !== 'object') return existing;
 
+  const deletedLogIds = Array.from(new Set<string>([
+    ...(Array.isArray(existing.deletedLogIds) ? existing.deletedLogIds : []),
+    ...(Array.isArray(incoming.deletedLogIds) ? incoming.deletedLogIds : []),
+  ])).slice(-500);
+  const deletedGoalIds = Array.from(new Set<string>([
+    ...(Array.isArray(existing.deletedGoalIds) ? existing.deletedGoalIds : []),
+    ...(Array.isArray(incoming.deletedGoalIds) ? incoming.deletedGoalIds : []),
+  ])).slice(-500);
+  const deletedJournalIds = Array.from(new Set<string>([
+    ...(Array.isArray(existing.deletedJournalIds) ? existing.deletedJournalIds : []),
+    ...(Array.isArray(incoming.deletedJournalIds) ? incoming.deletedJournalIds : []),
+  ])).slice(-500);
+
+  const delLogSet = new Set(deletedLogIds);
+  const delGoalSet = new Set(deletedGoalIds);
+  const delJournalSet = new Set(deletedJournalIds);
+
   const mergedLogs = mergeByKey(existing.logs, incoming.logs, (x) =>
     x?.id ? String(x.id) : `${x?.date || ''}_${x?.subject || ''}_${x?.durationMinutes || 0}`
-  );
+  ).filter((x) => !x?.id || !delLogSet.has(String(x.id)));
+
   const mergedGoals = mergeByKey(existing.goals, incoming.goals, (x) =>
     x?.id ? String(x.id) : `${x?.title || ''}`
-  );
+  ).filter((x) => !x?.id || !delGoalSet.has(String(x.id)));
+
   const mergedJournal = mergeByKey(existing.journal, incoming.journal, (x) =>
     x?.id ? String(x.id) : `${x?.date || ''}_${(x?.content || '').slice(0, 24)}`
-  );
+  ).filter((x) => !x?.id || !delJournalSet.has(String(x.id)));
   const mergedInsights = mergeByKey(existing.insights, incoming.insights, (x) =>
     x?.id ? String(x.id) : `${x?.date || ''}`
   );
@@ -132,6 +151,9 @@ function mergePayloads(existing: any, incoming: any): any {
     logs: mergedLogs,
     goals: mergedGoals,
     journal: mergedJournal,
+    deletedLogIds,
+    deletedGoalIds,
+    deletedJournalIds,
     insights: mergedInsights,
     institutional_attendance: mergedInst,
     lastSyncedAt: new Date().toISOString(),

@@ -358,6 +358,33 @@ export const Journal = () => {
             </div>
           </div>
 
+                    <button
+            type="button"
+            onClick={() => {
+              const cutoff = new Date();
+              cutoff.setDate(cutoff.getDate() - 7);
+              const cutoffIso = cutoff.toISOString().slice(0, 10);
+              const recent = (journalEntries || []).filter((e: any) => (e.date || '') >= cutoffIso);
+              const md = recent.length > 0
+                ? `# Savantix 7-Day Study Reflection Review\n\n` + recent.map((e: any) =>
+                    `## ${e.date} — ${e.title || 'Daily Reflection'}\n` +
+                    (e.wins ? `- **Wins:** ${e.wins}\n` : '') +
+                    (e.struggles ? `- **Struggles:** ${e.struggles}\n` : '') +
+                    (e.insights ? `- **Insights:** ${e.insights}\n` : '') +
+                    (e.priorities ? `- **Next Priorities:** ${e.priorities}\n` : '') +
+                    (e.content ? `- **Notes:** ${e.content}\n` : '')
+                  ).join('\n')
+                : '# Savantix 7-Day Study Reflection Review\n\nNo reflections logged in the last 7 days.';
+              if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(md).catch(() => {});
+              }
+            }}
+            className="flex items-center gap-2 px-3.5 py-2.5 bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] text-[var(--sx-ink)] border border-[var(--sx-border)] rounded-[6px] text-xs font-medium transition-colors cursor-pointer"
+            title="Copy last 7 days of journal reflections as Markdown"
+          >
+            <Copy className="w-3.5 h-3.5 text-[var(--sx-signal-text)]" />
+            <span>Copy 7-Day Review (.md)</span>
+          </button>
           <button
             onClick={handleOpenNew}
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl shadow-lg transition-all active:scale-95 shrink-0"

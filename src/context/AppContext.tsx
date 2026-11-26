@@ -641,13 +641,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('savantix_logs_backup_latest', JSON.stringify(updated));
 
     if (!isGuest) {
+      if (canonicalId) CloudSyncService.recordDeletionTombstone(canonicalId, 'logs', id);
       try {
         const logRef = doc(db, 'users', user.uid, 'logs', id);
         await import('firebase/firestore').then(f => f.deleteDoc(logRef));
-        CloudSyncService.pushToCloud(user.email, user.uid);
       } catch (err) {
         console.warn("Firestore deleteLog background sync notice:", err);
       }
+      CloudSyncService.pushToCloud(user.email, user.uid).catch(() => {});
     }
   };
 
@@ -770,13 +771,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (!isGuest) {
+      if (canonicalId) CloudSyncService.recordDeletionTombstone(canonicalId, 'goals', id);
       try {
         const ref = doc(db, 'users', user.uid, 'goals', id);
         await import('firebase/firestore').then(f => f.deleteDoc(ref));
-        CloudSyncService.pushToCloud(user.email, user.uid);
       } catch (err) {
         console.warn("Firestore deleteGoal background sync notice:", err);
       }
+      CloudSyncService.pushToCloud(user.email, user.uid).catch(() => {});
     }
   };
 
@@ -853,13 +855,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (!isGuest) {
+      if (canonicalId) CloudSyncService.recordDeletionTombstone(canonicalId, 'journal', id);
       try {
         const ref = doc(db, 'users', user.uid, 'journal_entries', id);
         await import('firebase/firestore').then(f => f.deleteDoc(ref));
-        CloudSyncService.pushToCloud(user.email, user.uid);
       } catch (err) {
         console.warn("Firestore deleteJournalEntry background sync notice:", err);
       }
+      CloudSyncService.pushToCloud(user.email, user.uid).catch(() => {});
     }
   };
 

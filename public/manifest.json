@@ -4,8 +4,8 @@
   "description": "Precision STEM study workbench, institutional attendance ledger, and cognitive telemetry instrument.",
   "start_url": "/?source=pwa",
   "display": "standalone",
-  "background_color": "#f4f3ef",
-  "theme_color": "#f4f3ef",
+  "background_color": "#090a0c",
+  "theme_color": "#090a0c",
   "orientation": "portrait-primary",
   "scope": "/",
   "categories": [
