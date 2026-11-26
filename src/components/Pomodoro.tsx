@@ -304,6 +304,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
   const [isYtSearching, setIsYtSearching] = useState<boolean>(false);
   const [ytCategoryFilter, setYtCategoryFilter] = useState<string>('all');
   const [customYtInput, setCustomYtInput] = useState<string>('');
+  const [ytError, setYtError] = useState<string | null>(null);
   const [isYtPlaying, setIsYtPlaying] = useState<boolean>(false);
   const [autoLoop, setAutoLoop] = useState<boolean>(true);
   const [userCustomTags, setUserCustomTags] = useState<string[]>(() => YouTubeAudioService.getUserCustomTags());
@@ -457,7 +458,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
     e.preventDefault();
     const vidId = YouTubeAudioService.extractVideoId(customYtInput);
     if (!vidId) {
-      alert('Please enter a valid YouTube video link or 11-character video ID.');
+      setYtError('Please enter a valid YouTube video link or 11-character video ID.'); setTimeout(() => setYtError(null), 4000);
       return;
     }
     const resolved = await YouTubeAudioService.resolveDirectVideo(customYtInput);
@@ -475,7 +476,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
     setYtTracks(prev => [newTrack, ...prev.filter(t => t.youtubeId !== newTrack.youtubeId)]);
     setSelectedYtTrack(newTrack);
     setIsYtPlaying(true);
-    setCustomYtInput('');
+    setCustomYtInput(''); setYtError(null);
     if (isAudioPlaying) {
       pomodoroAudio.pause();
       setIsAudioPlaying(false);
@@ -1882,6 +1883,9 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                     </button>
                   </div>
                 </form>
+                {ytError && (
+                  <p role="alert" className="text-[11px] text-rose-600 mt-1">{ytError}</p>
+                )}
               </div>
             )}
 

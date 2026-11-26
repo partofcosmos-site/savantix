@@ -121,6 +121,7 @@ export const Analytics = () => {
 
   // State
   const [timeRange, setTimeRange] = useState<TimeRangeOption>('30d');
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
   const [metricView, setMetricView] = useState<MetricViewOption>('hours');
   const [selectedExamId, setSelectedExamId] = useState<string>('all');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -546,7 +547,7 @@ export const Analytics = () => {
   // Export Study Data as CSV
   const handleExportCSV = () => {
     if (!logs || logs.length === 0) {
-      alert('No study logs available to export.');
+      setExportNotice('No study logs available to export yet. Log a study session first.'); setTimeout(() => setExportNotice(null), 4000);
       return;
     }
 
@@ -604,7 +605,7 @@ export const Analytics = () => {
   // Export Study Data as JSON
   const handleExportJSON = () => {
     if (!logs || logs.length === 0) {
-      alert('No study logs available to export.');
+      setExportNotice('No study logs available to export yet. Log a study session first.'); setTimeout(() => setExportNotice(null), 4000);
       return;
     }
 
@@ -836,6 +837,9 @@ export const Analytics = () => {
               <FileJson className="w-3.5 h-3.5 text-indigo-400" />
               <span>JSON</span>
             </button>
+            {exportNotice && (
+              <span role="status" className="text-xs text-amber-700 bg-amber-500/15 border border-amber-500/30 px-2.5 py-1 rounded-lg">{exportNotice}</span>
+            )}
 
             {/* Import Data Modal Trigger */}
             <button

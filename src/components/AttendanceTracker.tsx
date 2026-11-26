@@ -923,6 +923,9 @@ export const AttendanceTracker: React.FC = () => {
                   setCalMonth(m => m - 1);
                 }
               }}
+              type="button"
+              aria-label="Previous month"
+              title="Previous month"
               className="p-2 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold"
             >
               <ChevronLeft className="w-4 h-4" /> <span className="hidden sm:inline">Previous</span>
@@ -946,6 +949,9 @@ export const AttendanceTracker: React.FC = () => {
                   setCalMonth(m => m + 1);
                 }
               }}
+              type="button"
+              aria-label="Next month"
+              title="Next month"
               className="p-2 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-zinc-300 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold"
             >
               <span className="hidden sm:inline">Next</span> <ChevronRight className="w-4 h-4" />
