@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { 
   Plus, 
@@ -204,6 +204,15 @@ export const Goals = () => {
   };
 
   // Close Form
+  useEffect(() => {
+    if (!isFormOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleCloseForm();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isFormOpen]);
+
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setEditingGoalId(null);

@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { AppProvider } from './context/AppContext';
 import { AuthWrapper } from './components/AuthWrapper';
 import { Layout, ActiveTabType } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
-import { Analytics } from './components/Analytics';
-import { Journal } from './components/Journal';
-import { Goals } from './components/Goals';
-import { Pomodoro } from './components/Pomodoro';
-import { Settings } from './components/Settings';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { DeepWorkFortress } from './components/DeepWorkFortress';
-import { ContactFeedback } from './components/ContactFeedback';
-import { AttendanceCalculator } from './components/AttendanceCalculator';
+
+const Analytics = lazy(() => import('./components/Analytics').then(m => ({ default: m.Analytics })));
+const Journal = lazy(() => import('./components/Journal').then(m => ({ default: m.Journal })));
+const Goals = lazy(() => import('./components/Goals').then(m => ({ default: m.Goals })));
+const Pomodoro = lazy(() => import('./components/Pomodoro').then(m => ({ default: m.Pomodoro })));
+const Settings = lazy(() => import('./components/Settings').then(m => ({ default: m.Settings })));
+const DeepWorkFortress = lazy(() => import('./components/DeepWorkFortress').then(m => ({ default: m.DeepWorkFortress })));
+const ContactFeedback = lazy(() => import('./components/ContactFeedback').then(m => ({ default: m.ContactFeedback })));
+const AttendanceCalculator = lazy(() => import('./components/AttendanceCalculator').then(m => ({ default: m.AttendanceCalculator })));
+
+const TabFallback = () => (
+  <div className="flex items-center justify-center h-64 text-xs font-mono text-[#575652] tracking-wider uppercase">
+    Loading module...
+  </div>
+);
 
 const TAB_ROUTES: Record<ActiveTabType, { path: string; title: string }> = {
   dashboard: { path: '/', title: 'Savantix | Elite AI Study Optimization' },
@@ -117,8 +124,9 @@ export default function App() {
     <ErrorBoundary>
       <AppProvider>
         <AuthWrapper>
-          {isFortressMode && <DeepWorkFortress onClose={() => setIsFortressMode(false)} />}
+          {isFortressMode && (<Suspense fallback={null}><DeepWorkFortress onClose={() => setIsFortressMode(false)} /></Suspense>)}
           <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
+            <Suspense fallback={<TabFallback />}>
             {/* Optimized Lazy-Mount Keep-Alive Viewport for Study Time Management Suite */}
             {(mountedTabs.has('dashboard') || activeTab === 'dashboard') && (
               <div className={`h-full w-full ${activeTab === 'dashboard' ? 'block' : 'hidden'}`}>
@@ -160,6 +168,7 @@ export default function App() {
                 <ContactFeedback />
               </div>
             )}
+            </Suspense>
           </Layout>
         </AuthWrapper>
       </AppProvider>
