@@ -1,14 +1,18 @@
 {
-  "name": "Savantix OS — Elite STEM Engine",
+  "name": "Savantix - Academic Telemetry & Study Workbench",
   "short_name": "Savantix",
-  "description": "Universal STEM Decision Support, High-Speed Logging, and Cognitive Velocity System",
+  "description": "Precision STEM study workbench, institutional attendance ledger, and cognitive telemetry instrument.",
   "start_url": "/?source=pwa",
   "display": "standalone",
-  "background_color": "#09090b",
-  "theme_color": "#09090b",
+  "background_color": "#f4f3ef",
+  "theme_color": "#f4f3ef",
   "orientation": "portrait-primary",
   "scope": "/",
-  "categories": ["education", "productivity", "utilities"],
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/favicon.svg",
@@ -21,37 +25,50 @@
     {
       "name": "Micro-Logger HUD",
       "short_name": "Micro-Log",
-      "description": "Instant Sub-Second Voice & Text Study Logger (Alt+L)",
+      "description": "Quick study session logger (Alt+L)",
       "url": "/?action=microlog",
-      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
-      "name": "STEM Socratic Solver",
-      "short_name": "STEM Solver",
-      "description": "KaTeX First-Principles Derivations & AI Audit",
-      "url": "/?tab=solver",
-      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
-    },
-    {
-      "name": "Attendance Regulator",
+      "name": "Attendance Tracker",
       "short_name": "Attendance",
-      "description": "CBSE Attendance Reality Math & Leave Limit Projections",
-      "url": "/?tab=attendance",
-      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+      "description": "Institutional attendance ledger and safe-leave projections",
+      "url": "/attendance",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
-      "name": "AI Gateway Router",
+      "name": "AI Gateway & STEM Solver",
       "short_name": "AI Gateway",
-      "description": "Frontier AI Query Router (NotebookLM, Gemini 3, ChatGPT, DeepSeek)",
+      "description": "KaTeX derivations and frontier AI launcher (Alt+G)",
       "url": "/?action=aigateway",
-      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
-      "name": "Pomodoro Focus & Music",
+      "name": "Pomodoro & Focus Audio",
       "short_name": "Pomodoro",
-      "description": "Distraction-Free Focus Timer & YouTube Study Audio",
-      "url": "/?tab=pomodoro",
-      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+      "description": "Focus timer, Flowmodoro, and distraction-free study audio",
+      "url": "/pomodoro",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
