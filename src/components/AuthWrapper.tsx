@@ -161,7 +161,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
           <div className="px-6 py-2.5 bg-[#f4f3ef] border-t border-[#d5d3cb] flex items-center justify-between font-mono text-[10px] text-[#8c8a84]">
             <span>PART OF COSMOS INITIATIVE</span>
-            <span>OFFLINE-FIRST ? CLOUD SYNC</span>
+            <span>OFFLINE-FIRST · CLOUD SYNC</span>
           </div>
         </div>
       </div>

@@ -120,7 +120,7 @@ export const AttendanceTracker: React.FC = () => {
     }));
     setIsBulkOpen(false);
     setBulkDatesInput('');
-    showToast(`Added ${added} new absence date(s) ? synced to cloud`);
+    showToast(`Added ${added} new absence date(s) — saved`);
   };
 
   // Institution Profile Edit Modal State

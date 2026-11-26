@@ -587,7 +587,7 @@ export class CloudSyncService {
       console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
     }
 
-    // 2. Durable Cloudflare KV Sync Relay (/api/sync) ? always read & union-merge with Firestore
+    // 2. Durable Cloudflare KV Sync Relay (/api/sync) - always read & union-merge with Firestore
     try {
       const endpoint = typeof window !== 'undefined'
         ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`

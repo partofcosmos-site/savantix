@@ -150,10 +150,10 @@ export const Settings = () => {
             <span className="w-2 h-2 rounded-full bg-[#15803d] mt-1.5 shrink-0" />
             <div>
               <div className="font-mono text-[10px] text-[#ea580c] tracking-wider uppercase">
-                Built-In Edge AI ? Active
+                Built-In Edge AI — Active
               </div>
               <p className="text-xs text-[#141413] font-medium mt-0.5">
-                Cloudflare Workers AI (Llama 3.3 70B) is active by default ? zero API key required.
+                Cloudflare Workers AI (Llama 3.3 70B) is active by default — zero API key required.
               </p>
               <p className="text-xs text-[#575652] mt-0.5">
                 Configure any optional BYOK provider key below to override the built-in edge model.
@@ -161,7 +161,7 @@ export const Settings = () => {
             </div>
           </div>
           <span className="font-mono text-[11px] text-[#15803d] bg-[#15803d]/10 border border-[#15803d]/30 px-2.5 py-1 rounded-[4px] self-start sm:self-center shrink-0">
-            /api/ai-chat ? READY
+            /api/ai-chat · READY
           </span>
         </div>
 
