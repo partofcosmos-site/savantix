@@ -37,19 +37,19 @@ export function parseFlexibleAbsenceDates(raw: string): string[] {
   const found = new Set<string>();
 
   // 1. ISO YYYY-MM-DD
-  for (const m of raw.matchAll(/(20\d{2})-(\d{1,2})-(\d{1,2})/g)) {
+  for (const m of raw.matchAll(/\b(20\d{2})-(\d{1,2})-(\d{1,2})\b/g)) {
     const iso = toValidIso(Number(m[1]), Number(m[2]), Number(m[3]));
     if (iso) found.add(iso);
   }
 
   // 2. DD/MM/YYYY or DD-MM-YYYY (Indian/UK standard)
-  for (const m of raw.matchAll(/(\d{1,2})[\/\-](\d{1,2})[\/\-](20\d{2})/g)) {
+  for (const m of raw.matchAll(/\b(\d{1,2})[/-](\d{1,2})[/-](20\d{2})\b/g)) {
     const iso = toValidIso(Number(m[3]), Number(m[2]), Number(m[1]));
     if (iso) found.add(iso);
   }
 
   // 3. DD Mon YYYY (e.g., 12 Nov 2026, 4 November 2026)
-  for (const m of raw.matchAll(/(\d{1,2})\s+([A-Za-z]{3,9}),?\s+(20\d{2})/g)) {
+  for (const m of raw.matchAll(/\b(\d{1,2})\s+([A-Za-z]{3,9}),?\s+(20\d{2})\b/g)) {
     const mon = MONTH_MAP[m[2].toLowerCase()];
     if (mon) {
       const iso = toValidIso(Number(m[3]), mon, Number(m[1]));
@@ -58,7 +58,7 @@ export function parseFlexibleAbsenceDates(raw: string): string[] {
   }
 
   // 4. Mon DD, YYYY (e.g., Nov 12 2026, November 12, 2026)
-  for (const m of raw.matchAll(/([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(20\d{2})/g)) {
+  for (const m of raw.matchAll(/\b([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(20\d{2})\b/g)) {
     const mon = MONTH_MAP[m[1].toLowerCase()];
     if (mon) {
       const iso = toValidIso(Number(m[3]), mon, Number(m[2]));
