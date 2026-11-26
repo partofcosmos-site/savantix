@@ -1,3 +1,4 @@
+import { runFlexibleDateParserTests } from './flexibleDateParser.test';
 /**
  * Savantix (Aegis) — Master E2E & Unit Test Suite Runner
  * @file allTests.test.ts

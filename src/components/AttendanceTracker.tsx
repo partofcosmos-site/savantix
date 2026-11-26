@@ -1,3 +1,4 @@
+import { parseFlexibleAbsenceDates } from '../utils/dateParser';
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   School, Calendar, Award, Sparkles, TrendingUp, TrendingDown,
@@ -71,7 +72,7 @@ export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; r
 ];
 
 export const AttendanceTracker: React.FC = () => {
-  const { user, isGuest } = useAppContext();
+  const { user, isGuest, syncStatus, forceSyncNow } = useAppContext();
   const userIdentifier = isGuest ? 'guest' : (user?.email || 'anonymous');
   const isDebanjan = isDebanjanAccount(userIdentifier);
 
@@ -83,9 +84,9 @@ export const AttendanceTracker: React.FC = () => {
   const [bulkReasonInput, setBulkReasonInput] = useState<string>('Self-study / missed school day');
 
   const handleBulkImportDates = () => {
-    const matches = Array.from(new Set(bulkDatesInput.match(/\b20\d{2}-\d{2}-\d{2}\b/g) || []));
+    const matches = parseFlexibleAbsenceDates(bulkDatesInput);
     if (matches.length === 0) {
-      showToast('Enter at least one YYYY-MM-DD date (e.g. 2026-11-04, 2026-11-12)');
+      showToast('Enter at least one valid date (e.g. 2026-11-04, 12/11/2026, or Nov 14 2026)');
       return;
     }
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -704,6 +705,20 @@ export const AttendanceTracker: React.FC = () => {
               <Download className="w-3.5 h-3.5 text-indigo-400" />
               <span>Backup (.json)</span>
             </button>
+            {!isGuest && (
+              <button
+                type="button"
+                onClick={async () => {
+                  const res = await forceSyncNow();
+                  showToast(res.success ? 'Cloud attendance synced across devices' : (res.message || 'Sync check complete'));
+                }}
+                disabled={syncStatus?.isSyncing}
+                title="Sync attendance immediately with Cloudflare KV"
+                className="flex items-center gap-1.5 px-3 py-2 bg-[#ffffff] hover:bg-[#eae8e2] border border-[#b8b5ac] text-[#141413] rounded-[4px] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+              >
+                <span>{syncStatus?.isSyncing ? 'Syncing...' : 'Sync Now'}</span>
+              </button>
+            )}
 
             <label
               title="Restore or merge attendance from a JSON backup"
@@ -2622,15 +2637,27 @@ export const AttendanceTracker: React.FC = () => {
             </div>
             <div className="space-y-2">
               <label className="block text-xs font-medium text-[#575652]">
-                Dates (YYYY-MM-DD, comma or newline separated)
+                Dates (YYYY-MM-DD, DD/MM/YYYY, or Nov 12 2026 — comma or newline separated)
               </label>
               <textarea
                 rows={4}
                 value={bulkDatesInput}
                 onChange={(e) => setBulkDatesInput(e.target.value)}
-                placeholder="2026-11-04, 2026-11-12, 2026-11-19"
+                placeholder="2026-11-04, 12/11/2026, Nov 19 2026"
                 className="w-full p-2.5 text-xs font-mono border border-[#b8b5ac] rounded-[4px]"
               />
+              {bulkDatesInput.trim().length > 0 && (() => {
+                const parsed = parseFlexibleAbsenceDates(bulkDatesInput);
+                const existingSet = new Set(state.absences.map(a => a.date));
+                const newCount = parsed.filter(d => !existingSet.has(d)).length;
+                return (
+                  <p role="status" className="text-[11px] font-mono text-[#115e59] bg-[#f4f3ef] border border-[#d5d3cb] px-2.5 py-1.5 rounded-[4px]">
+                    {parsed.length > 0
+                      ? `Parsed ${parsed.length} valid date(s) (${newCount} new): ${parsed.slice(0, 4).join(', ')}${parsed.length > 4 ? '...' : ''}`
+                      : 'No valid dates detected yet — try 12/11/2026 or 2026-11-12'}
+                  </p>
+                );
+              })()}
             </div>
             <div className="space-y-2">
               <label className="block text-xs font-medium text-[#575652]">Reason</label>

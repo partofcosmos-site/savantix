@@ -326,3 +326,7 @@ input:focus, textarea:focus, select:focus {
   background-color: #ea580c !important;
   border-color: #ea580c !important;
 }
+
+.recharts-legend-item-text {
+  color: var(--rams-ink) !important;
+}
