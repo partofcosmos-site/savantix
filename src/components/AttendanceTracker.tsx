@@ -810,6 +810,7 @@ export const AttendanceTracker: React.FC = () => {
         {(() => {
           const computedHeldToday = computeWorkingDaysToToday(state);
           const streakRisk = detectConsecutiveAbsenceRisk(state.absences);
+          const isFreshLedger = state.profile.workingDaysHeld === 0 && state.absences.length === 0;
           const canSkipSafe = metrics.effectivePct >= 75 && metrics.safeLeaves75 > 0;
           const isTightBuffer = metrics.effectivePct >= 75 && metrics.safeLeaves75 <= 3;
           const heldOutOfSync = computedHeldToday > 0 && state.profile.workingDaysHeld !== computedHeldToday;
@@ -818,32 +819,38 @@ export const AttendanceTracker: React.FC = () => {
             <div className="relative z-10 mt-5 pt-4 border-t border-[var(--sx-hairline)] grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
               <div className={clsx(
                 'lg:col-span-8 flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-[6px] border',
-                !canSkipSafe
-                  ? 'bg-[var(--sx-fault-bg)] border-[var(--sx-fault-border)]'
-                  : isTightBuffer
-                    ? 'bg-[var(--sx-caution-bg)] border-[var(--sx-caution-border)]'
-                    : 'bg-[var(--sx-safe-bg)] border-[var(--sx-safe-border)]'
+                isFreshLedger
+                  ? 'bg-[var(--sx-elevated)] border-[var(--sx-border)]'
+                  : !canSkipSafe
+                    ? 'bg-[var(--sx-fault-bg)] border-[var(--sx-fault-border)]'
+                    : isTightBuffer
+                      ? 'bg-[var(--sx-caution-bg)] border-[var(--sx-caution-border)]'
+                      : 'bg-[var(--sx-safe-bg)] border-[var(--sx-safe-border)]'
               )}>
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2">
                     <span className={clsx(
                       'font-mono text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-[4px] border',
-                      !canSkipSafe
-                        ? 'text-[var(--sx-fault)] border-[var(--sx-fault-border)]'
-                        : isTightBuffer
-                          ? 'text-[var(--sx-caution)] border-[var(--sx-caution-border)]'
-                          : 'text-[var(--sx-safe)] border-[var(--sx-safe-border)]'
+                      isFreshLedger
+                        ? 'text-[var(--sx-signal-text)] border-[var(--sx-signal-border)]'
+                        : !canSkipSafe
+                          ? 'text-[var(--sx-fault)] border-[var(--sx-fault-border)]'
+                          : isTightBuffer
+                            ? 'text-[var(--sx-caution)] border-[var(--sx-caution-border)]'
+                            : 'text-[var(--sx-safe)] border-[var(--sx-safe-border)]'
                     )}>
-                      {!canSkipSafe ? 'DO NOT SKIP — RECOVERY MODE' : isTightBuffer ? 'CAUTION — TIGHT BUFFER' : 'SAFE TO SKIP TOMORROW'}
+                      {isFreshLedger ? 'READY TO TRACK' : !canSkipSafe ? 'DO NOT SKIP — RECOVERY MODE' : isTightBuffer ? 'CAUTION — TIGHT BUFFER' : 'SAFE TO SKIP TOMORROW'}
                     </span>
                     <span className="font-mono text-xs text-[var(--sx-ink)] font-semibold">
-                      {metrics.effectivePct}% Effective ({metrics.rawPct}% Raw)
+                      {isFreshLedger ? '0 days logged yet' : `${metrics.effectivePct}% Effective (${metrics.rawPct}% Raw)`}
                     </span>
                   </div>
                   <p className="text-xs text-[var(--sx-ink-secondary)]">
-                    {!canSkipSafe
-                      ? `Attend ${metrics.consecutiveRecoveryEffective} consecutive school day(s) to restore 75% compliance.`
-                      : `${metrics.safeLeaves75} safe leave(s) left to stay ≥75% (${metrics.safeLeaves60} at 60% condonation floor).`}
+                    {isFreshLedger
+                      ? 'Tap "+ Present Today" or click Sync to initialize your attendance ledger for your school.'
+                      : !canSkipSafe
+                        ? `Attend ${metrics.consecutiveRecoveryEffective} consecutive school day(s) to restore 75% compliance.`
+                        : `${metrics.safeLeaves75} safe leave(s) left to stay ≥75% (${metrics.safeLeaves60} at 60% condonation floor).`}
                     {streakRisk.hasCriticalStreak && (
                       <span className="ml-2 text-[var(--sx-fault)] font-medium">
                         · {streakRisk.consecutiveAbsenceStreak}-day streak flagged
