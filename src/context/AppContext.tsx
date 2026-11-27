@@ -214,8 +214,24 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setIsGuest(false);
     setUser(sessionUser);
 
-    // Ensure Firebase Auth session is active
-    await CloudSyncService.ensureAuth();
+    // Fire Edge KV cloud hydration IMMEDIATELY (never block user data on Firebase Auth/Firestore latency)
+    const fastUidKey = authUser.uid || canonicalId;
+    CloudSyncService.pullFromCloud(cleanEmail, fastUidKey).then(res => {
+      if (res.success) {
+        if (res.mergedLogs) setLogsSmart(res.mergedLogs);
+        if (res.mergedGoals) setGoalsSmart(res.mergedGoals);
+        if (res.mergedJournal) setJournalSmart(res.mergedJournal);
+        if (res.mergedInsights) setInsightsSmart(res.mergedInsights);
+        setSyncStatus({
+          isSyncing: false,
+          lastSyncedAt: res.timestamp,
+          message: res.message
+        });
+      }
+    }).catch(() => {});
+
+    // Ensure Firebase Auth session in background (non-blocking)
+    CloudSyncService.ensureAuth().catch(() => {});
 
     const initialTargetExams = ['Midterm Examination', 'Final Board / Term Examination', 'Competitive Entrance'];
 

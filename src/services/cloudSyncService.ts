@@ -595,65 +595,76 @@ export class CloudSyncService {
   public static async pullFromCloud(email: string, uid: string): Promise<SyncResult> {
     const canonicalId = this.getCanonicalUid(email);
     let remoteData: CloudSyncPayload | null = null;
+    let firstResult: SyncResult | null = null;
 
-    // 1. Primary: Durable Firestore sync partition (sync_hub)
-    try {
-      await this.ensureAuth(email);
-      const syncDocRef = doc(db, this.SYNC_COLLECTION, canonicalId);
-      const snap = await getDoc(syncDocRef);
-      if (snap.exists()) {
-        remoteData = snap.data() as CloudSyncPayload;
-      }
-      
-    } catch (fireErr) {
-      console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
-    }
-
-    // 2. Durable Cloudflare KV Sync Relay (/api/sync) - always read & union-merge with Firestore
+    // 1. PRIMARY (Fast <150ms): Durable Cloudflare Edge KV (/api/sync)
+    // Hydrates local storage and React UI immediately without blocking on Firebase Auth/Firestore.
     try {
       const endpoint = typeof window !== 'undefined'
         ? `${window.location.origin}/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`
         : `https://savantix.pages.dev/api/sync?canonicalId=${encodeURIComponent(canonicalId)}`;
 
-      const response = await fetch(endpoint);
+      const response = await fetch(endpoint, { cache: 'no-store' });
       if (response.ok) {
         const json = await response.json();
         if (json.exists && json.payload) {
-          const kvData = json.payload as CloudSyncPayload;
-          if (!remoteData) {
-            remoteData = kvData;
-          } else {
-            const absMap = new Map<string, any>();
-            (remoteData.institutional_attendance?.absences || []).forEach((a: any) => { if (a?.date) absMap.set(a.date, a); });
-            (kvData.institutional_attendance?.absences || []).forEach((a: any) => { if (a?.date) absMap.set(a.date, a); });
-            remoteData = {
-              ...remoteData,
-              ...kvData,
-              institutional_attendance: (remoteData.institutional_attendance || kvData.institutional_attendance)
-                ? {
-                    ...(remoteData.institutional_attendance || {}),
-                    ...(kvData.institutional_attendance || {}),
-                    absences: Array.from(absMap.values())
-                  }
-                : undefined
-            };
-          }
+          remoteData = json.payload as CloudSyncPayload;
+          firstResult = this.mergeAndPersist(remoteData, email, uid);
         }
       }
     } catch (apiErr) {
       console.warn('[CloudSyncService] Durable KV pull notice:', apiErr);
     }
 
-    if (remoteData) {
-      const result = this.mergeAndPersist(remoteData, email, uid);
+    // 2. SECONDARY (Non-blocking with 3.5s timeout): Firestore sync partition
+    try {
+      const firePromise = (async () => {
+        await this.ensureAuth(email);
+        const syncDocRef = doc(db, this.SYNC_COLLECTION, canonicalId);
+        const snap = await getDoc(syncDocRef);
+        return snap.exists() ? (snap.data() as CloudSyncPayload) : null;
+      })();
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3500));
+      const fireData = await Promise.race([firePromise, timeoutPromise]);
 
-      // Re-push merged top state so both client and cloud are perfectly equalized
-      this.pushToCloud(email, uid).catch(() => {});
-      return result;
-    } else {
-      // First time initialization: push current local state as cloud baseline
-      return await this.pushToCloud(email, uid);
+      if (fireData) {
+        if (!remoteData) {
+          remoteData = fireData;
+          firstResult = this.mergeAndPersist(remoteData, email, uid);
+        } else {
+          // Merge any Firestore-only items with KV (KV remains authoritative for tombstones)
+          const kvDel = new Set<string>(remoteData.institutional_attendance?.deletedAbsenceDates || []);
+          const absMap = new Map<string, any>();
+          (fireData.institutional_attendance?.absences || []).forEach((a: any) => {
+            if (a?.date && !kvDel.has(a.date)) absMap.set(a.date, a);
+          });
+          (remoteData.institutional_attendance?.absences || []).forEach((a: any) => {
+            if (a?.date && !kvDel.has(a.date)) absMap.set(a.date, a);
+          });
+          remoteData = {
+            ...fireData,
+            ...remoteData,
+            institutional_attendance: (remoteData.institutional_attendance || fireData.institutional_attendance)
+              ? {
+                  ...(fireData.institutional_attendance || {}),
+                  ...(remoteData.institutional_attendance || {}),
+                  absences: Array.from(absMap.values())
+                }
+              : undefined
+          };
+          firstResult = this.mergeAndPersist(remoteData, email, uid);
+        }
+      }
+    } catch (fireErr) {
+      console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
     }
+
+    if (firstResult) {
+      this.pushToCloud(email, uid).catch(() => {});
+      return firstResult;
+    }
+
+    return await this.pushToCloud(email, uid);
   }
 
   /**
