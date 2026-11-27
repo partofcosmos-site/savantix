@@ -150,6 +150,9 @@ export const AttendanceTracker: React.FC = () => {
   const [editSchoolName, setEditSchoolName] = useState<string>('');
   const [editAffiliationNo, setEditAffiliationNo] = useState<string>('');
   const [editStream, setEditStream] = useState<string>('');
+  const [editWorkingDaysHeld, setEditWorkingDaysHeld] = useState<string>('0');
+  const [editTotalWorkingDays, setEditTotalWorkingDays] = useState<string>('140');
+  const [editOnDutyDays, setEditOnDutyDays] = useState<string>('0');
 
   // Mobile Calendar & Locked-In Matrix State - initialized to current date
   const [calYear, setCalYear] = useState<number>(() => new Date().getFullYear());
@@ -444,21 +447,39 @@ export const AttendanceTracker: React.FC = () => {
     setEditSchoolName(state.profile.schoolName);
     setEditAffiliationNo(state.profile.affiliationNo);
     setEditStream(state.profile.stream);
+    setEditWorkingDaysHeld(String(state.profile.workingDaysHeld ?? 0));
+    setEditTotalWorkingDays(String(state.profile.totalWorkingDays ?? 140));
+    setEditOnDutyDays(String(metrics.onDutyDays ?? state.profile.onDutyDays ?? 0));
     setIsEditingProfile(true);
   };
 
   const handleSaveProfile = () => {
-    setState(prev => ({
-      ...prev,
-      profile: {
-        ...prev.profile,
-        schoolName: editSchoolName.trim() || 'Academic Institution',
-        affiliationNo: editAffiliationNo.trim(),
-        stream: editStream.trim() || 'General Senior Secondary'
-      }
-    }));
+    const held = Math.max(state.absences.length, parseInt(editWorkingDaysHeld, 10) || 0);
+    const total = Math.max(held, parseInt(editTotalWorkingDays, 10) || 140);
+    const od = Math.max(0, parseInt(editOnDutyDays, 10) || 0);
+    setState(prev => {
+      const nextState = {
+        ...prev,
+        profile: {
+          ...prev.profile,
+          schoolName: editSchoolName.trim() || 'Your Institution',
+          affiliationNo: editAffiliationNo.trim(),
+          stream: editStream.trim() || 'General Academic Track',
+          workingDaysHeld: held,
+          totalWorkingDays: total,
+          onDutyDays: od,
+          onDutyCredits: od,
+          absentDays: prev.absences.length,
+          presentDays: Math.max(0, held - prev.absences.length),
+        } as any
+      };
+      isSelfSavingRef.current = true;
+      saveInstitutionalState(nextState, userIdentifier);
+      setTimeout(() => { isSelfSavingRef.current = false; }, 120);
+      return nextState;
+    });
     setIsEditingProfile(false);
-    showToast('Institution profile updated.');
+    showToast('Register numbers & profile saved and synced.');
   };
 
   // Filtered holidays
@@ -2817,6 +2838,38 @@ export const AttendanceTracker: React.FC = () => {
                   placeholder="e.g., Class XI â€” Science (PCM)"
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-200 focus:outline-none focus:border-indigo-500"
                 />
+              </div>
+              <div className="grid grid-cols-3 gap-3 pt-1">
+                <div>
+                  <label className="block text-xs font-medium text-[var(--sx-ink-secondary)] mb-1">Days Held</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={editWorkingDaysHeld}
+                    onChange={(e) => setEditWorkingDaysHeld(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border rounded-[8px]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[var(--sx-ink-secondary)] mb-1">Session Total</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editTotalWorkingDays}
+                    onChange={(e) => setEditTotalWorkingDays(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border rounded-[8px]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[var(--sx-ink-secondary)] mb-1">On-Duty Days</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={editOnDutyDays}
+                    onChange={(e) => setEditOnDutyDays(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border rounded-[8px]"
+                  />
+                </div>
               </div>
             </div>
 

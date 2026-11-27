@@ -316,6 +316,18 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
       )}
 
       <main className="flex-1 overflow-y-auto min-h-0 h-[calc(100vh-48px)] md:h-screen bg-[var(--sx-canvas)]">
+        {isGuest && (
+          <div className="w-full px-4 py-2 bg-[var(--sx-caution-bg)] border-b border-[var(--sx-caution-border)] flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--sx-caution)]">
+            <span>You are in Demo Mode — changes here will not sync to your personal account.</span>
+            <button
+              type="button"
+              onClick={logout}
+              className="px-2.5 py-1 rounded-[6px] bg-[var(--sx-surface)] border border-[var(--sx-caution-border)] text-[var(--sx-ink)] font-semibold cursor-pointer hover:bg-[var(--sx-hover)]"
+            >
+              Sign in to your account
+            </button>
+          </div>
+        )}
         {children}
       </main>
     </div>
