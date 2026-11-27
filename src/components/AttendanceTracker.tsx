@@ -1,4 +1,4 @@
-import { parseFlexibleAbsenceDates } from '../utils/dateParser';
+﻿import { parseFlexibleAbsenceDates } from '../utils/dateParser';
 import React, { useState, useEffect, useMemo , useRef } from 'react';
 import {
   School, Calendar, Award, Sparkles, TrendingUp, TrendingDown,
@@ -130,7 +130,7 @@ export const AttendanceTracker: React.FC = () => {
     });
     setIsBulkOpen(false);
     setBulkDatesInput('');
-    showToast(`Added ${added} new absence date(s) — saved`);
+    showToast(`Added ${added} new absence date(s) â€” saved`);
   };
 
   // Institution Profile Edit Modal State
@@ -657,7 +657,7 @@ export const AttendanceTracker: React.FC = () => {
                   {state.profile.stream || 'Senior Secondary'}
                 </span>
                 <span className="px-3 py-1 bg-zinc-800/80 border border-zinc-700 rounded-full text-xs text-zinc-400">
-                  Mon – Fri Schedule
+                  Mon â€“ Fri Schedule
                 </span>
                 <button
                   onClick={handleOpenEditProfile}
@@ -675,7 +675,7 @@ export const AttendanceTracker: React.FC = () => {
                 {state.profile.schoolName}
               </h1>
               <p className="text-sm text-zinc-400 mt-1 max-w-2xl">
-                Attendance Ledger & Regulatory Compliance Dashboard · Academic Session 2026–2027
+                Attendance Ledger & Regulatory Compliance Dashboard Â· Academic Session 2026â€“2027
               </p>
             </div>
           </div>
@@ -697,7 +697,7 @@ export const AttendanceTracker: React.FC = () => {
                 className="flex items-center justify-center gap-2 px-5 py-3.5 bg-zinc-800/90 hover:bg-zinc-700/90 text-zinc-100 rounded-2xl text-xs font-semibold border border-zinc-700 transition-all cursor-pointer"
               >
                 <Scale className="w-4 h-4 text-indigo-400" />
-                <span>Attendance Projections</span>
+                <span>Calculator</span>
               </button>
             )}
 
@@ -850,10 +850,10 @@ export const AttendanceTracker: React.FC = () => {
                       ? 'Tap "+ Present Today" or click Sync to initialize your attendance ledger for your school.'
                       : !canSkipSafe
                         ? `Attend ${metrics.consecutiveRecoveryEffective} consecutive school day(s) to restore 75% compliance.`
-                        : `${metrics.safeLeaves75} safe leave(s) left to stay ≥75% (${metrics.safeLeaves60} at 60% condonation floor).`}
+                        : `${metrics.safeLeaves75} safe leave(s) left to stay â‰¥75% (${metrics.safeLeaves60} at 60% condonation floor).`}
                     {streakRisk.hasCriticalStreak && (
                       <span className="ml-2 text-[var(--sx-fault)] font-medium">
-                        · {streakRisk.consecutiveAbsenceStreak}-day streak flagged
+                        Â· {streakRisk.consecutiveAbsenceStreak}-day streak flagged
                       </span>
                     )}
                   </p>
@@ -952,7 +952,7 @@ export const AttendanceTracker: React.FC = () => {
                   <div className="font-mono text-[10px] text-[var(--sx-ink-muted)] uppercase">Calendar Held to Today</div>
                   <div className="font-mono text-xs font-semibold text-[var(--sx-ink)]">
                     {computedHeldToday} working days
-                    {!heldOutOfSync && <span className="ml-1.5 text-[var(--sx-safe)]">· In Sync</span>}
+                    {!heldOutOfSync && <span className="ml-1.5 text-[var(--sx-safe)]">Â· In Sync</span>}
                   </div>
                 </div>
                 {heldOutOfSync && (
@@ -991,12 +991,12 @@ export const AttendanceTracker: React.FC = () => {
         {/* Navigation Tabs */}
         <div className="relative z-10 flex items-center gap-2 mt-6 pt-4 border-t border-zinc-800/60 overflow-x-auto no-scrollbar">
           {[
-            { id: 'locked_matrix', label: 'Locked Dates Matrix', icon: Lock, badge: `${state.profile.absentDays} Locked` },
-            { id: 'absences', label: 'Absence Ledger', icon: Award, badge: `${state.absences.length}` },
-            { id: 'overview', label: 'Attendance Projections', icon: Scale },
-            { id: 'calendar', label: 'Holidays & Breaks', icon: Calendar },
+            { id: 'locked_matrix', label: 'Calendar', icon: Lock, badge: `${state.profile.absentDays} Locked` },
+            { id: 'absences', label: 'Absences', icon: Award, badge: `${state.absences.length}` },
+            { id: 'overview', label: 'Calculator', icon: Scale },
+            { id: 'calendar', label: 'Holidays', icon: Calendar },
             { id: 'subjects', label: `Subjects (${state.profile.subjects.length})`, icon: BookOpen },
-            { id: 'ai_regulator', label: 'AI Regulatory Dossier', icon: FileText },
+            { id: 'ai_regulator', label: 'AI Advisor', icon: FileText },
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1037,7 +1037,7 @@ export const AttendanceTracker: React.FC = () => {
             {metrics.effectivePct.toFixed(1)}%
           </div>
           <div className="text-[11px] text-zinc-300 font-semibold">
-            <span className="text-rose-400 font-bold">{state.profile.absentDays}</span> Locked · <span className="text-emerald-400 font-bold">{metrics.safeLeaves75}</span> Safe Left
+            <span className="text-rose-400 font-bold">{state.profile.absentDays}</span> Locked Â· <span className="text-emerald-400 font-bold">{metrics.safeLeaves75}</span> Safe Left
           </div>
         </div>
         <button
@@ -1077,7 +1077,7 @@ export const AttendanceTracker: React.FC = () => {
                     Tap any date to inspect, lock in as absent, or unlock
                   </h3>
                   <p className="text-xs text-zinc-400 mt-0.5">
-                    Live Attendance: <strong className="text-rose-400">{metrics.effectivePct.toFixed(2)}%</strong> · Remaining Safe Leaves: <strong className="text-emerald-400">{metrics.safeLeaves75} Days</strong>
+                    Live Attendance: <strong className="text-rose-400">{metrics.effectivePct.toFixed(2)}%</strong> Â· Remaining Safe Leaves: <strong className="text-emerald-400">{metrics.safeLeaves75} Days</strong>
                   </p>
                 </div>
               </div>
@@ -1422,7 +1422,7 @@ export const AttendanceTracker: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs text-zinc-400">
-                  Date: <strong>{selectedCalDate.dateStr}</strong> ({selectedCalDate.dayOfWeek}) · Classification: {selectedCalDate.holiday.classification}.
+                  Date: <strong>{selectedCalDate.dateStr}</strong> ({selectedCalDate.dayOfWeek}) Â· Classification: {selectedCalDate.holiday.classification}.
                   School is officially closed on this day.
                 </p>
                 <button
@@ -1520,10 +1520,10 @@ export const AttendanceTracker: React.FC = () => {
                   </span>
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-zinc-100 mt-0.5">
-                  Academic Deputation — Indian Institute of Technology (IIT) Kharagpur
+                  Academic Deputation â€” Indian Institute of Technology (IIT) Kharagpur
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">
-                  Duration: June 15 – June 26, 2026 · Credited: <strong className="text-emerald-300">10 Working Days</strong> · Ref: OD-REF-001
+                  Duration: June 15 â€“ June 26, 2026 Â· Credited: <strong className="text-emerald-300">10 Working Days</strong> Â· Ref: OD-REF-001
                 </p>
               </div>
             </div>
@@ -1643,7 +1643,7 @@ export const AttendanceTracker: React.FC = () => {
                   CBSE 2026 Academic Session Timeline
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">
-                  Commencement: {state.profile.sessionStart} · Attendance Submission Lock: {state.profile.lockDate} · {metrics.remainingSessionDays} working days remaining
+                  Commencement: {state.profile.sessionStart} Â· Attendance Submission Lock: {state.profile.lockDate} Â· {metrics.remainingSessionDays} working days remaining
                 </p>
               </div>
               <div className="flex items-center gap-4 text-xs">
@@ -1896,7 +1896,7 @@ export const AttendanceTracker: React.FC = () => {
                         isCompleted ? 'bg-zinc-800 text-zinc-400 border-zinc-700' :
                         'bg-indigo-500/10 text-indigo-300 border-indigo-500/25'
                       )}>
-                        {isUpcoming ? '⏳ Upcoming' : isCompleted ? 'Completed' : 'Scheduled'}
+                        {isUpcoming ? 'â³ Upcoming' : isCompleted ? 'Completed' : 'Scheduled'}
                       </span>
                       {exam.syllabusPercentage && (
                         <span className="text-[10px] text-zinc-500 font-bold">{exam.syllabusPercentage}% Syllabus</span>
@@ -1906,7 +1906,7 @@ export const AttendanceTracker: React.FC = () => {
                     <div className="text-xs text-zinc-400 space-y-1">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-                        <span>{exam.startDate} – {exam.endDate}</span>
+                        <span>{exam.startDate} â€“ {exam.endDate}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-indigo-400 font-medium">
                         <Award className="w-3.5 h-3.5" />
@@ -2020,7 +2020,7 @@ export const AttendanceTracker: React.FC = () => {
                       <td className="py-3 px-4 text-zinc-500">
                         {h.inVacationWindow ? (
                           <span className="text-indigo-400 font-medium">Inside {h.inVacationWindow}</span>
-                        ) : '—'}
+                        ) : 'â€”'}
                       </td>
                     </tr>
                   ))}
@@ -2042,7 +2042,7 @@ export const AttendanceTracker: React.FC = () => {
                 Absence & Academic Deputation Ledger
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Total Absences: <strong className="text-rose-400">{state.profile.absentDays} Days</strong> · Approved On-Duty: <strong className="text-emerald-400">10 Days</strong>
+                Total Absences: <strong className="text-rose-400">{state.profile.absentDays} Days</strong> Â· Approved On-Duty: <strong className="text-emerald-400">10 Days</strong>
               </p>
             </div>
             <button
@@ -2516,7 +2516,7 @@ export const AttendanceTracker: React.FC = () => {
                               )}
                             </div>
                             <div className="text-xs text-zinc-400 mt-0.5">
-                              {subj.attended} attended of {subj.total} total classes · Target: {subj.required}%
+                              {subj.attended} attended of {subj.total} total classes Â· Target: {subj.required}%
                             </div>
                           </div>
                         </div>
@@ -2814,7 +2814,7 @@ export const AttendanceTracker: React.FC = () => {
                   type="text"
                   value={editStream}
                   onChange={(e) => setEditStream(e.target.value)}
-                  placeholder="e.g., Class XI — Science (PCM)"
+                  placeholder="e.g., Class XI â€” Science (PCM)"
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-200 focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -2854,7 +2854,7 @@ export const AttendanceTracker: React.FC = () => {
             </div>
             <div className="space-y-2">
               <label className="block text-xs font-medium text-[var(--sx-ink-secondary)]">
-                Dates (YYYY-MM-DD, DD/MM/YYYY, or Nov 12 2026 — comma or newline separated)
+                Dates (YYYY-MM-DD, DD/MM/YYYY, or Nov 12 2026 â€” comma or newline separated)
               </label>
               <textarea
                 rows={4}
@@ -2871,7 +2871,7 @@ export const AttendanceTracker: React.FC = () => {
                   <p role="status" className="text-[11px] font-mono text-[var(--sx-safe)] bg-[var(--sx-elevated)] border border-[var(--sx-hairline)] px-2.5 py-1.5 rounded-[4px]">
                     {parsed.length > 0
                       ? `Parsed ${parsed.length} valid date(s) (${newCount} new): ${parsed.slice(0, 4).join(', ')}${parsed.length > 4 ? '...' : ''}`
-                      : 'No valid dates detected yet — try 12/11/2026 or 2026-11-12'}
+                      : 'No valid dates detected yet â€” try 12/11/2026 or 2026-11-12'}
                   </p>
                 );
               })()}
@@ -2905,3 +2905,4 @@ export const AttendanceTracker: React.FC = () => {
     </div>
   );
 };
+
