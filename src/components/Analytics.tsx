@@ -779,10 +779,10 @@ export const Analytics = () => {
               </div>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-100 tracking-tight">
-                  Study Analytics & Velocity Intelligence
+                  Analytics
                 </h1>
                 <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-                  Speed-accuracy calibration (SACM), 52-week activity heatmap, exam readiness, and data mobility
+                  Study hours, problem accuracy, activity heatmap, and exam pacing.
                 </p>
               </div>
             </div>

@@ -1131,10 +1131,10 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 bg-emerald-950/60 border-emerald-500/40 text-emerald-300 shadow-sm">
                       <Coffee className="w-3.5 h-3.5 text-emerald-400" />
-                      Dynamic Earned Rest Active
+                      Break active
                     </span>
                     <span className="text-[11px] text-emerald-400/80">
-                      Recharging neural stamina
+                      Break timer running
                     </span>
                   </div>
                 )}
@@ -1159,7 +1159,7 @@ export const Pomodoro: React.FC<PomodoroProps> = ({ isFortressMode, setIsFortres
                       {formatFlowTime(flowElapsedSeconds, flowElapsedSeconds >= 3600)}
                     </div>
                     <p className="text-xs text-zinc-400 mt-2 font-medium">
-                      {flowIsActive ? 'Uninterrupted Cognitive Flow Accumulating...' : flowElapsedSeconds > 0 ? 'Flow Paused â€” Click Play to Resume' : 'Ready to begin open-ended study session'}
+                      {flowIsActive ? 'Session running' : flowElapsedSeconds > 0 ? 'Flow Paused â€” Click Play to Resume' : 'Ready to begin open-ended study session'}
                     </p>
                   </>
                 ) : (

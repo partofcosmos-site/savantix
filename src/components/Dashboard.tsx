@@ -235,7 +235,7 @@ export const Dashboard = () => {
       await addLog({
         date: format(new Date(), 'yyyy-MM-dd'),
         subject: 'General STEM',
-        topic: 'Morning Revision Sprint',
+        topic: 'Morning revision',
         durationMinutes: 45,
         problemsSolved: 3
       });
@@ -288,7 +288,7 @@ export const Dashboard = () => {
           biggestMistakePattern: mistakeSummary,
           hiddenWeakness: `Deep conceptual grounding and formula retention in ${subs[0] || 'Physics'}.`,
           nextDayPlan: [
-            `Initiate Morning Revision Sprint on ${subs[0] || 'Core STEM'} for 45 mins.`,
+            `Initiate Morning revision on ${subs[0] || 'Core STEM'} for 45 mins.`,
             `Schedule 90-minute high-yield numerical practice block.`,
             `Review active recall flashcards and error logs prior to evening session.`
           ],
@@ -362,7 +362,7 @@ export const Dashboard = () => {
                 ) : (
                   <RotateCcw className="w-3.5 h-3.5" />
                 )}
-                <span>{isReanalyzingInsights ? 'Re-analyzing...' : 'Re-analyze with Latest Logs'}</span>
+                <span>{isReanalyzingInsights ? 'Re-analyzing...' : 'Refresh insights'}</span>
               </button>
             )}
             <input 
@@ -493,7 +493,7 @@ export const Dashboard = () => {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-[var(--sx-ink)]">
-                    Morning Revision Sprint 
+                    Morning revision 
                   </h2>
                   <p className="text-xs text-indigo-200/60 mt-0.5">
                     {format(new Date(), 'EEEE, MMMM do')} • 45 Min Interleaved Practice
@@ -575,7 +575,7 @@ export const Dashboard = () => {
             style={{ backgroundColor: healthTier.tier === 'emerald' ? '#10b981' : healthTier.tier === 'amber' ? '#f59e0b' : '#f43f5e' }}
           />
 
-          {/* Top Row: Title, Anti-Fragile Badge & Controls */}
+          {/* Top Row: Title, Resilient Badge & Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div className="flex items-center gap-3">
               <div className={`p-3 rounded-2xl border ${healthTier.borderColor} bg-zinc-950/60 shadow-inner`}>
@@ -585,7 +585,7 @@ export const Dashboard = () => {
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-bold text-zinc-100 tracking-tight">Elastic Streak & Resilience Hub</h2>
                   <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full">
-                    Anti-Fragile
+                    Resilient
                   </span>
                 </div>
                 <p className="text-xs text-zinc-400 mt-0.5">
@@ -840,7 +840,7 @@ export const Dashboard = () => {
               <div className="flex items-center gap-1.5">
                 <p className="text-sm text-zinc-500 font-medium">Equilibrium</p>
                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${equilibriumReport.statusBadgeColor}`}>
-                  {equilibriumReport.status === 'harmonious' ? 'Harmonious' : equilibriumReport.status === 'mild_skew' ? 'Mild Skew' : 'Neglect Alert'}
+                  {equilibriumReport.status === 'harmonious' ? 'Balanced' : equilibriumReport.status === 'mild_skew' ? 'Mild Skew' : 'Neglect Alert'}
                 </span>
               </div>
               <p className="text-2xl font-bold text-zinc-100 font-mono">{equilibriumReport.equilibriumScore}%</p>

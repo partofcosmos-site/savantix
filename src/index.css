@@ -2,77 +2,80 @@
 @plugin "@tailwindcss/typography";
 
 /* ==========================================================================
-   SAVANTIX DUAL-THEME PRECISION DESIGN SYSTEM
-   Default: Precision Dark Graphite (Linear / Vercel / Raycast craft)
-   Optional: Architectural Daylight ([data-theme="light"])
-   Zero neon blur blobs. Crisp 1px hairlines. WCAG AA >= 4.5:1 contrast.
+   SAVANTIX — QUIET LINEAR / RAYCAST GRAPHITE DESIGN SYSTEM
+   4 neutral graphite surfaces · 3 crisp ink roles · 1px neutral hairlines
+   Zero rainbow neon borders · Zero blur blobs · Zero shouting weights
    ========================================================================== */
 
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --sx-canvas: #090a0c;
-  --sx-rail: #0d0f13;
-  --sx-surface: #12151b;
-  --sx-elevated: #181c24;
-  --sx-hover: #1f242f;
-  --sx-ink: #f3f4f6;
-  --sx-ink-secondary: #a1a7b5;
-  --sx-ink-muted: #7c8394;
-  --sx-hairline: #232732;
-  --sx-border: #323846;
-  --sx-signal: #f97316;
-  --sx-signal-text: #fb923c;
-  --sx-signal-bg: rgba(249, 115, 22, 0.12);
-  --sx-signal-border: rgba(249, 115, 22, 0.35);
+  --sx-canvas: #0d0d0f;
+  --sx-rail: #111114;
+  --sx-surface: #141418;
+  --sx-elevated: #1c1c21;
+  --sx-hover: #24242a;
+  --sx-ink: #f4f4f5;
+  --sx-ink-secondary: #a1a1aa;
+  --sx-ink-muted: #71717a;
+  --sx-hairline: rgba(255, 255, 255, 0.08);
+  --sx-border: rgba(255, 255, 255, 0.14);
+  --sx-accent: #e4e4e7;
+  --sx-signal: #e4e4e7;
+  --sx-signal-text: #f4f4f5;
+  --sx-signal-bg: #1c1c21;
+  --sx-signal-border: rgba(255, 255, 255, 0.14);
   --sx-safe: #34d399;
-  --sx-safe-bg: rgba(16, 185, 129, 0.12);
-  --sx-safe-border: rgba(16, 185, 129, 0.35);
-  --sx-caution: #fbbf24;
-  --sx-caution-bg: rgba(245, 158, 11, 0.12);
-  --sx-caution-border: rgba(245, 158, 11, 0.35);
+  --sx-safe-bg: rgba(52, 211, 153, 0.08);
+  --sx-safe-border: rgba(52, 211, 153, 0.22);
+  --sx-caution: #f59e0b;
+  --sx-caution-bg: rgba(245, 158, 11, 0.08);
+  --sx-caution-border: rgba(245, 158, 11, 0.22);
   --sx-fault: #f87171;
-  --sx-fault-bg: rgba(239, 68, 68, 0.12);
-  --sx-fault-border: rgba(239, 68, 68, 0.35);
-  --sx-sky: #38bdf8;
-  --sx-btn-primary-bg: #f3f4f6;
-  --sx-btn-primary-ink: #090a0c;
-  --sx-btn-primary-border: #f3f4f6;
-  --sx-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --sx-fault-bg: rgba(248, 113, 113, 0.08);
+  --sx-fault-border: rgba(248, 113, 113, 0.22);
+  --sx-sky: #a1a1aa;
+  --sx-btn-primary-bg: #f4f4f5;
+  --sx-btn-primary-ink: #0d0d0f;
+  --sx-btn-primary-border: #f4f4f5;
+  --sx-btn-primary-hover: #e4e4e7;
+  --sx-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   --sx-overlay: rgba(0, 0, 0, 0.65);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --sx-canvas: #f4f3ef;
-  --sx-rail: #eceae3;
+  --sx-canvas: #f6f6f7;
+  --sx-rail: #efeff1;
   --sx-surface: #ffffff;
-  --sx-elevated: #f4f3ef;
-  --sx-hover: #eae8e2;
-  --sx-ink: #141413;
-  --sx-ink-secondary: #575652;
-  --sx-ink-muted: #5f5e59;
-  --sx-hairline: #d5d3cb;
-  --sx-border: #b8b5ac;
-  --sx-signal: #ea580c;
-  --sx-signal-text: #c2410c;
-  --sx-signal-bg: rgba(234, 88, 12, 0.08);
-  --sx-signal-border: rgba(234, 88, 12, 0.35);
+  --sx-elevated: #f3f3f5;
+  --sx-hover: #e8e8ec;
+  --sx-ink: #111113;
+  --sx-ink-secondary: #52525b;
+  --sx-ink-muted: #71717a;
+  --sx-hairline: rgba(17, 17, 19, 0.09);
+  --sx-border: rgba(17, 17, 19, 0.16);
+  --sx-accent: #18181b;
+  --sx-signal: #18181b;
+  --sx-signal-text: #111113;
+  --sx-signal-bg: #f3f3f5;
+  --sx-signal-border: rgba(17, 17, 19, 0.14);
   --sx-safe: #15803d;
-  --sx-safe-bg: rgba(21, 128, 61, 0.08);
-  --sx-safe-border: rgba(21, 128, 61, 0.30);
+  --sx-safe-bg: rgba(21, 128, 61, 0.07);
+  --sx-safe-border: rgba(21, 128, 61, 0.22);
   --sx-caution: #b45309;
-  --sx-caution-bg: rgba(180, 83, 9, 0.08);
-  --sx-caution-border: rgba(180, 83, 9, 0.35);
+  --sx-caution-bg: rgba(180, 83, 9, 0.07);
+  --sx-caution-border: rgba(180, 83, 9, 0.22);
   --sx-fault: #b91c1c;
-  --sx-fault-bg: rgba(185, 28, 28, 0.08);
-  --sx-fault-border: rgba(185, 28, 28, 0.35);
-  --sx-sky: #0369a1;
-  --sx-btn-primary-bg: #141413;
+  --sx-fault-bg: rgba(185, 28, 28, 0.07);
+  --sx-fault-border: rgba(185, 28, 28, 0.22);
+  --sx-sky: #52525b;
+  --sx-btn-primary-bg: #111113;
   --sx-btn-primary-ink: #ffffff;
-  --sx-btn-primary-border: #141413;
-  --sx-shadow: 0 1px 2px rgba(20, 20, 19, 0.06);
-  --sx-overlay: rgba(20, 20, 19, 0.40);
+  --sx-btn-primary-border: #111113;
+  --sx-btn-primary-hover: #27272a;
+  --sx-shadow: 0 1px 2px rgba(17, 17, 19, 0.05);
+  --sx-overlay: rgba(17, 17, 19, 0.35);
 }
 
 html, body {
@@ -97,63 +100,96 @@ code, pre, .font-mono, input[type="number"], td, th {
 }
 
 /* ==========================================================================
-   SEMANTIC SURFACE & INK REMAPPING (Adapts Cleanly to Dark & Light)
+   1. STRICT 4-SURFACE NEUTRAL GRAPHITE COLLAPSE (Kills 30+ Rainbow BGs)
    ========================================================================== */
-
-/* 1. Surfaces */
-.bg-zinc-950,
-.bg-zinc-950\/95,
-.bg-zinc-950\/90,
-.bg-zinc-950\/80,
+[class*="bg-zinc-950"],
+[class*="bg-slate-950"],
+[class*="bg-gray-950"],
+[class*="bg-neutral-950"],
 .bg-black,
 .bg-black\/90 {
   background-color: var(--sx-canvas) !important;
 }
 
-.bg-zinc-900,
-.bg-zinc-900\/95,
-.bg-zinc-900\/90,
-.bg-zinc-900\/80,
-.bg-zinc-900\/70,
-.bg-zinc-900\/60,
-.bg-zinc-900\/50,
-.bg-zinc-900\/40 {
+[class*="bg-zinc-900"],
+[class*="bg-slate-900"],
+[class*="bg-gray-900"],
+[class*="bg-neutral-900"] {
   background-color: var(--sx-surface) !important;
   backdrop-filter: none !important;
 }
 
-.bg-zinc-800,
-.bg-zinc-800\/90,
-.bg-zinc-800\/80,
-.bg-zinc-800\/70,
-.bg-zinc-800\/60,
-.bg-zinc-800\/50,
-.bg-zinc-800\/40 {
+[class*="bg-zinc-800"],
+[class*="bg-slate-800"],
+[class*="bg-gray-800"],
+[class*="bg-neutral-800"],
+[class*="bg-zinc-700"],
+[class*="bg-indigo-950"],
+[class*="bg-indigo-900"],
+[class*="bg-indigo-800"],
+[class*="bg-indigo-500\/"],
+[class*="bg-indigo-600\/"],
+[class*="bg-violet-"],
+[class*="bg-purple-"],
+[class*="bg-cyan-"],
+[class*="bg-sky-"],
+[class*="bg-blue-"],
+[class*="bg-teal-"],
+[class*="bg-pink-"],
+[class*="bg-fuchsia-"],
+[class*="bg-orange-"] {
   background-color: var(--sx-elevated) !important;
+  backdrop-filter: none !important;
 }
 
 .hover\:bg-zinc-800:hover,
 .hover\:bg-zinc-800\/80:hover,
 .hover\:bg-zinc-800\/60:hover,
-.hover\:bg-zinc-700:hover {
+.hover\:bg-zinc-700:hover,
+[class*="hover:bg-indigo-"]:hover,
+[class*="hover:bg-violet-"]:hover,
+[class*="hover:bg-cyan-"]:hover,
+[class*="hover:bg-purple-"]:hover {
   background-color: var(--sx-hover) !important;
 }
 
-/* 2. Typography Ink Roles */
+/* ==========================================================================
+   2. QUIET 3-ROLE INK HIERARCHY (Kills Neon Rainbow Text)
+   ========================================================================== */
 .text-white,
 .text-zinc-50,
 .text-zinc-100,
-.text-zinc-200 {
+.text-zinc-200,
+.text-slate-100,
+.text-slate-200,
+[class*="text-indigo-100"],
+[class*="text-indigo-200"],
+[class*="text-cyan-100"],
+[class*="text-cyan-200"] {
   color: var(--sx-ink) !important;
 }
 
 .text-zinc-300,
-.text-zinc-400 {
+.text-zinc-400,
+.text-slate-300,
+.text-slate-400,
+[class*="text-indigo-300"],
+[class*="text-indigo-400"],
+[class*="text-violet-"],
+[class*="text-purple-"],
+[class*="text-cyan-300"],
+[class*="text-cyan-400"],
+[class*="text-sky-"],
+[class*="text-blue-"],
+[class*="text-teal-"],
+[class*="text-pink-"],
+[class*="text-orange-"] {
   color: var(--sx-ink-secondary) !important;
 }
 
 .text-zinc-500,
-.text-zinc-600 {
+.text-zinc-600,
+.text-slate-500 {
   color: var(--sx-ink-muted) !important;
 }
 
@@ -163,53 +199,88 @@ code, pre, .font-mono, input[type="number"], td, th {
   color: var(--sx-ink) !important;
 }
 
-/* 3. Crisp 1px Structural Hairlines */
-.border-zinc-900,
-.border-zinc-800,
-.border-zinc-800\/90,
-.border-zinc-800\/80,
-.border-zinc-800\/60,
-.border-zinc-800\/50,
-.border-zinc-700,
-.border-zinc-700\/80,
-.border-zinc-700\/60,
-.border-zinc-700\/50 {
+/* ==========================================================================
+   3. QUIET 1PX NEUTRAL HAIRLINES (Kills Neon Colored Borders)
+   ========================================================================== */
+[class*="border-zinc-"],
+[class*="border-slate-"],
+[class*="border-gray-"],
+[class*="border-indigo-"],
+[class*="border-violet-"],
+[class*="border-purple-"],
+[class*="border-cyan-"],
+[class*="border-sky-"],
+[class*="border-blue-"],
+[class*="border-teal-"],
+[class*="border-pink-"],
+[class*="border-orange-"] {
   border-color: var(--sx-hairline) !important;
 }
 
-/* 4. Architectural Radii & Quiet Elevation */
-.rounded-3xl {
-  border-radius: 8px !important;
+/* ==========================================================================
+   4. RESTRAINED SEMANTIC SIGNALS ONLY (Safe / Caution / Fault)
+   ========================================================================== */
+.text-emerald-200,
+.text-emerald-300,
+.text-emerald-400,
+.text-green-400 {
+  color: var(--sx-safe) !important;
 }
-.rounded-2xl {
-  border-radius: 8px !important;
+[class*="bg-emerald-500\/"],
+[class*="bg-emerald-600\/"],
+[class*="bg-emerald-950"],
+[class*="bg-green-500\/"] {
+  background-color: var(--sx-safe-bg) !important;
 }
-.rounded-xl {
-  border-radius: 6px !important;
-}
-.shadow-2xl,
-.shadow-xl,
-.shadow-lg {
-  box-shadow: var(--sx-shadow) !important;
-}
-
-/* 5. Kill AI Neon Blobs & Cheesy Gradients */
-.blur-3xl {
-  display: none !important;
-}
-
-[class*="from-indigo-"],
-[class*="from-violet-"],
-[class*="from-purple-"],
-[class*="bg-gradient-to-"] {
-  background-image: none !important;
+[class*="border-emerald-"],
+[class*="border-green-"] {
+  border-color: var(--sx-safe-border) !important;
 }
 
-/* 6. Primary Signal Actions */
+.text-amber-200,
+.text-amber-300,
+.text-amber-400,
+.text-yellow-400 {
+  color: var(--sx-caution) !important;
+}
+[class*="bg-amber-500\/"],
+[class*="bg-amber-950"],
+[class*="bg-yellow-500\/"] {
+  background-color: var(--sx-caution-bg) !important;
+}
+[class*="border-amber-"],
+[class*="border-yellow-"] {
+  border-color: var(--sx-caution-border) !important;
+}
+
+.text-rose-200,
+.text-rose-300,
+.text-rose-400,
+.text-red-300,
+.text-red-400 {
+  color: var(--sx-fault) !important;
+}
+[class*="bg-rose-500\/"],
+[class*="bg-rose-600\/"],
+[class*="bg-rose-950"],
+[class*="bg-red-500\/"],
+[class*="bg-red-950"] {
+  background-color: var(--sx-fault-bg) !important;
+}
+[class*="border-rose-"],
+[class*="border-red-"] {
+  border-color: var(--sx-fault-border) !important;
+}
+
+/* ==========================================================================
+   5. PRIMARY ACTIONS — CRISP LINEAR OFF-WHITE ON GRAPHITE
+   ========================================================================== */
 .bg-indigo-600,
 .bg-indigo-500,
 .bg-violet-600,
-.bg-emerald-600 {
+.bg-emerald-600,
+.sx-btn-primary,
+.rams-btn-primary {
   background-color: var(--sx-btn-primary-bg) !important;
   color: var(--sx-btn-primary-ink) !important;
   border-color: var(--sx-btn-primary-border) !important;
@@ -218,130 +289,80 @@ code, pre, .font-mono, input[type="number"], td, th {
 .bg-indigo-500 *,
 .bg-violet-600 *,
 .bg-emerald-600 *,
-button.bg-indigo-600,
-button.bg-indigo-500,
-button.bg-violet-600,
-button.bg-emerald-600 {
+.sx-btn-primary *,
+.rams-btn-primary * {
   color: var(--sx-btn-primary-ink) !important;
 }
-.hover\:bg-indigo-500:hover,
-.hover\:bg-indigo-600:hover,
-.hover\:bg-violet-500:hover {
-  background-color: var(--sx-signal) !important;
-  border-color: var(--sx-signal) !important;
-  color: #ffffff !important;
-}
-.hover\:bg-indigo-500:hover *,
-.hover\:bg-indigo-600:hover *,
-.hover\:bg-violet-500:hover * {
-  color: #ffffff !important;
+.bg-indigo-600:hover,
+.bg-indigo-500:hover,
+.bg-violet-600:hover,
+.bg-emerald-600:hover,
+.sx-btn-primary:hover,
+.rams-btn-primary:hover {
+  background-color: var(--sx-btn-primary-hover) !important;
+  border-color: var(--sx-btn-primary-hover) !important;
+  color: var(--sx-btn-primary-ink) !important;
 }
 
-/* Accent Tints -> Quiet Signal Orange Surfaces */
-.bg-indigo-500\/10,
-.bg-indigo-500\/15,
-.bg-indigo-500\/20,
-.bg-indigo-600\/10,
-.bg-indigo-600\/20,
-.bg-violet-500\/10,
-.bg-violet-500\/20,
-.bg-purple-500\/10,
-.bg-indigo-950,
-.bg-indigo-950\/80,
-.bg-indigo-950\/60,
-.bg-indigo-950\/40,
-.bg-indigo-950\/30 {
-  background-color: var(--sx-signal-bg) !important;
+/* ==========================================================================
+   6. TYPOGRAPHY, RADII, SHADOWS & CALM MOTION (Zero AI Slop Tells)
+   ========================================================================== */
+.font-black,
+.font-extrabold,
+.font-bold {
+  font-weight: 600 !important;
 }
 
-.border-indigo-500\/20,
-.border-indigo-500\/30,
-.border-indigo-500\/40,
-.border-indigo-500\/50,
-.border-violet-500\/30,
-.border-violet-500\/40,
-.border-indigo-800\/60,
-.border-indigo-800\/40,
-.border-indigo-800 {
-  border-color: var(--sx-signal-border) !important;
+.rounded-3xl,
+.rounded-2xl {
+  border-radius: 8px !important;
+}
+.rounded-xl {
+  border-radius: 6px !important;
+}
+.rounded-lg {
+  border-radius: 5px !important;
 }
 
-.text-indigo-200,
-.text-indigo-200\/90,
-.text-indigo-300,
-.text-indigo-400,
-.text-violet-300,
-.text-violet-400,
-.text-purple-400 {
-  color: var(--sx-signal-text) !important;
+.shadow-2xl,
+.shadow-xl,
+.shadow-lg,
+.shadow-md,
+.shadow-inner,
+[class*="drop-shadow-"] {
+  box-shadow: none !important;
+  filter: none !important;
 }
 
-/* 7. Functional Semantic Signals */
-.text-emerald-200,
-.text-emerald-300,
-.text-emerald-400,
-.text-green-400 {
-  color: var(--sx-safe) !important;
-}
-.bg-emerald-500\/10,
-.bg-emerald-500\/20,
-.bg-emerald-950\/80,
-.bg-emerald-950\/60,
-.bg-emerald-950\/50,
-.bg-emerald-950\/40,
-.bg-emerald-950 {
-  background-color: var(--sx-safe-bg) !important;
-}
-.border-emerald-500\/20,
-.border-emerald-500\/30,
-.border-emerald-800\/50 {
-  border-color: var(--sx-safe-border) !important;
+.blur-3xl,
+.blur-2xl {
+  display: none !important;
 }
 
-.text-amber-300,
-.text-amber-400,
-.text-yellow-400 {
-  color: var(--sx-caution) !important;
-}
-.bg-amber-500\/10,
-.bg-amber-500\/20,
-.bg-amber-950\/40,
-.bg-amber-950\/50 {
-  background-color: var(--sx-caution-bg) !important;
-}
-.border-amber-500\/30,
-.border-amber-800\/60 {
-  border-color: var(--sx-caution-border) !important;
+[class*="bg-gradient-to-"],
+[class*="from-indigo-"],
+[class*="from-violet-"],
+[class*="from-purple-"],
+[class*="from-cyan-"],
+[class*="from-emerald-"] {
+  background-image: none !important;
 }
 
-.text-rose-300,
-.text-rose-400,
-.text-red-300,
-.text-red-400 {
-  color: var(--sx-fault) !important;
-}
-.bg-rose-500\/10,
-.bg-rose-500\/20,
-.bg-rose-950\/60,
-.bg-rose-950,
-.bg-red-500\/10,
-.bg-red-950\/40,
-.bg-red-950\/50 {
-  background-color: var(--sx-fault-bg) !important;
-}
-.border-rose-500\/30,
-.border-red-500\/30,
-.border-red-800\/60 {
-  border-color: var(--sx-fault-border) !important;
+.animate-pulse,
+.animate-bounce {
+  animation: none !important;
 }
 
-.text-sky-300,
-.text-sky-400,
-.text-cyan-400 {
-  color: var(--sx-sky) !important;
+/* Guarantee gradient-clipped text never disappears */
+.text-transparent.bg-clip-text,
+.bg-clip-text.text-transparent {
+  color: var(--sx-ink) !important;
+  -webkit-text-fill-color: var(--sx-ink) !important;
+  background-color: transparent !important;
+  background-clip: border-box !important;
 }
 
-/* 8. Form Inputs & Focus States */
+/* Form inputs */
 input, textarea, select {
   background-color: var(--sx-elevated) !important;
   color: var(--sx-ink) !important;
@@ -351,43 +372,12 @@ input::placeholder, textarea::placeholder {
   color: var(--sx-ink-muted) !important;
 }
 input:focus, textarea:focus, select:focus {
-  border-color: var(--sx-signal) !important;
+  border-color: var(--sx-ink-secondary) !important;
   outline: none !important;
-  box-shadow: 0 0 0 1px var(--sx-signal) !important;
+  box-shadow: 0 0 0 1px var(--sx-ink-secondary) !important;
 }
 
-/* 9. Calm Motion (No Pulsing/Bouncing AI Slop) */
-.animate-pulse {
-  animation: none !important;
-}
-
-/* 10. Explicit Primary Action Button (High Contrast in Both Dark & Light) */
-.rams-btn-primary,
-.sx-btn-primary {
-  background-color: var(--sx-btn-primary-bg) !important;
-  color: var(--sx-btn-primary-ink) !important;
-  border: 1px solid var(--sx-btn-primary-border) !important;
-}
-.rams-btn-primary *,
-.rams-btn-primary span,
-.sx-btn-primary *,
-.sx-btn-primary span {
-  color: var(--sx-btn-primary-ink) !important;
-}
-.rams-btn-primary:hover,
-.sx-btn-primary:hover {
-  background-color: var(--sx-signal) !important;
-  border-color: var(--sx-signal) !important;
-  color: #ffffff !important;
-}
-.rams-btn-primary:hover *,
-.rams-btn-primary:hover span,
-.sx-btn-primary:hover *,
-.sx-btn-primary:hover span {
-  color: #ffffff !important;
-}
-
-/* 11. Recharts Precision Theme Tokens */
+/* Recharts dark/light precision styling */
 .recharts-legend-item-text {
   color: var(--sx-ink-secondary) !important;
 }
@@ -405,15 +395,5 @@ input:focus, textarea:focus, select:focus {
 }
 .recharts-tooltip-label {
   color: var(--sx-ink) !important;
-  font-weight: 600;
-}
-
-
-/* 12. Guarantee Gradient-Clipped Text Never Becomes Invisible */
-.text-transparent.bg-clip-text,
-.bg-clip-text.text-transparent {
-  color: var(--sx-ink) !important;
-  -webkit-text-fill-color: var(--sx-ink) !important;
-  background-color: transparent !important;
-  background-clip: border-box !important;
+  font-weight: 500;
 }

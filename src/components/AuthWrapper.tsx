@@ -17,7 +17,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="min-h-screen bg-[var(--sx-canvas)] flex flex-col items-center justify-center gap-3 text-[var(--sx-ink)]">
         <Loader2 className="w-5 h-5 text-[var(--sx-signal-text)] animate-spin" />
-        <span className="font-mono text-xs uppercase tracking-widest text-[var(--sx-ink-secondary)]">
+        <span className="font-mono text-xs  text-[var(--sx-ink-secondary)]">
           Initializing Savantix
         </span>
       </div>
@@ -66,12 +66,12 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
           {/* Top Specification Strip */}
           <div className="px-6 py-3 bg-[var(--sx-rail)] border-b border-[var(--sx-hairline)] flex items-center justify-between">
             <span className="font-mono text-[11px] text-[var(--sx-signal-text)] font-medium tracking-wider">
-              01 / WORKBENCH ACCESS
+              Sign in
             </span>
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-[var(--sx-ink-secondary)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--sx-safe)]" />
-                SYNC READY
+                Cloud sync
               </span>
               <button
                 type="button"
@@ -92,7 +92,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
                 Savantix
               </h1>
               <p className="text-sm text-[var(--sx-ink-secondary)] leading-relaxed">
-                Academic telemetry, attendance ledger, and STEM study workbench.
+                Study log, attendance tracker, and focus timer.
               </p>
             </div>
 
@@ -126,7 +126,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
             {/* Hairline Divider */}
             <div className="relative flex items-center justify-center">
               <div className="border-t border-[var(--sx-hairline)] w-full" />
-              <span className="bg-[var(--sx-surface)] px-3 font-mono text-[10px] text-[var(--sx-ink-muted)] uppercase tracking-widest whitespace-nowrap">
+              <span className="bg-[var(--sx-surface)] px-3 font-mono text-[10px] text-[var(--sx-ink-muted)]  whitespace-nowrap">
                 Or email sync
               </span>
               <div className="border-t border-[var(--sx-hairline)] w-full" />
@@ -175,8 +175,8 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="px-6 py-2.5 bg-[var(--sx-rail)] border-t border-[var(--sx-hairline)] flex items-center justify-between font-mono text-[10px] text-[var(--sx-ink-muted)]">
-            <span>PART OF COSMOS INITIATIVE</span>
-            <span>OFFLINE-FIRST · CLOUD SYNC</span>
+            <span>Part of Cosmos</span>
+            <span>Local-first sync</span>
           </div>
         </div>
       </div>

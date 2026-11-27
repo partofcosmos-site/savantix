@@ -839,7 +839,7 @@ export const AttendanceTracker: React.FC = () => {
                             ? 'text-[var(--sx-caution)] border-[var(--sx-caution-border)]'
                             : 'text-[var(--sx-safe)] border-[var(--sx-safe-border)]'
                     )}>
-                      {isFreshLedger ? 'READY TO TRACK' : !canSkipSafe ? 'DO NOT SKIP — RECOVERY MODE' : isTightBuffer ? 'CAUTION — TIGHT BUFFER' : 'SAFE TO SKIP TOMORROW'}
+                      {isFreshLedger ? 'Ready to track' : !canSkipSafe ? 'Attend required' : isTightBuffer ? 'Tight buffer' : 'Safe to skip'}
                     </span>
                     <span className="font-mono text-xs text-[var(--sx-ink)] font-semibold">
                       {isFreshLedger ? '0 days logged yet' : `${metrics.effectivePct}% Effective (${metrics.rawPct}% Raw)`}

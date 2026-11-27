@@ -129,10 +129,10 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
       {/* Mobile Top Bar */}
       <header className="md:hidden flex items-center justify-between px-4 h-14 bg-[var(--sx-rail)] border-b border-[var(--sx-hairline)] sticky top-0 z-30">
         <div className="flex items-center gap-2.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--sx-signal)]" />
+          <span className="w-2 h-2 rounded-full bg-[var(--sx-ink)]" />
           <div>
             <h1 className="text-sm font-semibold tracking-tight text-[var(--sx-ink)] leading-none">Savantix</h1>
-            <p className="font-mono text-[9px] text-[var(--sx-ink-muted)] uppercase tracking-wider mt-0.5">
+            <p className="font-mono text-[9px] text-[var(--sx-ink-muted)]  mt-0.5">
               Part of Cosmos
             </p>
           </div>
@@ -192,11 +192,11 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
         <div className="hidden md:flex px-5 py-4 items-center justify-between border-b border-[var(--sx-hairline)]">
           <div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--sx-signal)]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--sx-ink)]" />
               <h1 className="text-base font-semibold tracking-tight text-[var(--sx-ink)]">Savantix</h1>
             </div>
-            <p className="font-mono text-[9px] text-[var(--sx-ink-muted)] uppercase tracking-wider mt-1">
-              An initiative of Part of Cosmos
+            <p className="font-mono text-[9px] text-[var(--sx-ink-muted)]  mt-1">
+              Study workbench
             </p>
           </div>
           <button
@@ -220,7 +220,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           >
             <span className="flex items-center gap-2">
               <Zap className="w-3.5 h-3.5" />
-              <span>Micro-Logger HUD</span>
+              <span>Quick log</span>
             </span>
             <kbd className="font-mono text-[10px] opacity-75 px-1.5 py-0.5 rounded-[3px] border border-current/25">
               Alt+L
@@ -231,7 +231,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
         {/* Primary Workspace Navigation */}
         <nav className="flex-1 py-3 overflow-y-auto">
           <div className="px-5 pb-1.5 font-mono text-[10px] text-[var(--sx-ink-muted)] tracking-wider">
-            01 / WORKSPACE
+            Workspace
           </div>
           <div className="space-y-0.5">
             {tabs.map((tab) => {
@@ -247,7 +247,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
                   className={clsx(
                     'w-full flex items-center gap-2.5 px-5 py-2.5 text-xs transition-colors duration-150 cursor-pointer border-l-2 text-left',
                     isActive
-                      ? 'border-[var(--sx-signal)] bg-[var(--sx-elevated)] text-[var(--sx-ink)] font-semibold'
+                      ? 'border-[var(--sx-ink)] bg-[var(--sx-elevated)] text-[var(--sx-ink)] font-medium'
                       : 'border-transparent text-[var(--sx-ink-secondary)] hover:bg-[var(--sx-hover)] hover:text-[var(--sx-ink)] font-medium'
                   )}
                 >
@@ -264,7 +264,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           {/* Cosmic Knowledge Suite */}
           <div className="mt-4 pt-3 border-t border-[var(--sx-hairline)]">
             <div className="px-5 pb-1.5 font-mono text-[10px] text-[var(--sx-ink-muted)] tracking-wider">
-              02 / KNOWLEDGE SUITE
+              Part of Cosmos
             </div>
             <div className="space-y-0.5">
               {suiteLinks.map((item) => (
@@ -363,7 +363,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           >
             <div className="flex items-center justify-between border-b border-[var(--sx-hairline)] pb-3">
               <div>
-                <span className="font-mono text-[10px] text-[var(--sx-signal-text)] tracking-wider uppercase">WORKBENCH COMMANDS</span>
+                <span className="font-mono text-[10px] text-[var(--sx-signal-text)] tracking-wider uppercase">Shortcuts</span>
                 <h2 className="text-base font-semibold text-[var(--sx-ink)]">Keyboard Shortcuts</h2>
               </div>
               <button
