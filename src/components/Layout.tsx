@@ -125,7 +125,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
 
       {/* Mobile Top Bar */}
       <header className="md:hidden flex items-center justify-between px-4 h-12 bg-[var(--sx-rail)] border-b border-[var(--sx-hairline)] sticky top-0 z-30">
-        <span className="text-sm font-semibold tracking-tight text-[var(--sx-ink)]">Savantix</span>
+        <span className="text-lg font-bold tracking-tight" style={{ color: "var(--sx-accent)" }}>Savantix</span>
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -158,12 +158,12 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
       {/* Quiet 224px Linear-Style Sidebar */}
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 z-40 w-56 bg-[var(--sx-rail)] border-r border-[var(--sx-hairline)] flex flex-col transform transition-transform duration-150 ease-out md:relative md:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 w-60 bg-[var(--sx-rail)] border-r border-[var(--sx-hairline)] flex flex-col transform transition-transform duration-150 ease-out md:relative md:translate-x-0',
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         <div className="hidden md:flex px-4 h-12 items-center justify-between border-b border-[var(--sx-hairline)]">
-          <span className="text-sm font-semibold tracking-tight text-[var(--sx-ink)]">Savantix</span>
+          <span className="text-lg font-bold tracking-tight" style={{ color: "var(--sx-accent)" }}>Savantix</span>
           <button
             type="button"
             onClick={handleToggleTheme}
@@ -179,7 +179,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
           <button
             type="button"
             onClick={() => setIsMicroLoggerOpen(true)}
-            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[5px] text-xs text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] border border-[var(--sx-hairline)] transition-colors cursor-pointer"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-medium text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] border border-[var(--sx-hairline)] transition-colors cursor-pointer"
             title="Quick log (Ctrl+K or Alt+L)"
           >
             <span className="flex items-center gap-2">
@@ -202,9 +202,9 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
                   setIsMobileMenuOpen(false);
                 }}
                 className={clsx(
-                  'w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-[5px] text-[13px] transition-colors cursor-pointer text-left',
+                  'w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-[8px] text-[14px] py-2 transition-colors cursor-pointer text-left',
                   isActive
-                    ? 'bg-[var(--sx-hover)] text-[var(--sx-ink)] font-medium'
+                    ? 'bg-[var(--sx-signal-bg)] text-[var(--sx-signal-text)] font-semibold'
                     : 'text-[var(--sx-ink-secondary)] hover:bg-[var(--sx-hover)]/60 hover:text-[var(--sx-ink)]'
                 )}
               >
@@ -222,7 +222,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-[5px] text-xs text-[var(--sx-ink-muted)] hover:text-[var(--sx-ink)] hover:bg-[var(--sx-hover)]/60 transition-colors"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-[8px] text-xs font-medium text-[var(--sx-ink-muted)] hover:text-[var(--sx-ink)] hover:bg-[var(--sx-hover)]/60 transition-colors"
               >
                 <span className="flex items-center gap-2">
                   <item.icon className="w-3.5 h-3.5" strokeWidth={1.6} />

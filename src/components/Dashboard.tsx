@@ -148,12 +148,18 @@ export const Dashboard = () => {
     return isValid(d) ? format(d, 'EEEE, d MMM yyyy') : selectedDate;
   }, [selectedDate]);
 
-  const barColors = ['#e4e4e7', '#34d399', '#a1a1aa', '#f59e0b', '#71717a'];
+  const getHumanGreeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+  const barColors = ['#2374e1', '#31a24c', '#f7b928', '#e4605e', '#8b5cf6'];
 
   return (
     <div className="w-full px-5 sm:px-8 py-7 max-w-6xl mx-auto space-y-8">
       {toast && (
-        <div className="fixed top-5 right-5 z-50 px-3.5 py-2 rounded-[6px] bg-[var(--sx-surface)] border border-[var(--sx-border)] text-xs text-[var(--sx-ink)]">
+        <div className="fixed top-5 right-5 z-50 px-3.5 py-2 rounded-[8px] bg-[var(--sx-surface)] border border-[var(--sx-border)] text-xs text-[var(--sx-ink)]">
           {toast}
         </div>
       )}
@@ -161,7 +167,7 @@ export const Dashboard = () => {
       {/* Minimal Header — No Box */}
       <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-[var(--sx-hairline)]">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-[var(--sx-ink)]">Overview</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--sx-ink)]">{getHumanGreeting()}</h1>
           <p className="text-xs text-[var(--sx-ink-muted)] mt-1">{displayDateLabel}</p>
         </div>
         <div className="flex items-center gap-2.5">
@@ -218,7 +224,7 @@ export const Dashboard = () => {
       </header>
 
       {/* Flat 4-Column Telemetry Strip (Hairline Dividers, Zero Nested Boxes) */}
-      <section className="grid grid-cols-2 md:grid-cols-4 border border-[var(--sx-hairline)] rounded-[8px] bg-[var(--sx-surface)] divide-y md:divide-y-0 md:divide-x divide-[var(--sx-hairline)]">
+      <section className="grid grid-cols-2 md:grid-cols-4 border border-[var(--sx-hairline)] rounded-[12px] bg-[var(--sx-surface)] divide-y md:divide-y-0 md:divide-x divide-[var(--sx-hairline)]">
         <div className="p-4 space-y-2">
           <div className="text-xs text-[var(--sx-ink-muted)]">Focused today</div>
           <div className="flex items-baseline gap-2 font-mono">
@@ -230,7 +236,7 @@ export const Dashboard = () => {
               className="h-full transition-all duration-300"
               style={{
                 width: `${targetPct}%`,
-                backgroundColor: targetPct >= 100 ? 'var(--sx-safe)' : 'var(--sx-ink)',
+                backgroundColor: targetPct >= 100 ? 'var(--sx-safe)' : 'var(--sx-accent)',
               }}
             />
           </div>
@@ -266,19 +272,19 @@ export const Dashboard = () => {
             onChange={(e) => setQuickLogInput(e.target.value)}
             placeholder='Quick log — e.g. "45m physics optics 15q 85%" or "1.5h math calculus"'
             aria-label="Natural language quick study log"
-            className="flex-1 px-3.5 py-2.5 text-sm rounded-[6px] border border-[var(--sx-border)]"
+            className="flex-1 px-3.5 py-2.5 text-sm rounded-[8px] border border-[var(--sx-border)]"
           />
           <button
             type="submit"
             disabled={!parsedQuickLog || isQuickLogging}
-            className="sx-btn-primary px-4 py-2.5 rounded-[6px] text-xs font-medium cursor-pointer disabled:opacity-40 shrink-0"
+            className="sx-btn-primary px-4 py-2.5 rounded-[8px] text-xs font-medium cursor-pointer disabled:opacity-40 shrink-0"
           >
             {isQuickLogging ? 'Saving...' : 'Quick Log'}
           </button>
           <button
             type="button"
             onClick={() => setShowFullComposer((v) => !v)}
-            className="px-3 py-2.5 rounded-[6px] text-xs text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] bg-[var(--sx-surface)] border border-[var(--sx-hairline)] flex items-center gap-1 cursor-pointer shrink-0"
+            className="px-3 py-2.5 rounded-[8px] text-xs text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] bg-[var(--sx-surface)] border border-[var(--sx-hairline)] flex items-center gap-1 cursor-pointer shrink-0"
             title="Toggle voice and detailed log composer"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -339,7 +345,7 @@ export const Dashboard = () => {
             </span>
           </div>
 
-          <div className="border border-[var(--sx-hairline)] rounded-[8px] bg-[var(--sx-surface)] divide-y divide-[var(--sx-hairline)]">
+          <div className="border border-[var(--sx-hairline)] rounded-[12px] bg-[var(--sx-surface)] divide-y divide-[var(--sx-hairline)]">
             {todayLogs.length === 0 ? (
               <div className="p-8 text-center text-xs text-[var(--sx-ink-muted)]">
                 No study sessions logged for {displayDateLabel}. Type above to log one in seconds.

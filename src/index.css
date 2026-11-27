@@ -2,105 +2,109 @@
 @plugin "@tailwindcss/typography";
 
 /* ==========================================================================
-   SAVANTIX — QUIET LINEAR / RAYCAST GRAPHITE DESIGN SYSTEM
-   4 neutral graphite surfaces · 3 crisp ink roles · 1px neutral hairlines
-   Zero rainbow neon borders · Zero blur blobs · Zero shouting weights
+   SAVANTIX — HUMAN-CRAFTED UI SYSTEM (Facebook / Notion / Apple Craft)
+   Warm charcoal dark mode (#18191a / #242526) & soft light mode (#f0f2f5 / #fff)
+   Human Trust Blue (#2374e1 / #1877f2), gentle 12px cards, zero AI slop
    ========================================================================== */
 
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --sx-canvas: #0d0d0f;
-  --sx-rail: #111114;
-  --sx-surface: #141418;
-  --sx-elevated: #1c1c21;
-  --sx-hover: #24242a;
-  --sx-ink: #f4f4f5;
-  --sx-ink-secondary: #a1a1aa;
-  --sx-ink-muted: #71717a;
-  --sx-hairline: rgba(255, 255, 255, 0.08);
-  --sx-border: rgba(255, 255, 255, 0.14);
-  --sx-accent: #e4e4e7;
-  --sx-signal: #e4e4e7;
-  --sx-signal-text: #f4f4f5;
-  --sx-signal-bg: #1c1c21;
-  --sx-signal-border: rgba(255, 255, 255, 0.14);
-  --sx-safe: #34d399;
-  --sx-safe-bg: rgba(52, 211, 153, 0.08);
-  --sx-safe-border: rgba(52, 211, 153, 0.22);
-  --sx-caution: #f59e0b;
-  --sx-caution-bg: rgba(245, 158, 11, 0.08);
-  --sx-caution-border: rgba(245, 158, 11, 0.22);
-  --sx-fault: #f87171;
-  --sx-fault-bg: rgba(248, 113, 113, 0.08);
-  --sx-fault-border: rgba(248, 113, 113, 0.22);
-  --sx-sky: #a1a1aa;
-  --sx-btn-primary-bg: #f4f4f5;
-  --sx-btn-primary-ink: #0d0d0f;
-  --sx-btn-primary-border: #f4f4f5;
-  --sx-btn-primary-hover: #e4e4e7;
-  --sx-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --sx-overlay: rgba(0, 0, 0, 0.65);
+  --sx-canvas: #18191a;
+  --sx-rail: #1e1f21;
+  --sx-surface: #242526;
+  --sx-elevated: #303234;
+  --sx-hover: #3a3b3c;
+  --sx-ink: #e4e6eb;
+  --sx-ink-secondary: #b0b3b8;
+  --sx-ink-muted: #8a8d91;
+  --sx-hairline: #3e4042;
+  --sx-border: #4e4f50;
+  --sx-accent: #2374e1;
+  --sx-signal: #2374e1;
+  --sx-signal-text: #4599ff;
+  --sx-signal-bg: rgba(35, 116, 225, 0.14);
+  --sx-signal-border: rgba(69, 153, 255, 0.28);
+  --sx-safe: #31a24c;
+  --sx-safe-bg: rgba(49, 162, 76, 0.14);
+  --sx-safe-border: rgba(49, 162, 76, 0.30);
+  --sx-caution: #f7b928;
+  --sx-caution-bg: rgba(247, 185, 40, 0.14);
+  --sx-caution-border: rgba(247, 185, 40, 0.30);
+  --sx-fault: #f02849;
+  --sx-fault-bg: rgba(240, 40, 73, 0.14);
+  --sx-fault-border: rgba(240, 40, 73, 0.30);
+  --sx-sky: #4599ff;
+  --sx-btn-primary-bg: #2374e1;
+  --sx-btn-primary-ink: #ffffff;
+  --sx-btn-primary-border: #2374e1;
+  --sx-btn-primary-hover: #1b64c7;
+  --sx-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+  --sx-overlay: rgba(0, 0, 0, 0.62);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --sx-canvas: #f6f6f7;
-  --sx-rail: #efeff1;
+  --sx-canvas: #f0f2f5;
+  --sx-rail: #ffffff;
   --sx-surface: #ffffff;
-  --sx-elevated: #f3f3f5;
-  --sx-hover: #e8e8ec;
-  --sx-ink: #111113;
-  --sx-ink-secondary: #52525b;
-  --sx-ink-muted: #71717a;
-  --sx-hairline: rgba(17, 17, 19, 0.09);
-  --sx-border: rgba(17, 17, 19, 0.16);
-  --sx-accent: #18181b;
-  --sx-signal: #18181b;
-  --sx-signal-text: #111113;
-  --sx-signal-bg: #f3f3f5;
-  --sx-signal-border: rgba(17, 17, 19, 0.14);
-  --sx-safe: #15803d;
-  --sx-safe-bg: rgba(21, 128, 61, 0.07);
-  --sx-safe-border: rgba(21, 128, 61, 0.22);
+  --sx-elevated: #f0f2f5;
+  --sx-hover: #e4e6eb;
+  --sx-ink: #050505;
+  --sx-ink-secondary: #65676b;
+  --sx-ink-muted: #8a8d91;
+  --sx-hairline: #dadde1;
+  --sx-border: #ccd0d5;
+  --sx-accent: #1877f2;
+  --sx-signal: #1877f2;
+  --sx-signal-text: #1877f2;
+  --sx-signal-bg: #e7f3ff;
+  --sx-signal-border: #bcdbff;
+  --sx-safe: #1e7e34;
+  --sx-safe-bg: #e9f7ef;
+  --sx-safe-border: #b7e4c7;
   --sx-caution: #b45309;
-  --sx-caution-bg: rgba(180, 83, 9, 0.07);
-  --sx-caution-border: rgba(180, 83, 9, 0.22);
-  --sx-fault: #b91c1c;
-  --sx-fault-bg: rgba(185, 28, 28, 0.07);
-  --sx-fault-border: rgba(185, 28, 28, 0.22);
-  --sx-sky: #52525b;
-  --sx-btn-primary-bg: #111113;
+  --sx-caution-bg: #fef5e7;
+  --sx-caution-border: #fad7a0;
+  --sx-fault: #d92638;
+  --sx-fault-bg: #fdecea;
+  --sx-fault-border: #f5c6cb;
+  --sx-sky: #1877f2;
+  --sx-btn-primary-bg: #1877f2;
   --sx-btn-primary-ink: #ffffff;
-  --sx-btn-primary-border: #111113;
-  --sx-btn-primary-hover: #27272a;
-  --sx-shadow: 0 1px 2px rgba(17, 17, 19, 0.05);
-  --sx-overlay: rgba(17, 17, 19, 0.35);
+  --sx-btn-primary-border: #1877f2;
+  --sx-btn-primary-hover: #166fe5;
+  --sx-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --sx-overlay: rgba(0, 0, 0, 0.40);
 }
 
 html, body {
   background-color: var(--sx-canvas);
   color: var(--sx-ink);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
 }
 
-code, pre, .font-mono, input[type="number"], td, th {
-  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+/* Keep human sans-serif everywhere; only use tabular figures for numbers */
+.font-mono, input[type="number"], td, th {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
   font-variant-numeric: tabular-nums;
+}
+
+code, pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--sx-border) var(--sx-canvas);
+  scrollbar-color: var(--sx-border) transparent;
 }
 
 /* ==========================================================================
-   1. STRICT 4-SURFACE NEUTRAL GRAPHITE COLLAPSE (Kills 30+ Rainbow BGs)
+   1. WARM HUMAN SURFACES (Kills AI-Slop Dark-Neon & Rainbow Boxes)
    ========================================================================== */
 [class*="bg-zinc-950"],
 [class*="bg-slate-950"],
@@ -117,6 +121,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 [class*="bg-neutral-900"] {
   background-color: var(--sx-surface) !important;
   backdrop-filter: none !important;
+  box-shadow: var(--sx-shadow) !important;
 }
 
 [class*="bg-zinc-800"],
@@ -154,7 +159,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 }
 
 /* ==========================================================================
-   2. QUIET 3-ROLE INK HIERARCHY (Kills Neon Rainbow Text)
+   2. HUMAN READABLE INK HIERARCHY
    ========================================================================== */
 .text-white,
 .text-zinc-50,
@@ -173,18 +178,21 @@ code, pre, .font-mono, input[type="number"], td, th {
 .text-zinc-400,
 .text-slate-300,
 .text-slate-400,
-[class*="text-indigo-300"],
-[class*="text-indigo-400"],
 [class*="text-violet-"],
 [class*="text-purple-"],
 [class*="text-cyan-300"],
 [class*="text-cyan-400"],
-[class*="text-sky-"],
-[class*="text-blue-"],
 [class*="text-teal-"],
 [class*="text-pink-"],
 [class*="text-orange-"] {
   color: var(--sx-ink-secondary) !important;
+}
+
+[class*="text-indigo-300"],
+[class*="text-indigo-400"],
+[class*="text-sky-"],
+[class*="text-blue-"] {
+  color: var(--sx-signal-text) !important;
 }
 
 .text-zinc-500,
@@ -200,7 +208,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 }
 
 /* ==========================================================================
-   3. QUIET 1PX NEUTRAL HAIRLINES (Kills Neon Colored Borders)
+   3. SOFT NATURAL BORDERS
    ========================================================================== */
 [class*="border-zinc-"],
 [class*="border-slate-"],
@@ -218,7 +226,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 }
 
 /* ==========================================================================
-   4. RESTRAINED SEMANTIC SIGNALS ONLY (Safe / Caution / Fault)
+   4. SEMANTIC STATUS COLORS
    ========================================================================== */
 .text-emerald-200,
 .text-emerald-300,
@@ -273,7 +281,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 }
 
 /* ==========================================================================
-   5. PRIMARY ACTIONS — CRISP LINEAR OFF-WHITE ON GRAPHITE
+   5. PRIMARY ACTIONS — HUMAN TRUST BLUE (#2374e1 / #1877f2)
    ========================================================================== */
 .bg-indigo-600,
 .bg-indigo-500,
@@ -305,23 +313,22 @@ code, pre, .font-mono, input[type="number"], td, th {
 }
 
 /* ==========================================================================
-   6. TYPOGRAPHY, RADII, SHADOWS & CALM MOTION (Zero AI Slop Tells)
+   6. FRIENDLY RADII, NATURAL WEIGHTS & ZERO AI GLOW
    ========================================================================== */
 .font-black,
-.font-extrabold,
-.font-bold {
-  font-weight: 600 !important;
+.font-extrabold {
+  font-weight: 700 !important;
 }
 
 .rounded-3xl,
 .rounded-2xl {
-  border-radius: 8px !important;
+  border-radius: 12px !important;
 }
 .rounded-xl {
-  border-radius: 6px !important;
+  border-radius: 8px !important;
 }
 .rounded-lg {
-  border-radius: 5px !important;
+  border-radius: 8px !important;
 }
 
 .shadow-2xl,
@@ -330,7 +337,7 @@ code, pre, .font-mono, input[type="number"], td, th {
 .shadow-md,
 .shadow-inner,
 [class*="drop-shadow-"] {
-  box-shadow: none !important;
+  box-shadow: var(--sx-shadow) !important;
   filter: none !important;
 }
 
@@ -353,7 +360,6 @@ code, pre, .font-mono, input[type="number"], td, th {
   animation: none !important;
 }
 
-/* Guarantee gradient-clipped text never disappears */
 .text-transparent.bg-clip-text,
 .bg-clip-text.text-transparent {
   color: var(--sx-ink) !important;
@@ -362,22 +368,23 @@ code, pre, .font-mono, input[type="number"], td, th {
   background-clip: border-box !important;
 }
 
-/* Form inputs */
+/* Comfortable human form controls */
 input, textarea, select {
   background-color: var(--sx-elevated) !important;
   color: var(--sx-ink) !important;
   border-color: var(--sx-border) !important;
+  border-radius: 8px !important;
 }
 input::placeholder, textarea::placeholder {
   color: var(--sx-ink-muted) !important;
 }
 input:focus, textarea:focus, select:focus {
-  border-color: var(--sx-ink-secondary) !important;
+  border-color: var(--sx-accent) !important;
   outline: none !important;
-  box-shadow: 0 0 0 1px var(--sx-ink-secondary) !important;
+  box-shadow: 0 0 0 2px var(--sx-signal-bg) !important;
 }
 
-/* Recharts dark/light precision styling */
+/* Recharts */
 .recharts-legend-item-text {
   color: var(--sx-ink-secondary) !important;
 }
@@ -390,10 +397,10 @@ input:focus, textarea:focus, select:focus {
 .recharts-default-tooltip {
   background-color: var(--sx-surface) !important;
   border: 1px solid var(--sx-border) !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   color: var(--sx-ink) !important;
 }
 .recharts-tooltip-label {
   color: var(--sx-ink) !important;
-  font-weight: 500;
+  font-weight: 600;
 }
