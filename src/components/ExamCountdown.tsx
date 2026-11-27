@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect } from 'react';
 import { Calendar, Target, Clock, AlertCircle, Plus, Trash2, CheckCircle2, ChevronRight, Edit2 } from 'lucide-react';
 import { differenceInDays, parseISO, format } from 'date-fns';
 import { useAppContext } from '../context/AppContext';
@@ -52,13 +52,14 @@ export const ExamCountdown: React.FC = () => {
         } catch {}
       }
     };
+    refreshExams();
     window.addEventListener('savantix_cloud_synced', refreshExams);
     window.addEventListener('storage', refreshExams);
     return () => {
       window.removeEventListener('savantix_cloud_synced', refreshExams);
       window.removeEventListener('storage', refreshExams);
     };
-  }, []);
+  }, [user?.email]);
 
   const saveExams = (newExams: ExamTarget[]) => {
     setExams(newExams);
@@ -297,3 +298,4 @@ export const ExamCountdown: React.FC = () => {
     </div>
   );
 };
+
