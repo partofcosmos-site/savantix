@@ -4,7 +4,7 @@
  * 
  * Verifies:
  * 1. CloudSyncPayload schema includes `insights` and `institutional_attendance`.
- * 2. Deterministic canonical email hashing (`debanjan8686@gmail.com` -> `deb_sync_debanjan8686_gmail_com`).
+ * 2. Deterministic canonical email hashing (`student@example.com` -> `deb_sync_scholar8686_gmail_com`).
  * 3. Non-destructive union merge (`mergeAndPersist`) across all data partitions with zero data loss:
  *    - Study logs merged without duplicates or deletions.
  *    - Daily AI insights merged union by date/id signature.
@@ -101,15 +101,15 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
   // 1. Canonical UID Hashing
   test('Canonical UID Hashing: generates deterministic partition keys from emails', () => {
     assertEqual(
-      CloudSyncService.getCanonicalUid('debanjan8686@gmail.com'),
-      'deb_sync_debanjan8686_gmail_com',
-      'debanjan8686 canonical key'
+      CloudSyncService.getCanonicalUid('student@example.com'),
+      'deb_sync_scholar8686_gmail_com',
+      'scholar8686 canonical key'
     );
 
     assertEqual(
-      CloudSyncService.getCanonicalUid('partofcosmmos@gmail.com'),
-      'deb_sync_partofcosmmos_gmail_com',
-      'partofcosmmos canonical key'
+      CloudSyncService.getCanonicalUid('student@example.com'),
+      'deb_sync_student_gmail_com',
+      'student canonical key'
     );
 
     assertEqual(
@@ -129,7 +129,7 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
   test('Local Snapshot: collects all data domains including insights & institutional attendance', () => {
     localStorage.clear();
 
-    const email = 'debanjan8686@gmail.com';
+    const email = 'student@example.com';
     const canonicalId = CloudSyncService.getCanonicalUid(email);
 
     // Seed local storage with multi-domain data
@@ -143,7 +143,7 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
       { id: 'phy_042', name: 'Physics', attended: 48, total: 71, required: 75, color: 'indigo' }
     ];
     const localInstitutional = {
-      profile: { schoolName: 'The Bandhan School Aranghata', workingDaysHeld: 71, presentDays: 48, absentDays: 23, onDutyDays: 10 },
+      profile: { schoolName: 'Your Institution', workingDaysHeld: 71, presentDays: 48, absentDays: 23, onDutyDays: 10 },
       absences: [{ id: 'abs_1', date: '2026-09-01', reason: 'Exam prep' }]
     };
 
@@ -160,14 +160,14 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
     assertEqual(snapshot.insights?.length, 1, 'Snapshot insights count');
     assertEqual(snapshot.attendance.length, 1, 'Snapshot subject attendance count');
     assert(snapshot.institutional_attendance !== null, 'Snapshot institutional attendance exists');
-    assertEqual(snapshot.institutional_attendance.profile.schoolName, 'The Bandhan School Aranghata', 'Institutional school name');
+    assertEqual(snapshot.institutional_attendance.profile.schoolName, 'Your Institution', 'Institutional school name');
   });
 
   // 3. Bidirectional Non-Destructive Union Merge (Cross-Device Simulation)
   test('Non-Destructive Union Merge: reconciles mobile & PC study sessions with zero data loss', () => {
     localStorage.clear();
 
-    const email = 'debanjan8686@gmail.com';
+    const email = 'student@example.com';
     const canonicalId = CloudSyncService.getCanonicalUid(email);
 
     // PC local state (logged morning session)
@@ -219,12 +219,12 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
   test('Institutional Attendance Merge: merges absence entries additively without overwriting', () => {
     localStorage.clear();
 
-    const email = 'debanjan8686@gmail.com';
+    const email = 'student@example.com';
     const canonicalId = CloudSyncService.getCanonicalUid(email);
 
     // Existing local state
     const localInstitutional = {
-      profile: { schoolName: 'The Bandhan School Aranghata', workingDaysHeld: 71, presentDays: 48, absentDays: 23, onDutyDays: 10 },
+      profile: { schoolName: 'Your Institution', workingDaysHeld: 71, presentDays: 48, absentDays: 23, onDutyDays: 10 },
       absences: [{ id: 'abs_1', date: '2026-08-28', reason: 'Pre-festival study' }]
     };
     localStorage.setItem('savantix_attendance_institutional_v1', JSON.stringify(localInstitutional));
@@ -241,7 +241,7 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
       journal: [],
       attendance: [],
       institutional_attendance: {
-        profile: { schoolName: 'The Bandhan School Aranghata', workingDaysHeld: 71, presentDays: 48, absentDays: 23, onDutyDays: 10 },
+        profile: { schoolName: 'Your Institution', workingDaysHeld: 71, presentDays: 48, absentDays: 23, onDutyDays: 10 },
         absences: [{ id: 'abs_2', date: '2026-09-01', reason: 'Half-yearly prep' }]
       },
       flashcards: [],
@@ -252,7 +252,7 @@ export async function runCloudSyncRealtimeTests(): Promise<void> {
 
     const mergedInst = JSON.parse(localStorage.getItem('savantix_attendance_institutional_v1') || '{}');
     assert(!!mergedInst.profile, 'Profile exists');
-    assertEqual(mergedInst.profile.schoolName, 'The Bandhan School Aranghata', 'School name preserved');
+    assertEqual(mergedInst.profile.schoolName, 'Your Institution', 'School name preserved');
     assert(mergedInst.absences.length >= 2, 'Both absences preserved in merged list');
   });
 

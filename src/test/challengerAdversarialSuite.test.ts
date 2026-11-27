@@ -207,7 +207,7 @@ export async function runChallengerAdversarialTests(): Promise<void> {
   // =========================================================================
   console.log('\n--- SECTION 1: Multi-Session Study Logs & Dynamic Insight Regeneration ---');
 
-  const testEmail = 'debanjan8686@gmail.com';
+  const testEmail = 'student@example.com';
   const canonicalUid = CloudSyncService.getCanonicalUid(testEmail);
   const targetDate = '2026-09-01';
 

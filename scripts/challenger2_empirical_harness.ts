@@ -128,13 +128,13 @@ runTest('ZDL-01', 'Simulate heavy existing user dataset (Logs, Goals, Journal, P
   }
 
   const initialGoals = [
-    { id: 'g1', uid, title: 'Master IPhO Electromagnetism', completed: false, targetDate: '2026-07-01' },
+    { id: 'g1', uid, title: 'Master Physics Olympiad Electromagnetism', completed: false, targetDate: '2026-07-01' },
     { id: 'g2', uid, title: 'JEE Advanced Rank 1-50 Target', completed: false, targetDate: '2026-05-20' },
     { id: 'g3', uid, title: 'Solve 1000 Calculus Problems', completed: true, targetDate: '2026-03-01' }
   ];
 
   const initialJournal = [
-    { id: 'j1', uid, title: 'IPhO Mock Exam Review', content: 'Great speed on rotational dynamics, need to review optics formulas.', date: '2026-08-20' },
+    { id: 'j1', uid, title: 'Physics Olympiad Mock Exam Review', content: 'Great speed on rotational dynamics, need to review optics formulas.', date: '2026-08-20' },
     { id: 'j2', uid, title: 'Equilibrium Rebalancing', content: 'PID flagged chemistry deficit, allocating 60m daily.', date: '2026-08-25' }
   ];
 
@@ -143,7 +143,7 @@ runTest('ZDL-01', 'Simulate heavy existing user dataset (Logs, Goals, Journal, P
     email: 'scholar@savantix.app',
     displayName: 'Aegis Champion',
     schoolHours: 5,
-    targetExams: ['JEE Advanced 2026', 'IPhO 2026']
+    targetExams: ['JEE Advanced 2026', 'Physics Olympiad 2026']
   };
 
   const initialStreak = {

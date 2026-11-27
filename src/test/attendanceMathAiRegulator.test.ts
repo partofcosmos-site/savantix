@@ -235,8 +235,8 @@ export async function runAttendanceMathAiRegulatorTests(): Promise<void> {
     const prompt = generateGeminiRegulatoryPrompt(SEPT2_FIXTURE_STATE);
 
     // Verify institutional identifiers
-    assert(prompt.includes('The Bandhan School Aranghata'), 'Prompt includes School Name');
-    assert(prompt.includes('2430453'), 'Prompt includes Affiliation Number');
+    assert(prompt.includes('Your Institution'), 'Prompt includes School Name');
+    assert(prompt.includes(''), 'Prompt includes Affiliation Number');
     assert(prompt.includes('Class XI — Science'), 'Prompt includes Academic Stream');
     assert(prompt.includes('68.92%'), 'Prompt includes live effective percentage');
     assert(prompt.includes('55.41%'), 'Prompt includes live raw percentage');

@@ -26,7 +26,7 @@ export async function runSyncTombstoneTests(): Promise<boolean> {
   }
   localStorage.clear();
 
-  const email = 'partofcosmmos@gmail.com';
+  const email = 'student@example.com';
   const cid = CloudSyncService.getCanonicalUid(email);
 
   CloudSyncService.recordDeletionTombstone(cid, 'logs', 'log_del_1');

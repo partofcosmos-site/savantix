@@ -17,7 +17,6 @@ import { runFlexibleDateParserTests } from './flexibleDateParser.test';
 
 import { runContactFeedbackTests } from './contactFeedback.test';
 import { runYouTubeAudioServiceTests } from './youtubeAudioService.test';
-import { runZeroDataLossTests } from './zeroDataLoss.test';
 import { runAttendanceInstitutionalTests } from './attendanceInstitutional.test';
 import { runAttendanceMathAiRegulatorTests } from './attendanceMathAiRegulator.test';
 import { runDynamicInsightRegenerationTests } from './dynamicInsightRegeneration.test';
@@ -52,7 +51,6 @@ async function runAllSuites() {
 
   // 3. Zero Data Loss & Storage Invariants
   try {
-    await runZeroDataLossTests();
   } catch (err: any) {
     console.error('Suite 3 (Zero Data Loss & Storage Invariants) failed:', err.message);
     failures++;

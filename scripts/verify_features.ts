@@ -881,7 +881,7 @@ test('T4_SCN_01: 7-Day JEE Advanced Preparation Crucible Simulation', () => {
   assert(streakState.currentHP >= 80, `Health remained high at ${streakState.currentHP} HP`);
 });
 
-test('T4_SCN_02: IPhO Olympiad Theoretical Research Intensive Week', () => {
+test('T4_SCN_02: Physics Olympiad Olympiad Theoretical Research Intensive Week', () => {
   const iPhoSessions = [
     { date: '2026-08-20', durationMinutes: 120, problemsSolved: 12, accuracyPercent: 95, subject: 'Physics' }, // V=6, A=95 -> Q2
     { date: '2026-08-21', durationMinutes: 150, problemsSolved: 15, accuracyPercent: 90, subject: 'Physics' }, // V=6, A=90 -> Q2

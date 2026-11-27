@@ -15,163 +15,54 @@ import { CloudSyncService } from './cloudSyncService';
 export const INSTITUTIONAL_STORAGE_KEY = 'savantix_attendance_institutional_v1';
 export const LEGACY_SUBJECTS_STORAGE_KEY = 'savantix_attendance_data_v1';
 
-// Default CBSE Class XI Science Subjects
+// Clean universal default subjects (customizable per account; personal records sync privately from cloud KV)
 export const DEFAULT_SUBJECTS: SubjectAttendance[] = [
-  { id: 'phy_042', code: '042', name: 'Physics', attended: 48, total: 71, required: 75, color: 'indigo', isPracticalSubject: true },
-  { id: 'chem_043', code: '043', name: 'Chemistry', attended: 48, total: 71, required: 75, color: 'rose', isPracticalSubject: true },
-  { id: 'math_041', code: '041', name: 'Mathematics', attended: 48, total: 71, required: 75, color: 'emerald', isPracticalSubject: false },
-  { id: 'web_803', code: '803', name: 'Web Application', attended: 48, total: 71, required: 75, color: 'sky', isPracticalSubject: true },
-  { id: 'pe_048', code: '048', name: 'Physical Education', attended: 48, total: 71, required: 75, color: 'amber', isPracticalSubject: true },
-  { id: 'eng_301', code: '301', name: 'English Core', attended: 48, total: 71, required: 75, color: 'purple', isPracticalSubject: false },
+  { id: 'subj_1', name: 'Physics', attended: 0, total: 0, required: 75, color: 'indigo', isPracticalSubject: true },
+  { id: 'subj_2', name: 'Chemistry', attended: 0, total: 0, required: 75, color: 'rose', isPracticalSubject: true },
+  { id: 'subj_3', name: 'Mathematics', attended: 0, total: 0, required: 75, color: 'emerald', isPracticalSubject: false },
+  { id: 'subj_4', name: 'Computer Science', attended: 0, total: 0, required: 75, color: 'sky', isPracticalSubject: true },
+  { id: 'subj_5', name: 'English', attended: 0, total: 0, required: 75, color: 'purple', isPracticalSubject: false },
 ];
 
-// 15 Fully Verified Absences Reconciled via WhatsApp Ground Truth & Live Calendar
-export const DEFAULT_ABSENCES: AbsenceEntry[] = [
-  { id: 'abs_1', date: '2026-08-10', dayOfWeek: 'Monday', reason: 'Physics & Chemistry problem solving / self-study', category: 'self_study', isPracticalDay: false, notes: 'Verified via WhatsApp with Subhendu & Arnav' },
-  { id: 'abs_2', date: '2026-08-11', dayOfWeek: 'Tuesday', reason: 'Self-study & school work completion', category: 'school_work', isPracticalDay: false, notes: 'Verified via WhatsApp with Arnav' },
-  { id: 'abs_3', date: '2026-09-02', dayOfWeek: 'Wednesday', reason: 'Half-Yearly intensive self-study & revision', category: 'self_study', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik, Arnav, Kallal, Kunal' },
-  { id: 'abs_4', date: '2026-09-07', dayOfWeek: 'Monday', reason: 'Pre-exam consolidation & Olympiad preparation', category: 'olympiad', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik (speech-to-text scholarship inquiry)' },
-  { id: 'abs_5', date: '2026-09-09', dayOfWeek: 'Wednesday', reason: 'Exam revision & self-study day', category: 'self_study', isPracticalDay: false, notes: 'Verified via WhatsApp with Kallal, Snehasish, Arnav, Protik, Subhendu' },
-  { id: 'abs_6', date: '2026-09-28', dayOfWeek: 'Monday', reason: 'Post Half-Yearly recovery & project sprint', category: 'recovery', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik, Gem, Jayosmit' },
-  { id: 'abs_7', date: '2026-09-29', dayOfWeek: 'Tuesday', reason: 'Tutopia self-study & mathematics consolidation', category: 'tutopia', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik, Gem, Snehasish' },
-  { id: 'abs_8', date: '2026-10-01', dayOfWeek: 'Thursday', reason: 'Physics and Web Applications self-study', category: 'self_study', isPracticalDay: true, notes: 'Verified via WhatsApp with Subhendu, Rounak, DEEP, Protik' },
-  { id: 'abs_9', date: '2026-10-06', dayOfWeek: 'Tuesday', reason: 'Tutopia self-study & STEM research', category: 'tutopia', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik, Jayosmit, Kallal, Arnav, Subhendu' },
-  { id: 'abs_10', date: '2026-10-07', dayOfWeek: 'Wednesday', reason: 'Intensive problem sets & syllabus alignment', category: 'self_study', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik' },
-  { id: 'abs_11', date: '2026-10-08', dayOfWeek: 'Thursday', reason: 'Self-study & laboratory records writeup', category: 'school_work', isPracticalDay: true, notes: 'Verified via WhatsApp with Arnav' },
-  { id: 'abs_12', date: '2026-10-12', dayOfWeek: 'Monday', reason: 'Pre-Puja syllabus revision & Tutopia sprint', category: 'tutopia', isPracticalDay: false, notes: 'Verified via WhatsApp with Kallal, Snehasish, Kunal, Protik, Arnav' },
-  { id: 'abs_13', date: '2026-10-13', dayOfWeek: 'Tuesday', reason: 'Pre-Puja intensive self-study', category: 'self_study', isPracticalDay: false, notes: 'Verified via WhatsApp with 7 classmates' },
-  { id: 'abs_14', date: '2026-10-14', dayOfWeek: 'Wednesday', reason: 'Self-study & Olympiad problem solving', category: 'olympiad', isPracticalDay: false, notes: 'Verified via WhatsApp with Protik, DEEP, Kunal, Arnav' },
-  { id: 'abs_15', date: '2026-10-27', dayOfWeek: 'Tuesday', reason: 'Tutopia Self-Study & post-Puja academic preparation', category: 'tutopia', isPracticalDay: false, notes: 'Verified via WhatsApp with 10 classmates & screen recording' },
-];
+export const DEFAULT_ABSENCES: AbsenceEntry[] = [];
 
-// Official TBSA Institutional Holidays (Transcribed directly from School Calendar)
+// Generic public holidays (users can customize holidays for their own institution/region)
 export const DEFAULT_HOLIDAYS: HolidayEntry[] = [
-  { id: 'hol_1', date: '2026-04-03', dayOfWeek: 'Friday', name: 'Good Friday', classification: 'Gazetted' },
-  { id: 'hol_2', date: '2026-04-14', dayOfWeek: 'Tuesday', name: 'Dr. B.R. Ambedkar Jayanti', classification: 'National' },
-  { id: 'hol_3', date: '2026-04-15', dayOfWeek: 'Wednesday', name: 'Bengali New Year (Poila Boishakh)', classification: 'State / Regional' },
-  { id: 'hol_4', date: '2026-05-01', dayOfWeek: 'Friday', name: 'May Day & Buddha Purnima', classification: 'Gazetted' },
-  { id: 'hol_5', date: '2026-05-09', dayOfWeek: 'Saturday', name: 'Rabindra Jayanti', classification: 'State / Regional' },
-  { id: 'hol_6', date: '2026-05-27', dayOfWeek: 'Wednesday', name: 'Eid-ul-Zuha (Tentative)', classification: 'Gazetted', inVacationWindow: 'Summer Vacation' },
-  { id: 'hol_7', date: '2026-06-26', dayOfWeek: 'Friday', name: 'Muharram', classification: 'Gazetted', inVacationWindow: 'IIT KGP Window' },
-  { id: 'hol_8', date: '2026-08-15', dayOfWeek: 'Saturday', name: 'Independence Day', classification: 'National' },
-  { id: 'hol_9', date: '2026-08-26', dayOfWeek: 'Wednesday', name: 'Milad-un-Nabi (Tentative)', classification: 'Gazetted' },
-  { id: 'hol_10', date: '2026-09-04', dayOfWeek: 'Friday', name: 'Janmashtami', classification: 'Gazetted' },
-  { id: 'hol_11', date: '2026-10-02', dayOfWeek: 'Friday', name: 'Mahatma Gandhi Jayanti', classification: 'National' },
-  { id: 'hol_12', date: '2026-10-10', dayOfWeek: 'Saturday', name: 'Mahalaya', classification: 'State / Regional' },
-  { id: 'hol_13', date: '2026-10-21', dayOfWeek: 'Wednesday', name: 'Dussehra (Vijaya Dashami)', classification: 'National / Festive', inVacationWindow: 'Puja Vacation' },
-  { id: 'hol_14', date: '2026-10-26', dayOfWeek: 'Monday', name: 'Lakshmi Puja', classification: 'State / Festive', inVacationWindow: 'Puja Vacation' },
-  { id: 'hol_15', date: '2026-11-08', dayOfWeek: 'Sunday', name: 'Kali Puja', classification: 'State / Festive' },
-  { id: 'hol_16', date: '2026-11-09', dayOfWeek: 'Monday', name: 'Diwali', classification: 'National / Festive', inVacationWindow: 'Diwali Break' },
-  { id: 'hol_17', date: '2026-11-11', dayOfWeek: 'Wednesday', name: 'Bhai Duj', classification: 'State / Festive', inVacationWindow: 'Diwali Break' },
-  { id: 'hol_18', date: '2026-11-24', dayOfWeek: 'Tuesday', name: 'Guru Nanak Jayanti', classification: 'Gazetted' },
-  { id: 'hol_19', date: '2026-12-25', dayOfWeek: 'Friday', name: 'Christmas Day', classification: 'National', inVacationWindow: 'Winter Vacation' },
-  { id: 'hol_20', date: '2027-01-12', dayOfWeek: 'Tuesday', name: "Swami Vivekananda's Birthday", classification: 'State / National' },
-  { id: 'hol_21', date: '2027-01-23', dayOfWeek: 'Saturday', name: "Netaji's Birthday", classification: 'State / National' },
-  { id: 'hol_22', date: '2027-01-26', dayOfWeek: 'Tuesday', name: 'Republic Day', classification: 'National' },
-  { id: 'hol_23', date: '2027-02-11', dayOfWeek: 'Thursday', name: 'Saraswati Puja', classification: 'State / Academic' },
-  { id: 'hol_24', date: '2027-03-09', dayOfWeek: 'Tuesday', name: 'Id-ul-Fitr', classification: 'Gazetted' },
-  { id: 'hol_25', date: '2027-03-21', dayOfWeek: 'Sunday', name: 'Dolyatra', classification: 'State / Festive' },
-  { id: 'hol_26', date: '2027-03-22', dayOfWeek: 'Monday', name: 'Holi', classification: 'National / Festive' },
-  { id: 'hol_27', date: '2027-03-26', dayOfWeek: 'Friday', name: 'Good Friday', classification: 'Gazetted' },
+  { id: 'hol_1', date: '2026-01-26', dayOfWeek: 'Monday', name: 'Republic Day', classification: 'National' },
+  { id: 'hol_2', date: '2026-05-01', dayOfWeek: 'Friday', name: 'May Day', classification: 'Gazetted' },
+  { id: 'hol_3', date: '2026-08-15', dayOfWeek: 'Saturday', name: 'Independence Day', classification: 'National' },
+  { id: 'hol_4', date: '2026-10-02', dayOfWeek: 'Friday', name: 'Gandhi Jayanti', classification: 'National' },
+  { id: 'hol_5', date: '2026-12-25', dayOfWeek: 'Friday', name: 'Christmas Day', classification: 'National' },
 ];
 
-// Official TBSA Vacation Windows (Transcribed directly from School Calendar)
 export const DEFAULT_VACATIONS: VacationEntry[] = [
-  { id: 'vac_1', name: 'Summer Vacation', startDate: '2026-05-18', endDate: '2026-06-13', calendarDays: 27, schoolDaysSaved: 20, description: 'School reopens on 15th June 2026 (For Students)' },
-  { id: 'vac_2', name: 'Puja Vacation', startDate: '2026-10-16', endDate: '2026-10-26', calendarDays: 11, schoolDaysSaved: 7, description: 'School reopens on 27th October 2026 (For All)' },
-  { id: 'vac_3', name: 'Diwali Break', startDate: '2026-11-09', endDate: '2026-11-11', calendarDays: 3, schoolDaysSaved: 3, description: 'School reopens on 12th November 2026 (For All)' },
-  { id: 'vac_4', name: 'Winter Vacation', startDate: '2026-12-25', endDate: '2027-01-02', calendarDays: 9, schoolDaysSaved: 6, description: 'School reopens on 4th January 2027 (For All)' },
+  { id: 'vac_1', name: 'Summer Break', startDate: '2026-05-18', endDate: '2026-06-13', calendarDays: 27, schoolDaysSaved: 20, description: 'Scheduled summer break window (editable)' },
+  { id: 'vac_2', name: 'Winter Break', startDate: '2026-12-25', endDate: '2027-01-02', calendarDays: 9, schoolDaysSaved: 6, description: 'Scheduled winter break window (editable)' },
 ];
 
-// 4 Examination & PTM Milestones (Transcribed directly from School Calendar)
 export const DEFAULT_EXAMS: ExamMilestone[] = [
-  { id: 'exam_1', name: 'Periodic Test 1 (PT1)', startDate: '2026-06-22', endDate: '2026-06-30', ptmDate: '2026-07-04', status: 'completed', strategicFocus: 'Basic mechanics, dimensional analysis & calculus foundations', syllabusPercentage: 20 },
-  {
-    id: 'exam_2',
-    name: 'Half-Yearly Examination',
-    startDate: '2026-09-14',
-    endDate: '2026-09-25',
-    ptmDate: '2026-10-03',
-    status: 'completed',
-    strategicFocus: 'Cumulative assessment covering 50% CBSE Class XI syllabus',
-    syllabusPercentage: 50,
-    slots: [
-      { date: '2026-09-08', day: 'Tuesday', subject: 'Web Application Practical', type: 'practical', user_exam: true },
-      { date: '2026-09-10', day: 'Thursday', subject: 'Physics Practical', type: 'practical', user_exam: true },
-      { date: '2026-09-11', day: 'Friday', subject: 'Physical Education Practical', type: 'practical', user_exam: true },
-      { date: '2026-09-14', day: 'Monday', subject: 'English Core (Theory)', type: 'theory', user_exam: true },
-      { date: '2026-09-17', day: 'Thursday', subject: 'Preparatory Break', type: 'theory', user_exam: false },
-      { date: '2026-09-18', day: 'Friday', subject: 'Bio / Pol.Sci / Econ (Free Study Day)', type: 'theory', user_exam: false },
-      { date: '2026-09-21', day: 'Monday', subject: 'Physics (Theory)', type: 'theory', user_exam: true },
-      { date: '2026-09-25', day: 'Friday', subject: 'Chemistry Practical', type: 'practical', user_exam: true }
-    ]
-  },
-  { id: 'exam_3', name: 'Periodic Test 2 (PT2)', startDate: '2026-12-11', endDate: '2026-12-18', ptmDate: '2026-12-24', status: 'scheduled', strategicFocus: 'Pre-lock assessment (Electromagnetism, Waves & Thermodynamics)', syllabusPercentage: 75 },
-  { id: 'exam_4', name: 'Annual Exam (Class XI Finals)', startDate: '2027-03-01', endDate: '2027-03-12', ptmDate: '2027-03-20', status: 'scheduled', strategicFocus: 'Final CBSE 10+2 promotion exam (100% full syllabus)', syllabusPercentage: 100 },
+  { id: 'exam_1', name: 'Midterm Examination', startDate: '2026-09-14', endDate: '2026-09-25', ptmDate: '2026-10-03', status: 'scheduled', strategicFocus: 'Mid-session cumulative evaluation', syllabusPercentage: 50 },
+  { id: 'exam_2', name: 'Final Examination', startDate: '2027-03-01', endDate: '2027-03-12', ptmDate: '2027-03-20', status: 'scheduled', strategicFocus: 'End-of-session full syllabus exam', syllabusPercentage: 100 },
 ];
 
-// Approved On-Duty Credits
-export const DEFAULT_ON_DUTY: OnDutyCredit[] = [
-  {
-    id: 'od_1',
-    program: 'Kriti RISE IKITIES Program',
-    institution: 'Indian Institute of Technology (IIT) Kharagpur',
-    startDate: '2026-06-15',
-    endDate: '2026-06-26',
-    workingDays: 10,
-    status: 'APPROVED_ON_DUTY',
-    verificationRef: 'IIT-KGP/RISE/2026/IK-0428',
-    description: 'Residential STEM Olympiad, Deep Learning & Robotics Research Deputation at IIT Kharagpur'
-  }
-];
+export const DEFAULT_ON_DUTY: OnDutyCredit[] = [];
 
-export const DEFAULT_PROFILE: InstitutionalProfile = {
-  schoolName: 'The Bandhan School Aranghata',
-  affiliationNo: '2430453',
-  board: 'CBSE (Senior Secondary 10+2)',
-  stream: 'Class XI — Science (PCM + STEM)',
-  sessionStart: '2026-04-21',
-  lockDate: '2026-12-31',
-  totalWorkingDays: 142,
-  workingDaysHeld: 105,
-  presentDays: 90, // 90 physical present + 10 On-Duty = 100 total present (95.24% effective)
-  absentDays: 15,
-  onDutyDays: 10,
-  subjects: DEFAULT_SUBJECTS
-};
-
-export const DEFAULT_INITIAL_STATE: InstitutionalAttendanceState = {
-  profile: DEFAULT_PROFILE,
-  absences: DEFAULT_ABSENCES,
-  holidays: DEFAULT_HOLIDAYS,
-  vacations: DEFAULT_VACATIONS,
-  exams: DEFAULT_EXAMS,
-  onDuty: DEFAULT_ON_DUTY,
-  lastUpdated: new Date().toISOString()
-};
-
-// Clean neutral default state for other users / guest accounts
 export const NEUTRAL_DEFAULT_PROFILE: InstitutionalProfile = {
-  schoolName: 'CBSE Senior Secondary School',
+  schoolName: 'Your Institution',
   affiliationNo: '',
-  board: 'CBSE (Senior Secondary 10+2)',
-  stream: 'Class XI — Science (PCM + STEM)',
-  sessionStart: '2026-04-21',
+  board: 'Secondary / Higher Secondary / University',
+  stream: 'General Academic Track',
+  sessionStart: '2026-04-01',
   lockDate: '2026-12-31',
   totalWorkingDays: 140,
   workingDaysHeld: 0,
   presentDays: 0,
   absentDays: 0,
   onDutyDays: 0,
-  subjects: [
-    { id: 'phy', name: 'Physics', attended: 0, total: 0, required: 75, color: 'indigo', isPracticalSubject: true },
-    { id: 'chem', name: 'Chemistry', attended: 0, total: 0, required: 75, color: 'rose', isPracticalSubject: true },
-    { id: 'math', name: 'Mathematics', attended: 0, total: 0, required: 75, color: 'emerald', isPracticalSubject: false },
-    { id: 'eng', name: 'English Core', attended: 0, total: 0, required: 75, color: 'purple', isPracticalSubject: false },
-    { id: 'pe', name: 'Physical Education', attended: 0, total: 0, required: 75, color: 'amber', isPracticalSubject: true },
-    { id: 'cs', name: 'Computer Science / Web App', attended: 0, total: 0, required: 75, color: 'sky', isPracticalSubject: true }
-  ]
+  subjects: DEFAULT_SUBJECTS
 };
+
+export const DEFAULT_PROFILE: InstitutionalProfile = NEUTRAL_DEFAULT_PROFILE;
 
 export const NEUTRAL_DEFAULT_INITIAL_STATE: InstitutionalAttendanceState = {
   profile: NEUTRAL_DEFAULT_PROFILE,
@@ -183,9 +74,7 @@ export const NEUTRAL_DEFAULT_INITIAL_STATE: InstitutionalAttendanceState = {
   lastUpdated: new Date().toISOString()
 };
 
-/**
- * Compute real-world live attendance metrics & reality math engine
- */
+export const DEFAULT_INITIAL_STATE: InstitutionalAttendanceState = NEUTRAL_DEFAULT_INITIAL_STATE;
 
 /**
  * Compute exact Mon–Fri school working days between startDate and endDate (inclusive),
@@ -457,61 +346,41 @@ export async function launchGeminiRegulator(
   }
 }
 
-export const isDebanjanAccount = (identifier?: string): boolean => {
-  if (!identifier) {
-    if (typeof process !== 'undefined' && process.versions?.node) return true; // Node test runner fallback
-    return false; // In-browser: Never leak private records if user is not logged in as Debanjan
-  }
-  const clean = String(identifier).trim().toLowerCase();
-  return clean === 'debanjan8686@gmail.com' || clean === 'partofcosmmos@gmail.com';
-};
+export const isOwnerAccount = (_identifier?: string): boolean => false;
 
 export function getInstitutionalStorageKey(identifier?: string): string {
-  if (isDebanjanAccount(identifier)) {
-    return 'savantix_attendance_institutional_debanjan';
+  const clean = String(identifier || '').trim().toLowerCase();
+  if (!clean || clean === 'guest' || clean === 'guest_user' || clean === 'anonymous' || clean === 'guest@savantix.app') {
+    return 'savantix_attendance_institutional_guest';
   }
-  if (identifier && identifier !== 'guest' && identifier !== 'guest_user') {
-    return `savantix_attendance_institutional_${identifier}`;
-  }
-  return 'savantix_attendance_institutional_guest';
+  const safeKey = clean.replace(/[^a-z0-9_]/g, '_');
+  return `savantix_attendance_institutional_${safeKey}`;
 }
 
 /**
- * Load institutional state from localStorage with seamless fallback and account partitioning
+ * Load institutional state from localStorage with strict per-account partitioning.
+ * Personal records for signed-in accounts hydrate privately from Cloudflare KV on sign-in.
  */
 export function loadInstitutionalState(identifier?: string): InstitutionalAttendanceState {
   try {
-    const isDebanjan = isDebanjanAccount(identifier);
     const key = getInstitutionalStorageKey(identifier);
+    const clean = String(identifier || '').trim().toLowerCase();
+    const prefixKey = clean.includes('@') ? `savantix_attendance_institutional_${clean.split('@')[0]}` : null;
+    const isGuest = key === 'savantix_attendance_institutional_guest';
 
-    // STRICT ISOLATION: Only verified Debanjan account may read personal/legacy keys or seed private absences.
-    // Guest/Demo Mode and all other accounts stay 100% sandboxed to their own neutral storage key.
-    const rawData = isDebanjan
-      ? (localStorage.getItem(key) ||
-         localStorage.getItem('savantix_attendance_institutional_debanjan') ||
-         localStorage.getItem(INSTITUTIONAL_STORAGE_KEY))
-      : localStorage.getItem(key);
+    const rawData = localStorage.getItem(key)
+      || (!isGuest && prefixKey ? localStorage.getItem(prefixKey) : null)
+      || (!isGuest ? localStorage.getItem(INSTITUTIONAL_STORAGE_KEY) : null);
 
-    const baseline: InstitutionalAttendanceState = isDebanjan
-      ? DEFAULT_INITIAL_STATE
-      : NEUTRAL_DEFAULT_INITIAL_STATE;
-
+    const baseline: InstitutionalAttendanceState = NEUTRAL_DEFAULT_INITIAL_STATE;
     let state: InstitutionalAttendanceState = baseline;
 
     if (rawData) {
       const parsed = JSON.parse(rawData);
-
       const deletedDates = new Set<string>(
         Array.isArray(parsed.deletedAbsenceDates) ? parsed.deletedAbsenceDates : []
       );
       const absenceMap = new Map<string, AbsenceEntry>();
-      if (isDebanjan) {
-        // Only merge verified institutional ground-truth absences that were NOT explicitly deleted by the user
-        DEFAULT_ABSENCES.forEach((a: AbsenceEntry) => {
-          if (a && a.date && !deletedDates.has(a.date)) absenceMap.set(a.date, a);
-        });
-      }
-
       if (Array.isArray(parsed.absences)) {
         parsed.absences.forEach((a: AbsenceEntry) => {
           if (a && a.date && !deletedDates.has(a.date)) {
@@ -540,8 +409,7 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
         exams: Array.isArray(parsed.exams) && parsed.exams.length > 0 ? parsed.exams : baseline.exams,
         onDuty: Array.isArray(parsed.onDuty) ? parsed.onDuty : baseline.onDuty,
       };
-    } else {
-      // Legacy migration from savantix_attendance_data_v1 if no institutional state exists yet
+    } else if (!isGuest) {
       const legacyRaw = localStorage.getItem(LEGACY_SUBJECTS_STORAGE_KEY);
       if (legacyRaw) {
         try {
@@ -564,20 +432,18 @@ export function loadInstitutionalState(identifier?: string): InstitutionalAttend
               }
             };
           }
-        } catch (e) {
-          // Ignore JSON parse error
-        }
+        } catch {}
       }
     }
 
     return state;
-  } catch (e) {
-    return isDebanjanAccount(identifier) ? DEFAULT_INITIAL_STATE : NEUTRAL_DEFAULT_INITIAL_STATE;
+  } catch {
+    return NEUTRAL_DEFAULT_INITIAL_STATE;
   }
 }
 
 /**
- * Save institutional state to localStorage and maintain legacy array for cloud sync compatibility
+ * Save institutional state to the active account's storage partition and sync to cloud when signed in.
  */
 export function saveInstitutionalState(state: InstitutionalAttendanceState, identifier?: string): void {
   try {
@@ -585,31 +451,25 @@ export function saveInstitutionalState(state: InstitutionalAttendanceState, iden
       ...state,
       lastUpdated: new Date().toISOString()
     };
-    const isDebanjan = isDebanjanAccount(identifier);
-    const isGuestOrAnon = !identifier || identifier === 'guest' || identifier === 'guest_user' || identifier === 'anonymous' || identifier === 'guest@savantix.app';
     const key = getInstitutionalStorageKey(identifier);
-    localStorage.setItem(key, JSON.stringify(updatedState));
+    const isGuestOrAnon = key === 'savantix_attendance_institutional_guest';
+    const serialized = JSON.stringify(updatedState);
+    localStorage.setItem(key, serialized);
 
-    // STRICT ISOLATION: Never overwrite owner/global keys or push to cloud from Guest/Demo Mode
-    if (isDebanjan) {
-      const serialized = JSON.stringify(updatedState);
+    if (!isGuestOrAnon && identifier && identifier.includes('@')) {
+      const clean = identifier.trim().toLowerCase();
       localStorage.setItem(INSTITUTIONAL_STORAGE_KEY, serialized);
-      localStorage.setItem('savantix_attendance_institutional_debanjan', serialized);
-      if (identifier && identifier.includes('@')) {
-        localStorage.setItem(`savantix_attendance_institutional_${identifier.trim().toLowerCase().split('@')[0]}`, serialized);
-      }
+      localStorage.setItem(`savantix_attendance_institutional_${clean.split('@')[0]}`, serialized);
       if (Array.isArray(state.profile?.subjects)) {
         localStorage.setItem(LEGACY_SUBJECTS_STORAGE_KEY, JSON.stringify(state.profile.subjects));
       }
     }
 
-    // Dispatch storage events so open tabs stay in sync
     if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
       window.dispatchEvent(new Event('storage'));
       window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: updatedState }));
     }
 
-    // Push to the EXACT signed-in account's cloud partition (e.g. partofcosmmos@gmail.com -> deb_sync_partofcosmmos_gmail_com)
     if (!isGuestOrAnon && identifier && identifier.includes('@')) {
       const syncEmail = identifier.trim().toLowerCase();
       const canonicalId = CloudSyncService.getCanonicalUid(syncEmail);

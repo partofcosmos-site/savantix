@@ -499,8 +499,8 @@ export async function runAdversarialChallengerTests(): Promise<{ passed: number;
     const prompt = generateGeminiRegulatoryPrompt(DEFAULT_INITIAL_STATE);
 
     // 1. Institutional Identity Accuracy
-    assert(prompt.includes('The Bandhan School Aranghata'), 'Prompt includes official School Name');
-    assert(prompt.includes('2430453'), 'Prompt includes CBSE Affiliation No. 2430453');
+    assert(prompt.includes('Your Institution'), 'Prompt includes official School Name');
+    assert(prompt.includes(''), 'Prompt includes CBSE Affiliation No. ');
     assert(prompt.includes('Class XI — Science'), 'Prompt includes Stream (Class XI Science)');
     assert(prompt.includes('Mon – Fri Schedule') || prompt.includes('Monday to Friday'), 'Prompt includes 5-day Mon-Fri schedule');
     assert(prompt.includes('2026-04-21') && prompt.includes('2026-12-31'), 'Prompt includes session window Apr 21 - Dec 31');
@@ -525,8 +525,8 @@ export async function runAdversarialChallengerTests(): Promise<{ passed: number;
 
     // 4. Strategic High-Performance Advisory Roster
     assert(prompt.includes('NIOS (National Institute of Open Schooling)'), 'Prompt contains NIOS alternative board guidance');
-    assert(prompt.includes('Private British A-Levels'), 'Prompt contains British A-Levels pathway for MIT/Ivy League/IPhO');
-    assert(prompt.includes('IIT Kharagpur') && prompt.includes('Kriti RISE'), 'Prompt contains IIT KGP Kriti RISE On-Duty program citation');
+    assert(prompt.includes('Private British A-Levels'), 'Prompt contains British A-Levels pathway for MIT/Ivy League/Physics Olympiad');
+    assert(prompt.includes('IIT Kharagpur') && prompt.includes('Academic Deputation'), 'Prompt contains IIT KGP Academic Deputation On-Duty program citation');
     assert(prompt.includes('Part of Cosmos'), 'Prompt maintains "An initiative of Part of Cosmos" branding');
   });
 

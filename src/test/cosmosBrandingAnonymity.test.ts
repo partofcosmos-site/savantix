@@ -5,7 +5,7 @@
  * Verifies:
  * 1. Uniform presence of subtitle: "An initiative of Part of Cosmos".
  * 2. Identity protection and anonymization protocols:
- *    - User display names containing raw founder names (e.g. "Debanjan") masked to "Lead Scholar".
+ *    - User display names containing raw founder names (e.g. "Scholar") masked to "Lead Scholar".
  *    - Contributor badge formatted as "Core Researcher".
  * 3. Zero leakage of private student names in clipboard outputs and exported feedback payloads.
  * 4. Anonymous authentication fallback handling.
@@ -23,11 +23,11 @@ export function sanitizeScholarDisplayName(user: { displayName?: string | null; 
 } {
   const email = (user?.email || '').trim().toLowerCase();
   const rawName = (user?.displayName || '').trim();
-  const isFounder = ['debanjan8686@gmail.com', 'partofcosmmos@gmail.com'].includes(email);
+  const isFounder = ['student@example.com', 'student@example.com'].includes(email);
 
   // Mask private founder name to Lead Scholar across public UI surfaces
   let displayName = 'Lead Scholar';
-  if (rawName && !rawName.toLowerCase().includes('debanjan')) {
+  if (rawName && !rawName.toLowerCase().includes('scholar')) {
     displayName = rawName;
   }
 
@@ -49,8 +49,8 @@ export function validatePublicDossierBranding(dossier: string): {
 } {
   const hasCosmosBranding = dossier.includes(INITIATIVE_SUBTITLE) || dossier.includes('Part of Cosmos');
   // Check for private personal name leak outside of official contact email
-  const bodyWithoutEmail = dossier.replace(/debanjan8686@gmail\.com/g, '');
-  const hasPrivateNameLeak = /debanjan\s+biswas/i.test(bodyWithoutEmail) || /\bdebanjan\b/i.test(bodyWithoutEmail);
+  const bodyWithoutEmail = dossier.replace(/scholar8686@gmail\.com/g, '');
+  const hasPrivateNameLeak = /scholar\s+biswas/i.test(bodyWithoutEmail) || /\bscholar\b/i.test(bodyWithoutEmail);
 
   return {
     hasCosmosBranding,
@@ -98,15 +98,15 @@ export async function runCosmosBrandingAnonymityTests(): Promise<void> {
 
   // 2. Display Name Sanitization & Masking
   test('Identity Masking: masks founder names to "Lead Scholar" and assigns "Core Researcher"', () => {
-    // Scenario A: Founder with raw name "Debanjan Biswas"
-    const userA = { displayName: 'Debanjan Biswas', email: 'debanjan8686@gmail.com' };
+    // Scenario A: Founder with raw name "Scholar Biswas"
+    const userA = { displayName: 'Scholar Biswas', email: 'student@example.com' };
     const sanitizedA = sanitizeScholarDisplayName(userA);
     assertEqual(sanitizedA.displayName, 'Lead Scholar', 'Masked to Lead Scholar');
     assertEqual(sanitizedA.isFounder, true, 'Identified as founder');
     assertEqual(sanitizedA.roleBadge, 'Core Researcher', 'Assigned Core Researcher role');
 
-    // Scenario B: Founder with case variations "debanjan"
-    const userB = { displayName: 'debanjan', email: 'partofcosmmos@gmail.com' };
+    // Scenario B: Founder with case variations "scholar"
+    const userB = { displayName: 'scholar', email: 'student@example.com' };
     const sanitizedB = sanitizeScholarDisplayName(userB);
     assertEqual(sanitizedB.displayName, 'Lead Scholar', 'Masked case variation');
     assertEqual(sanitizedB.roleBadge, 'Core Researcher', 'Core Researcher role');
@@ -130,7 +130,7 @@ export async function runCosmosBrandingAnonymityTests(): Promise<void> {
 # 🏛️ SAVANTIX AEGIS: INSTITUTIONAL ATTENDANCE REGULATOR & STRATEGIC DOSSIER
 **System Identity:** Savantix Aegis — An initiative of Part of Cosmos
 **User:** Lead Scholar (Core Researcher)
-**Channel:** debanjan8686@gmail.com
+**Channel:** student@example.com
     `;
 
     const validation = validatePublicDossierBranding(mockDossier);
@@ -142,7 +142,7 @@ export async function runCosmosBrandingAnonymityTests(): Promise<void> {
   test('Adversarial Leak Detection: catches accidental inclusion of private founder names', () => {
     const leakyDossier = `
 # SAVANTIX REPORT
-**Author:** Debanjan Biswas
+**Author:** Scholar Biswas
 **Organization:** Part of Cosmos
     `;
 

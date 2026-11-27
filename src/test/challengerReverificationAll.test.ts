@@ -140,7 +140,7 @@ runTest('Falsy Zero: Simulation with 0 future leaves and 0 attended', () => {
   assertEqual(sim.meetsSafe75, true, 'meetsSafe75 is true');
 });
 
-// 2. 2028 ACADEMIC TIMELINE & IPhO GOLD TRACK ROADMAP VERIFICATION
+// 2. 2028 ACADEMIC TIMELINE & Physics Olympiad GOLD TRACK ROADMAP VERIFICATION
 runTest('2028 Timeline: DEFAULT_EXAMS in attendanceRegulatorService reflects 2026-2027 Class XI session', () => {
   assertEqual(DEFAULT_PROFILE.sessionStart, '2026-04-21', 'Session start is 2026-04-21');
   assertEqual(DEFAULT_PROFILE.lockDate, '2026-12-31', 'CBSE Lock date is 2026-12-31');
@@ -156,24 +156,24 @@ runTest('2028 Timeline: DEFAULT_EXAMS in attendanceRegulatorService reflects 202
   assertEqual(DEFAULT_EXAMS[3].startDate, '2027-03-01', 'Class XI finals start 2027-03-01');
 });
 
-runTest('2028 Timeline: Logged absences include Olympiad prep, NSEP registration & recent real dates', () => {
+runTest('2028 Timeline: Logged absences include Olympiad prep, Physics Stage 1 registration & recent real dates', () => {
   assertEqual(DEFAULT_ABSENCES.length, 24, '21 specific + 3 buffer = 24 total absence entries');
   const nsepReg = DEFAULT_ABSENCES.find(a => a.date === '2026-08-21');
-  assert(nsepReg !== undefined, 'NSEP 2026 registration date logged');
-  assert(nsepReg!.reason.includes('NSEP'), 'NSEP cited in reason');
+  assert(nsepReg !== undefined, 'Physics Stage 1 2026 registration date logged');
+  assert(nsepReg!.reason.includes('Physics Stage 1'), 'Physics Stage 1 cited in reason');
 
   const aug28 = DEFAULT_ABSENCES.find(a => a.date === '2026-08-28');
-  assert(aug28 !== undefined, '2026-08-28 (Day before Raksha Bandhan) logged');
+  assert(aug28 !== undefined, '2026-08-28 (Day before Raksha Academy) logged');
 
   const sept1 = DEFAULT_ABSENCES.find(a => a.date === '2026-09-01');
   assert(sept1 !== undefined, '2026-09-01 (Today) logged');
 });
 
-runTest('2028 Timeline & Regulatory Dossier: Prompt references CBSE Rule 14, NIOS, A-Levels, and IPhO', () => {
+runTest('2028 Timeline & Regulatory Dossier: Prompt references CBSE Rule 14, NIOS, A-Levels, and Physics Olympiad', () => {
   const prompt = generateGeminiRegulatoryPrompt(DEFAULT_INITIAL_STATE);
   assert(prompt.includes('Rule 13.2'), 'Prompt includes CBSE Rule 13.2');
   assert(prompt.includes('Rule 14'), 'Prompt includes CBSE Rule 14 condonation');
-  assert(prompt.includes('Kriti RISE IKITIES Program at IIT Kharagpur'), 'Prompt includes IIT KGP deputation');
+  assert(prompt.includes('Academic Deputation at IIT Kharagpur'), 'Prompt includes IIT KGP deputation');
   assert(prompt.includes('Part of Cosmos'), 'Prompt includes Cosmos branding');
   const metrics = computeLiveMetrics(DEFAULT_INITIAL_STATE);
   assert(prompt.includes(`${metrics.effectivePct}%`), 'Prompt includes live effective attendance');

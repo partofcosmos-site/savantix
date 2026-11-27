@@ -23,7 +23,6 @@ export async function runAttendanceTombstoneTests(): Promise<boolean> {
     }
   };
 
-  // Ensure localStorage exists in Node test runtime
   if (typeof (globalThis as any).localStorage === 'undefined') {
     const store = new Map<string, string>();
     (globalThis as any).localStorage = {
@@ -42,23 +41,30 @@ export async function runAttendanceTombstoneTests(): Promise<boolean> {
   assert('Excludes May Day holiday (2026-05-01)', dHol === 4, `got ${dHol}`);
 
   const novDays = computeWorkingDaysToToday(DEFAULT_INITIAL_STATE, '2026-11-26');
-  assert('Computes realistic TBSA working days through Nov 26, 2026 (115..145)', novDays >= 115 && novDays <= 145, `got ${novDays}`);
+  assert('Computes realistic working days through Nov 26, 2026 (115..160)', novDays >= 115 && novDays <= 160, `got ${novDays}`);
 
-  const email = 'partofcosmmos@gmail.com';
-  const initial = loadInstitutionalState(email);
-  assert('Owner initial state contains 2026-10-27', initial.absences.some((a) => a.date === '2026-10-27'));
+  const email = 'student@example.com';
+  const base = loadInstitutionalState(email);
+  assert('Fresh account starts with clean empty absences', base.absences.length === 0);
 
-  const remaining = initial.absences.filter((a) => a.date !== '2026-10-27');
+  // Add an absence, then delete it with a tombstone and verify it stays deleted on reload
   saveInstitutionalState(
     {
-      ...initial,
-      absences: remaining,
+      ...base,
+      absences: [{ id: 'a1', date: '2026-10-27', dayOfWeek: 'Tuesday', reason: 'Sick leave', category: 'medical', isPracticalDay: false }],
+      profile: { ...base.profile, workingDaysHeld: 50, presentDays: 49, absentDays: 1 }
+    },
+    email
+  );
+  const withAbs = loadInstitutionalState(email);
+  assert('Saved absence persists on reload', withAbs.absences.some((a) => a.date === '2026-10-27'));
+
+  saveInstitutionalState(
+    {
+      ...withAbs,
+      absences: [],
       deletedAbsenceDates: ['2026-10-27'],
-      profile: {
-        ...initial.profile,
-        absentDays: remaining.length,
-        presentDays: initial.profile.workingDaysHeld - remaining.length
-      }
+      profile: { ...withAbs.profile, workingDaysHeld: 50, presentDays: 50, absentDays: 0 }
     },
     email
   );

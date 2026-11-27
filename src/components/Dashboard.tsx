@@ -262,7 +262,7 @@ export const Dashboard = () => {
 
       const constraints = {
         schoolHours: profile?.schoolHours || 6,
-        targetExams: profile?.targetExams || ['IPhO / NSEP Track', 'JEE Advanced 2028', 'ISI / CMI 2028', 'CBSE Class 12 Boards (2028)'],
+        targetExams: profile?.targetExams || ['Competitive STEM Track', 'Competitive Entrance', 'Mathematics Entrance', 'Board / Term Finals'],
         cumulativeDailyStats: {
           sessionCount: todayLogs.length,
           totalMinutes: totalMins,
@@ -437,6 +437,45 @@ export const Dashboard = () => {
                   </p>
                 )}
               </form>
+
+              {(() => {
+                const bySubj = new Map<string, number>();
+                let sum7 = 0;
+                logs7Days.forEach((l: any) => {
+                  const m = Math.max(0, Number(l.durationMinutes) || 0);
+                  if (!m) return;
+                  const s = (l.subject || 'General').split(',')[0].trim() || 'General';
+                  bySubj.set(s, (bySubj.get(s) || 0) + m);
+                  sum7 += m;
+                });
+                const ranked = Array.from(bySubj.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+                if (ranked.length === 0 || sum7 === 0) return null;
+                const colors = ['#f97316', '#34d399', '#38bdf8', '#fbbf24', '#a78bfa'];
+                return (
+                  <div className="lg:col-span-12 pt-3 border-t border-[var(--sx-hairline)] space-y-1.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono">
+                      <span className="uppercase tracking-wider text-[var(--sx-ink-muted)]">7-Day Subject Balance</span>
+                      <div className="flex flex-wrap items-center gap-3 text-[var(--sx-ink-secondary)]">
+                        {ranked.map(([name, mins], idx) => (
+                          <span key={name} className="inline-flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[idx % colors.length] }} />
+                            <span>{name} {Math.round((mins / sum7) * 100)}%</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="w-full h-1.5 rounded-full overflow-hidden flex bg-[var(--sx-elevated)]">
+                      {ranked.map(([name, mins], idx) => (
+                        <div
+                          key={name}
+                          style={{ width: `${(mins / sum7) * 100}%`, backgroundColor: colors[idx % colors.length] }}
+                          title={`${name}: ${Math.round(mins)}m (${Math.round((mins / sum7) * 100)}%)`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </section>
           );
         })()}

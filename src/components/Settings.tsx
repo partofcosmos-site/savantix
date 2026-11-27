@@ -585,7 +585,7 @@ export const Settings = () => {
               <label className="block text-xs font-medium text-zinc-400 mb-1.5">Target Exams (comma separated)</label>
               <input
                 type="text"
-                placeholder="e.g., IPhO Gold Track / NSEP 2026-2027, JEE Advanced 2028, ISI / CMI 2028, CBSE Class 12 Boards (2028)"
+                placeholder="e.g., Physics Olympiad Gold Track / Physics Stage 1 2026-2027, Competitive Entrance, Mathematics Entrance, Board / Term Finals"
                 value={targetExams}
                 onChange={(e) => setTargetExams(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-zinc-100 focus:outline-none focus:border-indigo-500"

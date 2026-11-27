@@ -2,7 +2,7 @@
  * Savantix (Aegis) — Speed vs. Accuracy Calibration Matrix (SACM) Engine
  * 
  * Mathematical calibration of Problem Solving Velocity (Q/hr) vs Accuracy (%)
- * across 4 cognitive quadrants for competitive STEM preparation (JEE Advanced, IPhO, Olympiads).
+ * across 4 cognitive quadrants for competitive STEM preparation (JEE Advanced, Physics Olympiad, Olympiads).
  */
 
 export type SACMQuadrantId = 'Q1_Mastery' | 'Q2_Overthinking' | 'Q3_Rushing' | 'Q4_Struggling';
@@ -116,7 +116,7 @@ export const QUADRANT_META: Record<SACMQuadrantId, {
     diagnostic: 'Optimal Fluidity: You are executing rapid problem solving with high accuracy (≥80% precision at ≥15 Q/hr). Core patterns and heuristics are internalized.',
     actionablePrescription: 'Escalate problem difficulty to Tier 3 / Olympiad / Irodov / Advanced multi-concept problems. Introduce high-pressure timed mock sections.',
     suggestedTechnique: 'Interleaved Hard Problem Sets & Olympiad Sprints',
-    idealFor: 'JEE Adv Multi-Correct / IPhO Part 2'
+    idealFor: 'JEE Adv Multi-Correct / Physics Olympiad Part 2'
   },
   Q2_Overthinking: {
     name: 'Deliberate / Overthinking Zone',

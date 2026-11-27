@@ -209,7 +209,7 @@ export async function runDynamicInsightRegenerationTests(): Promise<void> {
     }
   }
 
-  const testUid = 'user_debanjan_test';
+  const testUid = 'user_scholar_test';
   const targetDate = '2026-09-01';
 
   // 1. Initial Morning Session & First Insight Generation

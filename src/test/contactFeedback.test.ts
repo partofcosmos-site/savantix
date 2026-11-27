@@ -308,7 +308,7 @@ export async function runContactFeedbackTests() {
       affiliation: 'National Physics Team',
       name: 'Olympiad Scholar',
       email: 'scholar@savantix.app',
-      subject: 'IPhO Thermodynamics Problem Bank',
+      subject: 'Physics Olympiad Thermodynamics Problem Bank',
       message: 'Collaboration on 4-tier socratic physics solving.'
     });
     assert(academicPayload.academicFocus === 'ipho', 'Academic payload must include academicFocus');

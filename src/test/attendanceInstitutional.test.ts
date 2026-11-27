@@ -3,11 +3,11 @@
  * @file attendanceInstitutional.test.ts
  * 
  * Verifies:
- * 1. The Bandhan School Aranghata institutional profile (Affiliation 2430453, CBSE 10+2 Class XI-Science).
+ * 1. Your Institution institutional profile (Affiliation , CBSE 10+2 Class XI-Science).
  * 2. Session boundaries: Start date 2026-04-21, Lock date 2026-12-31, 139 total projected working days.
  * 3. Exact ground truth as of September 1, 2026: 71 working days held, 48 present, 23 absent.
- * 4. Specific logged absence dates (including 2026-08-28 Friday before Raksha Bandhan and 2026-09-01 Tuesday).
- * 5. Approved On-Duty Credits: 10 working days for IIT Kharagpur Kriti RISE IKITIES Program (2026-06-15 to 2026-06-26).
+ * 4. Specific logged absence dates (including 2026-08-28 Friday before Raksha Academy and 2026-09-01 Tuesday).
+ * 5. Approved On-Duty Credits: 10 working days for IIT Kharagpur Academic Deputation (2026-06-15 to 2026-06-26).
  * 6. 28 Official institutional holidays with correct classifications.
  * 7. 4 Major vacation windows (Summer, Puja, Diwali, Winter) and school days saved.
  * 8. 4 Examination & PTM milestones (PT1, Half-Yearly, PT2, Annual Exam).
@@ -112,9 +112,9 @@ export async function runAttendanceInstitutionalTests(): Promise<void> {
   }
 
   // 1. Institutional Profile Verification
-  test('Institutional Profile: matches The Bandhan School Aranghata specifications', () => {
-    assertEqual(DEFAULT_PROFILE.schoolName, 'The Bandhan School Aranghata', 'School Name');
-    assertEqual(DEFAULT_PROFILE.affiliationNo, '2430453', 'CBSE Affiliation Number');
+  test('Institutional Profile: matches Your Institution specifications', () => {
+    assertEqual(DEFAULT_PROFILE.schoolName, 'Your Institution', 'School Name');
+    assertEqual(DEFAULT_PROFILE.affiliationNo, '', 'CBSE Affiliation Number');
     assert(DEFAULT_PROFILE.board.includes('CBSE'), 'Affiliated Board must be CBSE');
     assert(DEFAULT_PROFILE.stream.includes('Class XI'), 'Academic stream must be Class XI');
     assert(DEFAULT_PROFILE.stream.includes('Science'), 'Academic stream must be Science');
@@ -128,7 +128,7 @@ export async function runAttendanceInstitutionalTests(): Promise<void> {
     assertEqual(DEFAULT_PROFILE.workingDaysHeld, 105, 'Working days held to date');
     assertEqual(DEFAULT_PROFILE.presentDays, 90, 'Attended days');
     assertEqual(DEFAULT_PROFILE.absentDays, 15, 'Total verified absent days');
-    assertEqual(DEFAULT_PROFILE.onDutyDays, 10, 'Approved on-duty days for IIT Kharagpur Kriti RISE');
+    assertEqual(DEFAULT_PROFILE.onDutyDays, 10, 'Approved on-duty days for IIT Kharagpur Academic Deputation');
     
     // Mathematical consistency check: 41 + 10 + 23 = 74
     assert(
@@ -138,12 +138,12 @@ export async function runAttendanceInstitutionalTests(): Promise<void> {
   });
 
   // 3. Approved On-Duty Credits Verification
-  test('Approved On-Duty Credits: 10 working days at IIT Kharagpur Kriti RISE', () => {
+  test('Approved On-Duty Credits: 10 working days at IIT Kharagpur Academic Deputation', () => {
     assert(Array.isArray(DEFAULT_ON_DUTY), 'On-duty credits must be an array');
     assertEqual(DEFAULT_ON_DUTY.length, 1, 'Exactly 1 on-duty credit record');
 
     const iitKgp = DEFAULT_ON_DUTY[0];
-    assertEqual(iitKgp.program, 'Kriti RISE IKITIES Program', 'Program Name');
+    assertEqual(iitKgp.program, 'Academic Deputation', 'Program Name');
     assertEqual(iitKgp.institution, 'Indian Institute of Technology (IIT) Kharagpur', 'Host Institution');
     assertEqual(iitKgp.startDate, '2026-06-15', 'On-Duty Start Date');
     assertEqual(iitKgp.endDate, '2026-06-26', 'On-Duty End Date');
@@ -300,7 +300,7 @@ export async function runAttendanceInstitutionalTests(): Promise<void> {
     localStorage.clear();
 
     const initialState = loadInstitutionalState();
-    assertEqual(initialState.profile.schoolName, 'The Bandhan School Aranghata', 'Initial state load fallback');
+    assertEqual(initialState.profile.schoolName, 'Your Institution', 'Initial state load fallback');
 
     // Save customized state
     const modifiedState = {

@@ -57,7 +57,7 @@ const HISTORY_STORAGE_KEY = 'savantix_submitted_feedback';
 const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/savantix.core@gmail.com';
 const GITHUB_ISSUES_URL = 'https://github.com/partofcosmos-site/savantix/issues';
 const FOUNDER_GITHUB = 'https://github.com/partofcosmos-site/savantix';
-export const FOUNDER_EMAIL = 'debanjan8686@gmail.com';
+export const FOUNDER_EMAIL = 'support@savantix.app';
 
 export const ContactFeedback: React.FC = () => {
   const { user } = useAppContext();
@@ -437,7 +437,7 @@ export const ContactFeedback: React.FC = () => {
       bgColor: 'bg-indigo-500/10',
       borderColor: 'border-indigo-500/30',
       activeBg: 'bg-indigo-600/20 text-indigo-300 border-indigo-500/50 ',
-      description: 'IPhO Physics, JEE Advanced, STEM research, or pedagogy'
+      description: 'STEM curriculum, study workflows, research, or pedagogy'
     },
     {
       id: 'inquiry' as FeedbackCategory,
@@ -470,7 +470,7 @@ export const ContactFeedback: React.FC = () => {
     },
     {
       id: 'faq-4',
-      question: 'How do Academic Collaborations (IPhO & JEE Advanced) work?',
+      question: 'How do Academic Collaborations work?',
       answer: 'We actively collaborate with Physics Olympiad medalists, JEE Advanced rankers, and cognitive science researchers to expand Savantix\'s Socratic STEM solvers, FSRS spaced repetition algorithms, and curated problem banks. Reach out via the Academic category!'
     }
   ];
@@ -769,7 +769,7 @@ export const ContactFeedback: React.FC = () => {
                           onChange={e => setAcademicFocus(e.target.value as AcademicFocus)}
                           className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
                         >
-                          <option value="ipho">International Physics Olympiad (IPhO) / USAPhO</option>
+                          <option value="ipho">Physics & Competitive Science</option>
                           <option value="jee">JEE Advanced Physics & Mathematics Optimization</option>
                           <option value="research">Cognitive Science & Memory Spacing (FSRS/Anki) Research</option>
                           <option value="general_academic">STEM Pedagogy & Socratic Solvers</option>
@@ -810,7 +810,7 @@ export const ContactFeedback: React.FC = () => {
                           : category === 'feature'
                           ? "e.g. Export flashcards to Anki .apkg format"
                           : category === 'academic'
-                          ? "e.g. IPhO Wave Optics simulation module collaboration"
+                          ? "e.g. Interactive Optics simulation collaboration"
                           : "e.g. Question regarding Savantix local storage persistence"
                       }
                       className={clsx(

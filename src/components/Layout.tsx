@@ -49,7 +49,6 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
   const [isMicroLoggerOpen, setIsMicroLoggerOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [theme, setTheme] = useState<SavantixTheme>(() => getSavedTheme());
-  const isFounder = ['debanjan8686@gmail.com', 'partofcosmmos@gmail.com'].includes(user?.email || '');
 
   const handleToggleTheme = () => {
     const next = toggleTheme();
@@ -319,7 +318,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
               {user?.displayName || 'Scholar'}
             </span>
             <span className="font-mono text-[10px] text-[var(--sx-ink-muted)] truncate">
-              {isGuest ? 'Local Sandbox' : (user?.email || (isFounder ? 'Core Researcher' : 'Signed In'))}
+              {isGuest ? 'Local Sandbox' : (user?.email || 'Signed In')}
             </span>
           </div>
           <div className="flex items-center gap-1">

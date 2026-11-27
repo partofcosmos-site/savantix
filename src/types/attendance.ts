@@ -1,5 +1,5 @@
 export type AbsenceCategory =
-  | 'tutopia'
+  | 'self_study_online'
   | 'olympiad'
   | 'jee_prep'
   | 'self_study'

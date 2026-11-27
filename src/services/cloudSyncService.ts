@@ -202,10 +202,10 @@ export class CloudSyncService {
     let institutional_attendance: any = null;
     try {
       const cleanLower = (email || '').trim().toLowerCase();
-      const isOwner = cleanLower === 'partofcosmmos@gmail.com' || cleanLower === 'debanjan8686@gmail.com';
+      const safeKey = cleanLower.replace(/[^a-z0-9_]/g, '_');
       const userKey = `savantix_attendance_institutional_${cleanLower.split('@')[0]}`;
-      const rawInst = localStorage.getItem(userKey)
-        || (isOwner ? localStorage.getItem('savantix_attendance_institutional_debanjan') : null)
+      const rawInst = localStorage.getItem(`savantix_attendance_institutional_${safeKey}`)
+        || localStorage.getItem(userKey)
         || localStorage.getItem('savantix_attendance_institutional_v1');
       if (rawInst) institutional_attendance = JSON.parse(rawInst);
     } catch {}
@@ -406,7 +406,7 @@ export class CloudSyncService {
     if (remote.institutional_attendance) {
       try {
         let localInst: any = null;
-        const userEmail = remote.email || email || 'debanjan8686@gmail.com';
+        const userEmail = remote.email || email || 'scholar@savantix.app';
         const userKey = `savantix_attendance_institutional_${userEmail.split('@')[0]}`;
         const rawInst = localStorage.getItem(userKey) || localStorage.getItem('savantix_attendance_institutional_v1');
         if (rawInst) {
@@ -417,10 +417,8 @@ export class CloudSyncService {
           const serializedRemote = JSON.stringify(remote.institutional_attendance);
           localStorage.setItem('savantix_attendance_institutional_v1', serializedRemote);
           localStorage.setItem(userKey, serializedRemote);
-          const lowerEmailFirst = userEmail.trim().toLowerCase();
-          if (lowerEmailFirst === 'partofcosmmos@gmail.com' || lowerEmailFirst === 'debanjan8686@gmail.com') {
-            localStorage.setItem('savantix_attendance_institutional_debanjan', serializedRemote);
-          }
+          const safeFirst = userEmail.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+          localStorage.setItem(`savantix_attendance_institutional_${safeFirst}`, serializedRemote);
           if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
             window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: remote.institutional_attendance }));
           }
@@ -464,10 +462,8 @@ export class CloudSyncService {
           const serializedInst = JSON.stringify(mergedInst);
           localStorage.setItem('savantix_attendance_institutional_v1', serializedInst);
           localStorage.setItem(userKey, serializedInst);
-          const lowerEmail = userEmail.trim().toLowerCase();
-          if (lowerEmail === 'partofcosmmos@gmail.com' || lowerEmail === 'debanjan8686@gmail.com') {
-            localStorage.setItem('savantix_attendance_institutional_debanjan', serializedInst);
-          }
+          const safeKeyMerged = userEmail.trim().toLowerCase().replace(/[^a-z0-9_]/g, '_');
+          localStorage.setItem(`savantix_attendance_institutional_${safeKeyMerged}`, serializedInst);
           if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
             window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: mergedInst }));
           }
@@ -608,31 +604,7 @@ export class CloudSyncService {
       if (snap.exists()) {
         remoteData = snap.data() as CloudSyncPayload;
       }
-      // One-way safe bridge: if signed in as partofcosmmos@gmail.com, also union-merge any legacy attendance stored under deb_sync_debanjan8686_gmail_com
-      if (email.trim().toLowerCase() === 'partofcosmmos@gmail.com') {
-        try {
-          const legacyRef = doc(db, this.SYNC_COLLECTION, this.getCanonicalUid('debanjan8686@gmail.com'));
-          const legacySnap = await getDoc(legacyRef);
-          if (legacySnap.exists()) {
-            const legacyData = legacySnap.data() as CloudSyncPayload;
-            if (!remoteData) {
-              remoteData = { ...legacyData, email: 'partofcosmmos@gmail.com', canonicalId };
-            } else if (legacyData?.institutional_attendance?.absences?.length) {
-              const map = new Map<string, any>();
-              (legacyData.institutional_attendance.absences || []).forEach((a: any) => { if (a?.date) map.set(a.date, a); });
-              (remoteData.institutional_attendance?.absences || []).forEach((a: any) => { if (a?.date) map.set(a.date, a); });
-              remoteData = {
-                ...remoteData,
-                institutional_attendance: {
-                  ...(legacyData.institutional_attendance || {}),
-                  ...(remoteData.institutional_attendance || {}),
-                  absences: Array.from(map.values())
-                }
-              };
-            }
-          }
-        } catch {}
-      }
+      
     } catch (fireErr) {
       console.warn('[CloudSyncService] Firestore pull notice:', fireErr);
     }

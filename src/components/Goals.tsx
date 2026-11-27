@@ -735,7 +735,7 @@ export const Goals = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. IPhO Gold Track: Rotational Dynamics (Pathfinder / Irodov) or JEE Adv 2028 Math"
+                  placeholder="e.g. Physics Olympiad Gold Track: Rotational Dynamics (Pathfinder / Irodov) or JEE Adv 2028 Math"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"

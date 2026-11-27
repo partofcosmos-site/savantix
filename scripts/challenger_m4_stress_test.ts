@@ -118,7 +118,7 @@ console.log('>>> [1/3] STRESS-TESTING CONTACT & FEEDBACK HUB');
 
   // Valid standard submission
   assert(
-    validateForm('Debanjan Biswas', 'debanjan8686@gmail.com', 'Feature Request: Anki Sync', 'Please add support for exporting flashcards to Anki .apkg format.'),
+    validateForm('Scholar Biswas', 'student@example.com', 'Feature Request: Anki Sync', 'Please add support for exporting flashcards to Anki .apkg format.'),
     'FEEDBACK_VAL_01',
     'Valid standard form payload passes all checks'
   );
@@ -134,7 +134,7 @@ console.log('>>> [1/3] STRESS-TESTING CONTACT & FEEDBACK HUB');
   assert(!validateForm('Valid Name', 'invalid-email', 'Subj', 'Message with 10+ chars'), 'FEEDBACK_VAL_07', 'Malformed email fails');
   assert(!validateForm('Valid Name', 'user@domain', 'Subj', 'Message with 10+ chars'), 'FEEDBACK_VAL_08', 'Email without TLD fails');
   assert(!validateForm('Valid Name', '@missingusername.com', 'Subj', 'Message with 10+ chars'), 'FEEDBACK_VAL_09', 'Email missing user fails');
-  assert(validateForm('Valid Name', 'debanjan.biswas+olympiad@iitb.ac.in', 'Subj', 'Message with 10+ chars'), 'FEEDBACK_VAL_10', 'Complex valid institutional email with subdomains passes');
+  assert(validateForm('Valid Name', 'scholar.biswas+olympiad@iitb.ac.in', 'Subj', 'Message with 10+ chars'), 'FEEDBACK_VAL_10', 'Complex valid institutional email with subdomains passes');
 
   // Boundary checks on subject (min 3 chars)
   assert(!validateForm('Valid Name', 'test@example.com', '', 'Message with 10+ chars'), 'FEEDBACK_VAL_11', 'Empty subject fails');
@@ -194,9 +194,9 @@ console.log('>>> [1/3] STRESS-TESTING CONTACT & FEEDBACK HUB');
   // Mailto URL Encoding Stress with Extreme text
   const sub = encodeURIComponent(`[Savantix BUG] ${extremeSubject.slice(0, 500)}`);
   const body = encodeURIComponent(`Name: Dr. Feynman\nEmail: feynman@caltech.edu\n\nMessage:\n${extremeMessage.slice(0, 2000)}`);
-  const mailtoUrl = `mailto:debanjan8686@gmail.com?subject=${sub}&body=${body}`;
+  const mailtoUrl = `mailto:student@example.com?subject=${sub}&body=${body}`;
 
-  assert(mailtoUrl.startsWith('mailto:debanjan8686@gmail.com?subject='), 'FEEDBACK_MAILTO_01', 'Mailto URL generates valid schema');
+  assert(mailtoUrl.startsWith('mailto:student@example.com?subject='), 'FEEDBACK_MAILTO_01', 'Mailto URL generates valid schema');
   assert(mailtoUrl.includes('%20Quantum%20Wave%20Equation'), 'FEEDBACK_MAILTO_02', 'Mailto URI properly encodes UTF-8 and unicode');
 }
 
@@ -208,9 +208,9 @@ console.log('>>> [1/3] STRESS-TESTING CONTACT & FEEDBACK HUB');
 
   const draft = {
     category: 'academic',
-    name: 'Debanjan Biswas',
+    name: 'Scholar Biswas',
     email: 'bidu@savantix.io',
-    subject: 'IPhO Thermodynamics Simulation',
+    subject: 'Physics Olympiad Thermodynamics Simulation',
     message: 'Proposing a 4-tier interactive simulation for Carnot cycle entropy calculations.',
     priority: 'high',
     academicFocus: 'ipho',

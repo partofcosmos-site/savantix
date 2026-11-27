@@ -38,7 +38,7 @@ export class GoogleCalendarSyncService {
       text: event.title,
       dates: `${startFormatted}/${endFormatted}`,
       details: event.details,
-      location: event.location || 'The Bandhan School Aranghata'
+      location: event.location || 'Your Institution'
     });
 
     return `https://calendar.google.com/calendar/render?${params.toString()}`;

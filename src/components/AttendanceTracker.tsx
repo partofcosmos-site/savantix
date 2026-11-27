@@ -26,7 +26,6 @@ import {
   launchGeminiRegulator,
   DEFAULT_INITIAL_STATE,
   NEUTRAL_DEFAULT_INITIAL_STATE,
-  isDebanjanAccount,
   computeWorkingDaysToToday,
   detectConsecutiveAbsenceRisk
 } from '../services/attendanceRegulatorService';
@@ -67,16 +66,16 @@ export const MONTH_NAMES = [
 
 export const QUICK_REASON_PRESETS: { label: string; category: AbsenceCategory; reason: string }[] = [
   { label: 'Guided Online Coaching', category: 'self_study', reason: 'Structured online lecture and syllabus consolidation' },
-  { label: 'Olympiad Sprint', category: 'olympiad', reason: 'IPhO / NSEP theoretical problem solving & optics sprint' },
-  { label: 'JEE Mechanics & Calculus', category: 'jee_prep', reason: 'Rotational dynamics, calculus & coordinate geometry' },
-  { label: 'Half-Yearly Revision', category: 'exam_prep', reason: 'Class XI Half-Yearly syllabus revision' },
+  { label: 'Olympiad Sprint', category: 'olympiad', reason: 'Deep theoretical problem solving & revision sprint' },
+  { label: 'Core Mechanics & Calculus', category: 'jee_prep', reason: 'Rotational dynamics, calculus & coordinate geometry' },
+  { label: 'Half-Yearly Revision', category: 'exam_prep', reason: 'Midterm syllabus consolidation & revision' },
   { label: 'Medical / Health Rest', category: 'recovery', reason: 'Health recovery & sleep consolidation' },
 ];
 
 export const AttendanceTracker: React.FC = () => {
   const { user, isGuest, syncStatus, forceSyncNow } = useAppContext();
   const userIdentifier = isGuest ? 'guest' : (user?.email || 'anonymous');
-  const isDebanjan = isDebanjanAccount(userIdentifier);
+  const isScholar = false;
 
   const [state, setState] = useState<InstitutionalAttendanceState>(() => loadInstitutionalState(userIdentifier));
   const isSelfSavingRef = useRef<boolean>(false);
@@ -428,8 +427,8 @@ export const AttendanceTracker: React.FC = () => {
 
   // Reset to default ground truth
   const handleResetToGroundTruth = () => {
-    if (isDebanjan) {
-      if (window.confirm('Reset all attendance data back to verified institutional ground truth (Bandhan School, 105 held, 90 attended, 10 on-duty, 15 absences, 28 holidays)?')) {
+    if (isScholar) {
+      if (window.confirm('Reset attendance ledger to clean default?')) {
         setState(DEFAULT_INITIAL_STATE);
         showToast('Reset to verified ground truth.');
       }
@@ -683,7 +682,7 @@ export const AttendanceTracker: React.FC = () => {
 
           {/* Action CTAs: AI Regulator / Advisory + Google Calendar Sync + Reset */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-            {isDebanjan ? (
+            {isScholar ? (
               <button
                 onClick={handleLaunchGemini}
                 className="relative group flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-violet-600 via-indigo-600 to-indigo-700 hover:from-violet-500 hover:to-indigo-600 text-white rounded-2xl font-bold text-sm shadow-xl hover: transition-all duration-300 cursor-pointer active:scale-95 border border-indigo-400/30"
@@ -799,7 +798,7 @@ export const AttendanceTracker: React.FC = () => {
 
             <button
               onClick={handleResetToGroundTruth}
-              title={isDebanjan ? "Reset data to verified ground truth" : "Reset attendance ledger to default"}
+              title={isScholar ? "Reset data to verified ground truth" : "Reset attendance ledger to default"}
               className="p-3 bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-zinc-200 rounded-2xl text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5"
             >
               <RefreshCw className="w-4 h-4" />
@@ -852,13 +851,92 @@ export const AttendanceTracker: React.FC = () => {
                     )}
                   </p>
                 </div>
-                <div className="flex items-center gap-3 font-mono text-xs">
-                  <div className="text-right">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+                  <div className="text-right mr-1">
                     <div className="text-[10px] text-[var(--sx-ink-muted)] uppercase">Held / Present / Absent</div>
                     <div className="font-semibold text-[var(--sx-ink)]">
                       {metrics.workingDaysHeld} / {metrics.presentDays}{metrics.onDutyDays > 0 ? `+${metrics.onDutyDays} OD` : ''} / {metrics.absentDays}
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const todayIso = new Date().toISOString().slice(0, 10);
+                      setState(prev => {
+                        const filteredAbs = prev.absences.filter(a => a.date !== todayIso);
+                        const wasAbsentToday = filteredAbs.length !== prev.absences.length;
+                        const held = wasAbsentToday ? prev.profile.workingDaysHeld : prev.profile.workingDaysHeld + 1;
+                        const nextDeleted = wasAbsentToday
+                          ? Array.from(new Set([...(prev.deletedAbsenceDates || []), todayIso])).sort()
+                          : (prev.deletedAbsenceDates || []);
+                        const nextState = {
+                          ...prev,
+                          absences: filteredAbs,
+                          deletedAbsenceDates: nextDeleted,
+                          profile: {
+                            ...prev.profile,
+                            workingDaysHeld: Math.max(held, filteredAbs.length),
+                            absentDays: filteredAbs.length,
+                            presentDays: Math.max(0, Math.max(held, filteredAbs.length) - filteredAbs.length),
+                            totalWorkingDays: Math.max(prev.profile.totalWorkingDays, held)
+                          }
+                        };
+                        isSelfSavingRef.current = true;
+                        saveInstitutionalState(nextState, userIdentifier);
+                        setTimeout(() => { isSelfSavingRef.current = false; }, 120);
+                        return nextState;
+                      });
+                      showToast('Marked Present Today (+1 held & present)');
+                    }}
+                    className="px-2.5 py-1.5 rounded-[5px] bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] border border-[var(--sx-safe-border)] text-[var(--sx-safe)] text-[11px] font-semibold cursor-pointer transition-colors"
+                    title="1-tap daily check-in: mark today as present"
+                  >
+                    + Present Today
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const todayIso = new Date().toISOString().slice(0, 10);
+                      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                      const dow = dayNames[new Date().getDay()] || 'Weekday';
+                      setState(prev => {
+                        if (prev.absences.some(a => a.date === todayIso)) return prev;
+                        const entry: AbsenceEntry = {
+                          id: `abs_today_${Date.now()}`,
+                          date: todayIso,
+                          dayOfWeek: dow,
+                          reason: 'Logged via 1-tap daily check-in',
+                          category: 'self_study',
+                          isPracticalDay: dow === 'Thursday' || dow === 'Friday',
+                          notes: 'Quick 1-tap log'
+                        };
+                        const nextAbs = [entry, ...prev.absences].sort((a, b) => b.date.localeCompare(a.date));
+                        const held = Math.max(prev.profile.workingDaysHeld + 1, nextAbs.length);
+                        const nextDeleted = (prev.deletedAbsenceDates || []).filter(d => d !== todayIso);
+                        const nextState = {
+                          ...prev,
+                          absences: nextAbs,
+                          deletedAbsenceDates: nextDeleted,
+                          profile: {
+                            ...prev.profile,
+                            workingDaysHeld: held,
+                            absentDays: nextAbs.length,
+                            presentDays: Math.max(0, held - nextAbs.length),
+                            totalWorkingDays: Math.max(prev.profile.totalWorkingDays, held)
+                          }
+                        };
+                        isSelfSavingRef.current = true;
+                        saveInstitutionalState(nextState, userIdentifier);
+                        setTimeout(() => { isSelfSavingRef.current = false; }, 120);
+                        return nextState;
+                      });
+                      showToast('Marked Missed Today and synced');
+                    }}
+                    className="px-2.5 py-1.5 rounded-[5px] bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] border border-[var(--sx-fault-border)] text-[var(--sx-fault)] text-[11px] font-semibold cursor-pointer transition-colors"
+                    title="1-tap daily check-in: mark today as missed"
+                  >
+                    + Missed Today
+                  </button>
                 </div>
               </div>
 
@@ -911,7 +989,7 @@ export const AttendanceTracker: React.FC = () => {
             { id: 'overview', label: 'Attendance Projections', icon: Scale },
             { id: 'calendar', label: 'Holidays & Breaks', icon: Calendar },
             { id: 'subjects', label: `Subjects (${state.profile.subjects.length})`, icon: BookOpen },
-            ...(isDebanjan ? [{ id: 'ai_regulator', label: 'AI Regulatory Dossier', icon: FileText }] : []),
+            { id: 'ai_regulator', label: 'AI Regulatory Dossier', icon: FileText },
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1358,7 +1436,7 @@ export const AttendanceTracker: React.FC = () => {
                       APPROVED ON-DUTY (CBSE RULE 14.ii)
                     </span>
                     <h3 className="text-lg font-bold text-white mt-0.5">
-                      Kriti RISE IKITIES Program (IIT Kharagpur)
+                      Academic Deputation (IIT Kharagpur)
                     </h3>
                   </div>
                 </div>
@@ -1435,10 +1513,10 @@ export const AttendanceTracker: React.FC = () => {
                   </span>
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-zinc-100 mt-0.5">
-                  Kriti RISE IKITIES Program — Indian Institute of Technology (IIT) Kharagpur
+                  Academic Deputation — Indian Institute of Technology (IIT) Kharagpur
                 </h3>
                 <p className="text-xs text-zinc-400 mt-0.5">
-                  Duration: June 15 – June 26, 2026 · Credited: <strong className="text-emerald-300">10 Working Days</strong> · Ref: IIT-KGP/RISE/2026/IK-0428
+                  Duration: June 15 – June 26, 2026 · Credited: <strong className="text-emerald-300">10 Working Days</strong> · Ref: OD-REF-001
                 </p>
               </div>
             </div>
@@ -2571,7 +2649,7 @@ export const AttendanceTracker: React.FC = () => {
       )}
 
       {/* TAB 5: AI REGULATORY DOSSIER (Strictly Private to Verified Account) */}
-      {isDebanjan && activeTab === 'ai_regulator' && (
+      {activeTab === 'ai_regulator' && (
         <div className="space-y-6 animate-in fade-in duration-300">
           {/* Action Header Card */}
           <div className="bg-gradient-to-r from-violet-950/40 via-indigo-950/30 to-zinc-900 border border-violet-500/40 rounded-md p-6 space-y-4 shadow-2xl">
@@ -2718,7 +2796,7 @@ export const AttendanceTracker: React.FC = () => {
                   type="text"
                   value={editAffiliationNo}
                   onChange={(e) => setEditAffiliationNo(e.target.value)}
-                  placeholder="e.g., 2430453 or leave blank"
+                  placeholder="e.g.,  or leave blank"
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-200 focus:outline-none focus:border-indigo-500"
                 />
               </div>

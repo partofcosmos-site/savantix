@@ -10,7 +10,6 @@ import {
   recomputeStreakFromHistory,
   DEFAULT_STREAK_STATE
 } from '../utils/streakResilienceEngine';
-import { seedDebanjanHistoryIfEmpty } from '../utils/debanjanHistoryData';
 import { CloudSyncService, SyncResult } from '../services/cloudSyncService';
 
 interface UserProfile {
@@ -218,10 +217,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     // Ensure Firebase Auth session is active
     await CloudSyncService.ensureAuth();
 
-    const isFounder = ['debanjan8686@gmail.com', 'partofcosmmos@gmail.com'].includes(cleanEmail);
-    const initialTargetExams = isFounder 
-      ? ['IPhO (Gold Track) / NSEP 2026–2027', 'INPhO / OCSC 2027', 'JEE Advanced 2028', 'ISI / CMI 2028', 'CBSE Class 12 Boards (March 2028)']
-      : ['IPhO (Gold Track) / NSEP 2026–2027', 'JEE Advanced 2028', 'ISI / CMI 2028', 'CBSE Class 12 Boards (March 2028)'];
+    const initialTargetExams = ['Midterm Examination', 'Final Board / Term Examination', 'Competitive Entrance'];
 
     try {
       const profileRef = doc(db, 'users', authUser.uid || canonicalId);
@@ -259,21 +255,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const localJournalKey = `savantix_user_journal_${userUidKey}`;
     const localInsightsKey = `savantix_user_insights_${userUidKey}`;
 
-    if (cleanEmail === 'debanjan8686@gmail.com' || cleanEmail === 'partofcosmmos@gmail.com') {
-      const seeded = seedDebanjanHistoryIfEmpty(userUidKey);
-      if (seeded) {
-        setLogs(seeded.mergedLogs);
-        setGoals(seeded.mergedGoals);
-        setJournalEntries(seeded.mergedJournal);
-      }
-    } else {
+    
       const savedLogs = localStorage.getItem(localLogsKey);
       if (savedLogs) setLogs(JSON.parse(savedLogs));
       const savedGoals = localStorage.getItem(localGoalsKey);
       if (savedGoals) setGoals(JSON.parse(savedGoals));
       const savedJournal = localStorage.getItem(localJournalKey);
       if (savedJournal) setJournalEntries(JSON.parse(savedJournal));
-    }
+    
 
     // Rehydrate cached insights state on auth bootstrap
     const savedInsights = localStorage.getItem(localInsightsKey) || localStorage.getItem(`savantix_user_insights_${canonicalId}`);
@@ -325,21 +314,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         const savedJournalKey = `savantix_user_journal_${parsed.uid}`;
         const savedInsightsKey = `savantix_user_insights_${parsed.uid}`;
 
-        if (parsed.email === 'debanjan8686@gmail.com' || parsed.email === 'partofcosmmos@gmail.com') {
-          const seeded = seedDebanjanHistoryIfEmpty(parsed.uid);
-          if (seeded) {
-            setLogs(seeded.mergedLogs);
-            setGoals(seeded.mergedGoals);
-            setJournalEntries(seeded.mergedJournal);
-          }
-        } else {
+        
           const savedLogs = localStorage.getItem(savedLogsKey);
           if (savedLogs) setLogs(JSON.parse(savedLogs));
           const savedGoals = localStorage.getItem(savedGoalsKey);
           if (savedGoals) setGoals(JSON.parse(savedGoals));
           const savedJournal = localStorage.getItem(savedJournalKey);
           if (savedJournal) setJournalEntries(JSON.parse(savedJournal));
-        }
+        
 
         const savedInsights = localStorage.getItem(savedInsightsKey) || localStorage.getItem(`savantix_user_insights_${parsed.canonicalId || parsed.uid}`);
         if (savedInsights) {
@@ -517,7 +499,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       email: 'guest@savantix.app',
       displayName: 'Guest Scholar',
       schoolHours: 6,
-      targetExams: ['IPhO (Gold Track) / NSEP 2026–2027', 'JEE Advanced 2028', 'ISI / CMI 2028', 'CBSE Class 12 Boards (March 2028)'],
+      targetExams: ['Physics Olympiad (Gold Track) / Physics Stage 1 2026–2027', 'Competitive Entrance', 'Mathematics Entrance', 'CBSE Class 12 Boards (March 2028)'],
       createdAt: Date.now()
     });
     setIsGuest(true);

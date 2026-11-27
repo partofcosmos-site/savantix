@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Calendar, Target, Clock, AlertCircle, Plus, Trash2, CheckCircle2, ChevronRight, Edit2 } from 'lucide-react';
 import { differenceInDays, parseISO, format } from 'date-fns';
 import { useAppContext } from '../context/AppContext';
+import { CloudSyncService } from '../services/cloudSyncService';
 
 interface ExamTarget {
   id: string;
@@ -13,16 +14,13 @@ interface ExamTarget {
 }
 
 const DEFAULT_EXAMS: ExamTarget[] = [
-  { id: 'exam-1', name: 'IPhO (International Physics Olympiad) Gold Track / OCSC', targetDate: '2027-07-15', targetHours: 1200, completedHours: 0, category: 'Physics' },
-  { id: 'exam-2', name: 'NSEP 2026 (Physics Olympiad Stage 1)', targetDate: '2026-11-29', targetHours: 600, completedHours: 0, category: 'Physics' },
-  { id: 'exam-3', name: 'INPhO 2027 (Indian National Physics Olympiad Stage 2)', targetDate: '2027-01-31', targetHours: 500, completedHours: 0, category: 'Physics' },
-  { id: 'exam-4', name: 'JEE Advanced 2028 (Class 12 Passing Year)', targetDate: '2028-05-28', targetHours: 1500, completedHours: 0, category: 'General' },
-  { id: 'exam-5', name: 'ISI & CMI Mathematics Entrances 2028', targetDate: '2028-05-14', targetHours: 800, completedHours: 0, category: 'Math' },
-  { id: 'exam-6', name: 'CBSE Class 12 Senior Secondary Board 2028', targetDate: '2028-03-01', targetHours: 400, completedHours: 0, category: 'General' }
+  { id: 'exam-1', name: 'Midterm Examination', targetDate: '2026-10-15', targetHours: 200, completedHours: 0, category: 'General' },
+  { id: 'exam-2', name: 'Final Term / Board Examination', targetDate: '2027-03-01', targetHours: 400, completedHours: 0, category: 'General' },
+  { id: 'exam-3', name: 'Competitive Entrance / Scholarship Exam', targetDate: '2027-05-15', targetHours: 600, completedHours: 0, category: 'Physics' }
 ];
 
 export const ExamCountdown: React.FC = () => {
-  const { user } = useAppContext();
+  const { user, isGuest } = useAppContext();
   
   const getInitialExams = () => {
     const saved = localStorage.getItem('savantix_exam_targets');
@@ -44,10 +42,30 @@ export const ExamCountdown: React.FC = () => {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<any>({});
 
+  useEffect(() => {
+    const refreshExams = () => {
+      const saved = localStorage.getItem('savantix_exam_targets');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) setExams(parsed);
+        } catch {}
+      }
+    };
+    window.addEventListener('savantix_cloud_synced', refreshExams);
+    window.addEventListener('storage', refreshExams);
+    return () => {
+      window.removeEventListener('savantix_cloud_synced', refreshExams);
+      window.removeEventListener('storage', refreshExams);
+    };
+  }, []);
+
   const saveExams = (newExams: ExamTarget[]) => {
     setExams(newExams);
     localStorage.setItem('savantix_exam_targets', JSON.stringify(newExams));
-    // Persistence to Firestore could be added here if needed, via AppContext
+    if (!isGuest && user?.email) {
+      CloudSyncService.pushToCloud(user.email, user.uid).catch(() => {});
+    }
   };
 
   const handleAdd = (e: React.FormEvent) => {
@@ -113,7 +131,7 @@ export const ExamCountdown: React.FC = () => {
               <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1.5">Target Exam Name</label>
               <input
                 type="text"
-                placeholder="e.g. IPhO Gold Track or JEE Advanced 2028"
+                placeholder="e.g. Midterm Exam or Entrance Test"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 className="w-full bg-zinc-900/60 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50"

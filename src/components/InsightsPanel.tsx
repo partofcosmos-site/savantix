@@ -52,7 +52,7 @@ export const InsightsPanel = ({ selectedDate }: { selectedDate: string }) => {
     try {
       const constraints = {
         schoolHours: profile?.schoolHours || 6,
-        targetExams: profile?.targetExams || ['IPhO / NSEP Track', 'JEE Advanced 2028', 'ISI / CMI 2028', 'CBSE Class 12 Boards (2028)'],
+        targetExams: profile?.targetExams || ['Competitive STEM Track', 'Competitive Entrance', 'Mathematics Entrance', 'Board / Term Finals'],
         cumulativeDailyStats: {
           sessionCount: todayLogs.length,
           totalMinutes,

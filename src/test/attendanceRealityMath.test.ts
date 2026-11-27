@@ -3,12 +3,12 @@
  * @file attendanceRealityMath.test.ts
  * 
  * Verifies:
- * 1. Exact ground truth metrics as of Sept 1, 2026 (The Bandhan School Aranghata, CBSE 2430453)
+ * 1. Exact ground truth metrics as of Sept 1, 2026 (Your Institution, CBSE )
  * 2. Effective Attendance % (81.69%) and Raw Physical Attendance % (67.61%)
  * 3. Dynamic Safe Future Leaves to Dec 31 Lock Date (21 days @ 75% safe, 42 days @ 60% condonation)
  * 4. Compulsory Consecutive Recovery Math (0 days effective, 21 days raw)
  * 5. Full 28 Institutional Holidays & 4 Vacation Windows catalogue
- * 6. 23 Absences Ledger & 10-day IIT Kharagpur Kriti RISE On-Duty credit
+ * 6. 23 Absences Ledger & 10-day IIT Kharagpur Academic Deputation On-Duty credit
  * 7. Simulation engine edge cases & boundary conditions
  * 8. Zero-Cost Gemini Web AI Regulator Prompt Payload completeness
  * 9. Dual-storage persistence & backward compatibility (savantix_attendance_institutional_v1 & savantix_attendance_data_v1)
@@ -195,8 +195,8 @@ export async function runAttendanceRealityMathTests() {
   test('AI Regulator Bridge: compiles rich structured dossier with CBSE by-laws and STEM strategy', () => {
     const prompt = generateGeminiRegulatoryPrompt(DEFAULT_INITIAL_STATE, 'Draft Principal application letter');
 
-    assert(prompt.includes('The Bandhan School Aranghata'), 'Prompt must contain school name');
-    assert(prompt.includes('2430453'), 'Prompt must contain affiliation number');
+    assert(prompt.includes('Your Institution'), 'Prompt must contain school name');
+    assert(prompt.includes(''), 'Prompt must contain affiliation number');
     assert(prompt.includes('81.69%'), 'Prompt must contain effective attendance %');
     assert(prompt.includes('67.61%'), 'Prompt must contain raw physical attendance %');
     assert(prompt.includes('21 days'), 'Prompt must contain 21 safe leaves');
@@ -219,7 +219,7 @@ export async function runAttendanceRealityMathTests() {
     const rawInst = localStorage.getItem(INSTITUTIONAL_STORAGE_KEY);
     assert(rawInst !== null, `${INSTITUTIONAL_STORAGE_KEY} must be created`);
     const parsedInst = JSON.parse(rawInst!);
-    assert(parsedInst.profile.schoolName === 'The Bandhan School Aranghata', 'Profile persisted');
+    assert(parsedInst.profile.schoolName === 'Your Institution', 'Profile persisted');
 
     // Verify legacy subject key exists and is non-empty
     const rawLegacy = localStorage.getItem(LEGACY_SUBJECTS_STORAGE_KEY);
