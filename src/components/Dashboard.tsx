@@ -1,91 +1,88 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { LogInput } from './LogInput';
-import { DailyAgendaDesk } from './DailyAgendaDesk';
-import { InsightsPanel } from './InsightsPanel';
-import { StudyHeatmap } from './StudyHeatmap';
-import { ExamCountdown } from './ExamCountdown';
-import { useAppContext } from '../context/AppContext';
+import React, { useState, useMemo } from 'react';
 import { format, subDays, parseISO, isValid, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
-import { generateMorningRevisionSprint } from '../utils/fsrsEngine';
+import { Edit2, Check, X, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
 import { parseQuickStudyLog } from '../utils/quickLogParser';
-import { UniversalAIService } from '../services/universalAIService';
-import {
-  Clock,
-  BookOpen,
-  CheckCircle2,
-  Edit2,
-  Check,
-  X,
-  Trash2,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
-  Flame,
-  Zap,
-  Trophy,
-  HeartPulse,
-  Info,
-  RotateCcw,
-  Sliders,
-  ChevronDown,
-  ChevronUp,
-  Sparkles,
-  Scale,
-  ArrowRight,
-  TrendingDown,
-  TrendingUp,
-  Plus,
-  Minus,
-  Sun,
-  BrainCircuit,
-  Target,
-  Loader2,
-  Brain
-} from 'lucide-react';
-import {
-  getStreakHealthTier,
-  getShieldTokenRack,
-  getAntiFragileStreakBadge,
-  MAX_HP,
-  MAX_SHIELD_TOKENS
-} from '../utils/streakResilienceEngine';
-import {
-  calculateSubjectEquilibrium,
-  SubjectEquilibriumReport
-} from '../utils/pidEquilibriumEngine';
-import {
-  getCurrentZone,
-  getNextZone,
-  getMinutesUntilNextZone,
-  formatCountdown,
-  getWeakSubjectsFromLogs,
-  getPersonalizedRecommendations,
-  buildTimeline,
-} from '../utils/circadianEngine';
+import { ExamCountdown } from './ExamCountdown';
+import { DailyAgendaDesk } from './DailyAgendaDesk';
+import { LogInput } from './LogInput';
 
 export const Dashboard = () => {
   const {
     logs,
+    addLog,
     updateLog,
     deleteLog,
     elasticStreak,
     updateElasticStreak,
-    recomputeElasticStreak,
-    addLog,
-    insights,
-    addInsight,
-    user,
-    profile
   } = useAppContext();
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [showHistory, setShowHistory] = useState(false);
-  const [isEditingTarget, setIsEditingTarget] = useState(false);
-  const [targetInput, setTargetInput] = useState(String(elasticStreak?.targetMinutesDaily || 120));
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isReanalyzingInsights, setIsReanalyzingInsights] = useState(false);
+
+  const [selectedDate, setSelectedDate] = useState(() => format(new Date(), 'yyyy-MM-dd'));
   const [quickLogInput, setQuickLogInput] = useState('');
   const [isQuickLogging, setIsQuickLogging] = useState(false);
+  const [showFullComposer, setShowFullComposer] = useState(false);
+  const [isEditingTarget, setIsEditingTarget] = useState(false);
+  const [targetInput, setTargetInput] = useState(String(elasticStreak?.targetMinutesDaily || 120));
+  const [editingLogId, setEditingLogId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<any>({});
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2600);
+  };
+
   const parsedQuickLog = useMemo(() => parseQuickStudyLog(quickLogInput), [quickLogInput]);
+
+  const logs7Days = useMemo(() => {
+    const today = new Date();
+    const start = startOfDay(subDays(today, 6));
+    const end = endOfDay(today);
+    return (logs || []).filter((l) => {
+      if (!l?.date) return false;
+      const d = parseISO(String(l.date).slice(0, 10));
+      return isValid(d) && isWithinInterval(d, { start, end });
+    });
+  }, [logs]);
+
+  const todayLogs = useMemo(
+    () => (logs || []).filter((l) => String(l.date || '').slice(0, 10) === selectedDate),
+    [logs, selectedDate]
+  );
+
+  const totalMinutes = useMemo(
+    () => todayLogs.reduce((acc, l) => acc + (Math.max(0, Number(l.durationMinutes)) || 0), 0),
+    [todayLogs]
+  );
+  const totalProblems = useMemo(
+    () => todayLogs.reduce((acc, l) => acc + (Math.max(0, Number(l.problemsSolved)) || 0), 0),
+    [todayLogs]
+  );
+  const pace7dHours = useMemo(() => {
+    const mins7 = logs7Days.reduce((acc, l) => acc + (Math.max(0, Number(l.durationMinutes)) || 0), 0);
+    return (mins7 / 60 / 7).toFixed(1);
+  }, [logs7Days]);
+
+  const subjectShare7d = useMemo(() => {
+    const bySubj = new Map<string, number>();
+    let total = 0;
+    logs7Days.forEach((l) => {
+      const m = Math.max(0, Number(l.durationMinutes) || 0);
+      if (!m) return;
+      const s = (l.subject || 'General').split(',')[0].trim() || 'General';
+      bySubj.set(s, (bySubj.get(s) || 0) + m);
+      total += m;
+    });
+    if (total === 0) return [];
+    return Array.from(bySubj.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, mins]) => ({ name, mins, pct: Math.round((mins / total) * 100) }));
+  }, [logs7Days]);
+
+  const targetMins = Math.max(15, elasticStreak?.targetMinutesDaily || 120);
+  const targetPct = Math.min(100, Math.round((totalMinutes / targetMins) * 100));
+  const activeStreak = elasticStreak?.activeStreakDays || 0;
 
   const handleQuickLogSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +90,7 @@ export const Dashboard = () => {
     setIsQuickLogging(true);
     try {
       await addLog({
-        date: selectedDate || format(new Date(), 'yyyy-MM-dd'),
+        date: selectedDate,
         subject: parsedQuickLog.subject,
         topic: parsedQuickLog.topic,
         durationMinutes: parsedQuickLog.durationMinutes,
@@ -102,66 +99,21 @@ export const Dashboard = () => {
         rawText: quickLogInput.trim(),
       });
       setQuickLogInput('');
-      showToast(`Logged ${parsedQuickLog.durationMinutes}m · ${parsedQuickLog.subject} (${parsedQuickLog.topic})`);
-    } catch (err) {
-      console.error('Quick log failed:', err);
-      showToast('Could not save quick log.');
+      showToast(`Logged ${parsedQuickLog.durationMinutes}m · ${parsedQuickLog.subject}`);
+    } catch {
+      showToast('Could not save log.');
     } finally {
       setIsQuickLogging(false);
     }
   };
 
-  // Rolling 7-Day Logs for Dynamic Subject Equilibrium Matrix
-  const logs7Days = useMemo(() => {
-    const today = new Date();
-    const sevenDaysAgo = subDays(today, 6);
-    const startBoundary = startOfDay(sevenDaysAgo);
-    const endBoundary = endOfDay(today);
-
-    return (logs || []).filter(l => {
-      if (!l.date) return false;
-      const parsed = parseISO(l.date.substring(0, 10));
-      return isValid(parsed) && isWithinInterval(parsed, { start: startBoundary, end: endBoundary });
-    });
-  }, [logs]);
-
-  // Subject Equilibrium & PID Corrective Prescription Report
-  const equilibriumReport: SubjectEquilibriumReport = useMemo(() => {
-    return calculateSubjectEquilibrium(logs7Days);
-  }, [logs7Days]);
-  
-  const todayLogs = logs.filter(l => l.date === selectedDate);
-
-  const totalMinutes = todayLogs.reduce((acc, log) => acc + (Math.max(0, Number(log.durationMinutes)) || 0), 0);
-  const totalProblems = todayLogs.reduce((acc, log) => acc + (Math.max(0, Number(log.problemsSolved)) || 0), 0);
-  
-  const subjects = Array.from(new Set(
-    todayLogs.flatMap(l => (l.subject || 'Uncategorized').split(/,| and | & /i).map(s => {
-      const trimmed = s.trim();
-      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
-    }).filter(Boolean))
-  ));
-
-  const [editingLogId, setEditingLogId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<any>({});
-
-  const healthTier = getStreakHealthTier(elasticStreak?.currentHP ?? 100);
-  const shieldRack = getShieldTokenRack(elasticStreak?.shieldTokens ?? 2, MAX_SHIELD_TOKENS);
-  const streakBadge = getAntiFragileStreakBadge(elasticStreak || {
-    currentHP: 100,
-    maxHP: 100,
-    shieldTokens: 2,
-    maxShieldTokens: 3,
-    activeStreakDays: 0,
-    longestStreakDays: 0,
-    lastEvaluatedDate: selectedDate,
-    targetMinutesDaily: 120,
-    history: []
-  });
-
-  const handleDateChange = (newDate: string) => {
-    setSelectedDate(newDate);
-    setEditingLogId(null);
+  const handleSaveTarget = () => {
+    const n = parseInt(targetInput, 10);
+    if (!isNaN(n) && n >= 15) {
+      updateElasticStreak({ targetMinutesDaily: n });
+      setIsEditingTarget(false);
+      showToast(`Daily target set to ${n}m`);
+    }
   };
 
   const handleEditClick = (log: any) => {
@@ -174,965 +126,337 @@ export const Dashboard = () => {
     });
   };
 
-  const handleSaveEdit = async (logId: string) => {
-    try {
-      await updateLog(logId, {
-        subject: (editForm.subject || 'General').trim().substring(0, 99) || 'General',
-        topic: (editForm.topic || '').trim().substring(0, 199),
-        durationMinutes: Math.max(0, Math.round(Number(editForm.durationMinutes))) || 0,
-        problemsSolved: Math.max(0, Math.round(Number(editForm.problemsSolved))) || 0,
-      });
-      setEditingLogId(null);
-    } catch (error) {
-      console.error("Failed to update log:", error);
+  const handleSaveEdit = async (id: string) => {
+    await updateLog(id, {
+      subject: (editForm.subject || 'General').trim().slice(0, 99) || 'General',
+      topic: (editForm.topic || '').trim().slice(0, 199),
+      durationMinutes: Math.max(0, Math.round(Number(editForm.durationMinutes))) || 0,
+      problemsSolved: Math.max(0, Math.round(Number(editForm.problemsSolved))) || 0,
+    });
+    setEditingLogId(null);
+  };
+
+  const handleDeleteLog = async (id: string) => {
+    if (window.confirm('Delete this study session?')) {
+      await deleteLog(id);
+      if (editingLogId === id) setEditingLogId(null);
     }
   };
 
-  const handleDeleteLog = async (logId: string) => {
-    if (window.confirm("Are you sure you want to delete this log?")) {
-      try {
-        await deleteLog(logId);
-        if (editingLogId === logId) {
-          setEditingLogId(null);
-        }
-      } catch (error) {
-        console.error("Failed to delete log:", error);
-      }
-    }
-  };
+  const displayDateLabel = useMemo(() => {
+    const d = parseISO(selectedDate);
+    return isValid(d) ? format(d, 'EEEE, d MMM yyyy') : selectedDate;
+  }, [selectedDate]);
 
-  const handleSaveTarget = () => {
-    const parsed = parseInt(targetInput, 10);
-    if (!isNaN(parsed) && parsed >= 15) {
-      updateElasticStreak({ targetMinutesDaily: parsed });
-      setIsEditingTarget(false);
-      showToast(`Daily study target updated to ${parsed} mins!`);
-    }
-  };
-
-  const handleRecompute = () => {
-    recomputeElasticStreak();
-    showToast('Elastic streak recomputed from history!');
-  };
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const revisionSprint = useMemo(() => {
-    return generateMorningRevisionSprint(logs, new Date());
-  }, [logs]);
-
-  const handleSolveNow = (subject: string, topic: string) => {
-    window.dispatchEvent(new CustomEvent('navigate', { 
-      detail: { tab: 'solver', subject, topic } 
-    }));
-  };
-
-  const handleMarkSprintComplete = async () => {
-    try {
-      await addLog({
-        date: format(new Date(), 'yyyy-MM-dd'),
-        subject: 'General STEM',
-        topic: 'Morning revision',
-        durationMinutes: 45,
-        problemsSolved: 3
-      });
-      showToast('Morning Sprint Complete! +45 mins');
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleQuickReanalyzeInsights = async () => {
-    if (!user || todayLogs.length === 0) return;
-    setIsReanalyzingInsights(true);
-    try {
-      const totalMins = todayLogs.reduce((acc, log) => acc + (Math.max(0, Number(log.durationMinutes)) || 0), 0);
-      const totalProbs = todayLogs.reduce((acc, log) => acc + (Math.max(0, Number(log.problemsSolved)) || 0), 0);
-      const avgEff = todayLogs.length > 0
-        ? (todayLogs.reduce((acc, log) => acc + (Number(log.efficiencyScore) || 8), 0) / todayLogs.length).toFixed(1)
-        : '8.0';
-      const avgFoc = todayLogs.length > 0
-        ? (todayLogs.reduce((acc, log) => acc + (Number(log.focusScore) || 8), 0) / todayLogs.length).toFixed(1)
-        : '8.0';
-      const subs = Array.from(new Set(todayLogs.map(l => l.subject).filter(Boolean)));
-      const mists = todayLogs.flatMap(l => (Array.isArray(l.mistakes) ? l.mistakes : [l.mistakes]).filter(Boolean));
-
-      const constraints = {
-        schoolHours: profile?.schoolHours || 6,
-        targetExams: profile?.targetExams || ['Competitive STEM Track', 'Competitive Entrance', 'Mathematics Entrance', 'Board / Term Finals'],
-        cumulativeDailyStats: {
-          sessionCount: todayLogs.length,
-          totalMinutes: totalMins,
-          totalProblems: totalProbs,
-          avgEfficiency: avgEff,
-          avgFocus: avgFoc,
-          subjects: subs
-        }
-      };
-
-      let insightData: any;
-      try {
-        insightData = await UniversalAIService.generateDailyInsights(todayLogs, constraints);
-      } catch (aiErr) {
-        const subjectListStr = subs.join(', ') || 'General STEM';
-        const mistakeSummary = mists.length > 0
-          ? `Key mistake patterns flagged across sessions: ${mists.slice(0, 3).join('; ')}.`
-          : 'Zero major conceptual traps reported across logged sessions.';
-
-        insightData = {
-          performanceSummary: `Completed ${todayLogs.length} cumulative study session(s) totaling ${Math.floor(totalMins / 60)}h ${totalMins % 60}m across ${subjectListStr}. Solved ${totalProbs} problems with an average efficiency score of ${avgEff}/10 and focus score of ${avgFoc}/10.`,
-          keyInefficiencies: totalMins < 120 ? ['Daily focus volume is below optimal 2-hour threshold'] : ['Pacing optimization recommended on complex multi-step numericals'],
-          biggestMistakePattern: mistakeSummary,
-          hiddenWeakness: `Deep conceptual grounding and formula retention in ${subs[0] || 'Physics'}.`,
-          nextDayPlan: [
-            `Initiate Morning revision on ${subs[0] || 'Core STEM'} for 45 mins.`,
-            `Schedule 90-minute high-yield numerical practice block.`,
-            `Review active recall flashcards and error logs prior to evening session.`
-          ],
-          priorityRanking: subs,
-          warnings: totalMins < 60 ? ['Cumulative focus time is below recommended baseline.'] : []
-        };
-      }
-
-      const effectiveDate = selectedDate || format(new Date(), 'yyyy-MM-dd');
-      await addInsight({
-        date: effectiveDate,
-        sessionCount: todayLogs.length,
-        evaluatedMinutes: totalMins,
-        evaluatedProblems: totalProbs,
-        avgEfficiencyScore: Number(avgEff),
-        avgFocusScore: Number(avgFoc),
-        ...insightData
-      });
-      showToast(`Daily insights re-analyzed for ${todayLogs.length} sessions (${totalMins}m)!`);
-    } catch (err: any) {
-      showToast(`Insight re-analysis notice: ${err.message || 'Failed'}`);
-    } finally {
-      setIsReanalyzingInsights(false);
-    }
-  };
-
-  const hasSprintCards = revisionSprint.stabilityCard || revisionSprint.consolidationCard || revisionSprint.decayCard;
-
-  // ── Circadian Engine — live clock ──────────────────────────────────────────
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    const tick = setInterval(() => setNow(new Date()), 60_000);
-    return () => clearInterval(tick);
-  }, []);
-
-  const currentZone = useMemo(() => getCurrentZone(now), [now]);
-  const nextZone = useMemo(() => getNextZone(currentZone), [currentZone]);
-  const minsLeft = useMemo(() => getMinutesUntilNextZone(now, currentZone), [now, currentZone]);
-  const weakSubjects = useMemo(() => getWeakSubjectsFromLogs(logs), [logs]);
-  const circadianRecs = useMemo(() => getPersonalizedRecommendations(currentZone, weakSubjects), [currentZone, weakSubjects]);
-  const circadianTimeline = useMemo(() => buildTimeline(currentZone), [currentZone]);
+  const barColors = ['#e4e4e7', '#34d399', '#a1a1aa', '#f59e0b', '#71717a'];
 
   return (
-    <div className="w-full px-4 sm:px-6 py-8">
-      <div className="max-w-7xl mx-auto w-full space-y-8">
-        
-        {/* Toast Notification */}
-        {toastMessage && (
-          <div className="fixed top-5 right-5 z-50 bg-zinc-900 border border-indigo-500/50 text-indigo-200 px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-top-3">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            <span>{toastMessage}</span>
+    <div className="w-full px-5 sm:px-8 py-7 max-w-6xl mx-auto space-y-8">
+      {toast && (
+        <div className="fixed top-5 right-5 z-50 px-3.5 py-2 rounded-[6px] bg-[var(--sx-surface)] border border-[var(--sx-border)] text-xs text-[var(--sx-ink)]">
+          {toast}
+        </div>
+      )}
+
+      {/* Minimal Header — No Box */}
+      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-[var(--sx-hairline)]">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight text-[var(--sx-ink)]">Overview</h1>
+          <p className="text-xs text-[var(--sx-ink-muted)] mt-1">{displayDateLabel}</p>
+        </div>
+        <div className="flex items-center gap-2.5">
+          {isEditingTarget ? (
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={15}
+                max={960}
+                value={targetInput}
+                onChange={(e) => setTargetInput(e.target.value)}
+                className="w-20 px-2.5 py-1.5 text-xs rounded-[5px] border border-[var(--sx-border)]"
+                aria-label="Daily target minutes"
+              />
+              <button
+                type="button"
+                onClick={handleSaveTarget}
+                className="sx-btn-primary px-2.5 py-1.5 text-xs rounded-[5px] cursor-pointer"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditingTarget(false)}
+                className="px-2 py-1.5 text-xs text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                setTargetInput(String(targetMins));
+                setIsEditingTarget(true);
+              }}
+              className="px-2.5 py-1.5 text-xs font-mono text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-[5px] cursor-pointer transition-colors"
+              title="Edit daily focus target"
+            >
+              Goal: {targetMins}m
+            </button>
+          )}
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => {
+              setSelectedDate(e.target.value);
+              setEditingLogId(null);
+            }}
+            aria-label="Select date"
+            className="px-3 py-1.5 text-xs rounded-[5px] border border-[var(--sx-hairline)]"
+          />
+        </div>
+      </header>
+
+      {/* Flat 4-Column Telemetry Strip (Hairline Dividers, Zero Nested Boxes) */}
+      <section className="grid grid-cols-2 md:grid-cols-4 border border-[var(--sx-hairline)] rounded-[8px] bg-[var(--sx-surface)] divide-y md:divide-y-0 md:divide-x divide-[var(--sx-hairline)]">
+        <div className="p-4 space-y-2">
+          <div className="text-xs text-[var(--sx-ink-muted)]">Focused today</div>
+          <div className="flex items-baseline gap-2 font-mono">
+            <span className="text-xl font-semibold text-[var(--sx-ink)]">{totalMinutes}m</span>
+            <span className="text-xs text-[var(--sx-ink-muted)]">/ {targetMins}m</span>
+          </div>
+          <div className="w-full h-1 rounded-full bg-[var(--sx-elevated)] overflow-hidden">
+            <div
+              className="h-full transition-all duration-300"
+              style={{
+                width: `${targetPct}%`,
+                backgroundColor: targetPct >= 100 ? 'var(--sx-safe)' : 'var(--sx-ink)',
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="p-4 space-y-1.5">
+          <div className="text-xs text-[var(--sx-ink-muted)]">Problems solved</div>
+          <div className="font-mono text-xl font-semibold text-[var(--sx-ink)]">{totalProblems}</div>
+          <div className="text-[11px] text-[var(--sx-ink-muted)]">{todayLogs.length} session(s)</div>
+        </div>
+
+        <div className="p-4 space-y-1.5">
+          <div className="text-xs text-[var(--sx-ink-muted)]">Active streak</div>
+          <div className="font-mono text-xl font-semibold text-[var(--sx-ink)]">{activeStreak}d</div>
+          <div className="text-[11px] text-[var(--sx-ink-muted)]">
+            Best: {elasticStreak?.longestStreakDays || activeStreak}d
+          </div>
+        </div>
+
+        <div className="p-4 space-y-1.5">
+          <div className="text-xs text-[var(--sx-ink-muted)]">7-day average</div>
+          <div className="font-mono text-xl font-semibold text-[var(--sx-ink)]">{pace7dHours}h</div>
+          <div className="text-[11px] text-[var(--sx-ink-muted)]">per day</div>
+        </div>
+      </section>
+
+      {/* Single Clean Quick-Log Bar + 7-Day Subject Balance */}
+      <section className="space-y-3">
+        <form onSubmit={handleQuickLogSubmit} className="flex items-center gap-2">
+          <input
+            type="text"
+            value={quickLogInput}
+            onChange={(e) => setQuickLogInput(e.target.value)}
+            placeholder='Quick log — e.g. "45m physics optics 15q 85%" or "1.5h math calculus"'
+            aria-label="Natural language quick study log"
+            className="flex-1 px-3.5 py-2.5 text-sm rounded-[6px] border border-[var(--sx-border)]"
+          />
+          <button
+            type="submit"
+            disabled={!parsedQuickLog || isQuickLogging}
+            className="sx-btn-primary px-4 py-2.5 rounded-[6px] text-xs font-medium cursor-pointer disabled:opacity-40 shrink-0"
+          >
+            {isQuickLogging ? 'Saving...' : 'Quick Log'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowFullComposer((v) => !v)}
+            className="px-3 py-2.5 rounded-[6px] text-xs text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] bg-[var(--sx-surface)] border border-[var(--sx-hairline)] flex items-center gap-1 cursor-pointer shrink-0"
+            title="Toggle voice and detailed log composer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Detailed</span>
+            {showFullComposer ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </form>
+
+        {parsedQuickLog && (
+          <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] text-[var(--sx-safe)]">
+            <span>{parsedQuickLog.durationMinutes}m</span>
+            <span>· {parsedQuickLog.subject}</span>
+            <span>· {parsedQuickLog.topic}</span>
+            {parsedQuickLog.problemsSolved > 0 && <span>· {parsedQuickLog.problemsSolved}Q</span>}
+            {parsedQuickLog.accuracyPercent !== undefined && <span>· {parsedQuickLog.accuracyPercent}%</span>}
           </div>
         )}
 
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">Overview</h1>
-            <p className="text-xs sm:text-sm text-zinc-500 mt-1">Select a date to view or log sessions</p>
+        {showFullComposer && (
+          <div className="pt-2">
+            <LogInput selectedDate={selectedDate} />
           </div>
-          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-            {todayLogs.length > 0 && (
-              <button
-                type="button"
-                onClick={handleQuickReanalyzeInsights}
-                disabled={isReanalyzingInsights}
-                title="Re-evaluate cumulative daily performance with latest logs"
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-xs font-bold transition-all shadow-md hover:scale-[1.02] cursor-pointer"
-              >
-                {isReanalyzingInsights ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <RotateCcw className="w-3.5 h-3.5" />
-                )}
-                <span>{isReanalyzingInsights ? 'Re-analyzing...' : 'Refresh insights'}</span>
-              </button>
-            )}
-            <input 
-              type="date" 
-              value={selectedDate} 
-              onChange={(e) => handleDateChange(e.target.value)}
-              className="bg-zinc-900/60 border border-zinc-800/80 rounded-full px-4 py-2 text-sm text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-inner"
-            />
-          </div>
-        </header>
+        )}
 
-        {/* DAILY FOCUS COMMAND STRIP — Target Progress + 1-Line Quick Log */}
-        {(() => {
-          const targetMins = Math.max(15, elasticStreak?.targetMinutesDaily || 120);
-          const pct = Math.min(100, Math.round((totalMinutes / targetMins) * 100));
-          const rem = Math.max(0, targetMins - totalMinutes);
-          return (
-            <section className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-[8px] p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-              <div className="lg:col-span-5 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--sx-ink-muted)]">
-                    Daily Target Progress
+        {subjectShare7d.length > 0 && (
+          <div className="pt-1 space-y-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[var(--sx-ink-muted)]">
+              <span>7-Day Subject Balance</span>
+              <div className="flex flex-wrap items-center gap-3 font-mono">
+                {subjectShare7d.map((item, idx) => (
+                  <span key={item.name} className="inline-flex items-center gap-1.5 text-[var(--sx-ink-secondary)]">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: barColors[idx % barColors.length] }} />
+                    <span>{item.name} {item.pct}%</span>
                   </span>
-                  <span className="font-mono font-semibold text-[var(--sx-ink)]">
-                    {totalMinutes}m / {targetMins}m ({pct}%)
-                  </span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-[var(--sx-elevated)] overflow-hidden border border-[var(--sx-hairline)]">
-                  <div
-                    className="h-full transition-all duration-300"
-                    style={{
-                      width: `${pct}%`,
-                      backgroundColor: pct >= 100 ? 'var(--sx-safe)' : 'var(--sx-signal)',
-                    }}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-[11px] text-[var(--sx-ink-secondary)]">
-                  <span>{rem === 0 ? 'Daily target hit.' : `${rem}m left to hit today's target`}</span>
-                  <span className="font-mono">{totalProblems} Qs · {todayLogs.length} session(s)</span>
-                </div>
-              </div>
-
-              <form onSubmit={handleQuickLogSubmit} className="lg:col-span-7 space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={quickLogInput}
-                    onChange={(e) => setQuickLogInput(e.target.value)}
-                    placeholder='Quick log: "45m physics optics 15q 85%" or "1.5h math calculus"'
-                    aria-label="Natural language quick study log"
-                    className="flex-1 px-3 py-2 text-xs sm:text-sm rounded-[5px] border border-[var(--sx-border)] bg-[var(--sx-elevated)] text-[var(--sx-ink)]"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!parsedQuickLog || isQuickLogging}
-                    className="sx-btn-primary px-4 py-2 rounded-[5px] text-xs font-semibold cursor-pointer disabled:opacity-40 shrink-0"
-                  >
-                    {isQuickLogging ? 'Saving...' : 'Quick Log'}
-                  </button>
-                </div>
-                {parsedQuickLog ? (
-                  <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] text-[var(--sx-safe)]">
-                    <span>Parsed: {parsedQuickLog.durationMinutes}m</span>
-                    <span>· {parsedQuickLog.subject}</span>
-                    <span>· {parsedQuickLog.topic}</span>
-                    {parsedQuickLog.problemsSolved > 0 && <span>· {parsedQuickLog.problemsSolved}Q</span>}
-                    {parsedQuickLog.accuracyPercent !== undefined && <span>· {parsedQuickLog.accuracyPercent}%</span>}
-                  </div>
-                ) : (
-                  <p className="font-mono text-[10px] text-[var(--sx-ink-muted)]">
-                    Press Enter to log directly to {selectedDate}
-                  </p>
-                )}
-              </form>
-
-              {(() => {
-                const bySubj = new Map<string, number>();
-                let sum7 = 0;
-                logs7Days.forEach((l: any) => {
-                  const m = Math.max(0, Number(l.durationMinutes) || 0);
-                  if (!m) return;
-                  const s = (l.subject || 'General').split(',')[0].trim() || 'General';
-                  bySubj.set(s, (bySubj.get(s) || 0) + m);
-                  sum7 += m;
-                });
-                const ranked = Array.from(bySubj.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
-                if (ranked.length === 0 || sum7 === 0) return null;
-                const colors = ['#f97316', '#34d399', '#38bdf8', '#fbbf24', '#a78bfa'];
-                return (
-                  <div className="lg:col-span-12 pt-3 border-t border-[var(--sx-hairline)] space-y-1.5">
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono">
-                      <span className="uppercase tracking-wider text-[var(--sx-ink-muted)]">7-Day Subject Balance</span>
-                      <div className="flex flex-wrap items-center gap-3 text-[var(--sx-ink-secondary)]">
-                        {ranked.map(([name, mins], idx) => (
-                          <span key={name} className="inline-flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[idx % colors.length] }} />
-                            <span>{name} {Math.round((mins / sum7) * 100)}%</span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="w-full h-1.5 rounded-full overflow-hidden flex bg-[var(--sx-elevated)]">
-                      {ranked.map(([name, mins], idx) => (
-                        <div
-                          key={name}
-                          style={{ width: `${(mins / sum7) * 100}%`, backgroundColor: colors[idx % colors.length] }}
-                          title={`${name}: ${Math.round(mins)}m (${Math.round((mins / sum7) * 100)}%)`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-            </section>
-          );
-        })()}
-
-        {/* ========================================================================= */}
-        {/* FSRS-STEM NEURO-INTERLEAVED SPRINT */}
-        {/* ========================================================================= */}
-        <div className="bg-zinc-950 border border-indigo-900/50 rounded-2xl overflow-hidden shadow-2xl relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-violet-500/5 to-transparent pointer-events-none" />
-          <div className="p-6 relative z-10">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg">
-                  <Sun className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-[var(--sx-ink)]">
-                    Morning revision 
-                  </h2>
-                  <p className="text-xs text-indigo-200/60 mt-0.5">
-                    {format(new Date(), 'EEEE, MMMM do')} • 45 Min Interleaved Practice
-                  </p>
-                </div>
-              </div>
-              {hasSprintCards && (
-                <button
-                  onClick={handleMarkSprintComplete}
-                  className="px-4 py-2 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  Mark Sprint Complete
-                </button>
-              )}
-            </div>
-
-            {!hasSprintCards ? (
-              <div className="text-center py-8 bg-zinc-900/50 rounded-xl border border-zinc-800/50">
-                <BrainCircuit className="w-8 h-8 text-zinc-600 mx-auto mb-3" />
-                <p className="text-sm font-medium text-zinc-300">Your revision queue is empty!</p>
-                <p className="text-xs text-zinc-500 mt-1 max-w-md mx-auto">Log some study sessions first. The FSRS engine will automatically build optimal interleaved revision sprints for you as topics age.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  { card: revisionSprint.stabilityCard, title: 'Stability Test', icon: <Target className="w-4 h-4 text-rose-400" />, desc: 'Long-term (21+ days)', bg: 'bg-rose-950/20', border: 'border-rose-900/50' },
-                  { card: revisionSprint.consolidationCard, title: 'Consolidation', icon: <BrainCircuit className="w-4 h-4 text-amber-400" />, desc: 'Medium (7-14 days)', bg: 'bg-amber-950/20', border: 'border-amber-900/50' },
-                  { card: revisionSprint.decayCard, title: 'Decay Reinforce', icon: <RotateCcw className="w-4 h-4 text-emerald-400" />, desc: 'Recent (2-6 days)', bg: 'bg-emerald-950/20', border: 'border-emerald-900/50' }
-                ].map((item, idx) => (
-                  <div key={idx} className={`p-4 rounded-xl border ${item.border} ${item.bg} flex flex-col justify-between gap-4 transition-all hover:scale-[1.02] cursor-default`}>
-                    {item.card ? (
-                      <>
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            {item.icon}
-                            <span className="text-xs font-bold text-zinc-300">{item.title}</span>
-                          </div>
-                          <div className="mb-2">
-                            <span className="inline-block px-2 py-0.5 bg-zinc-900/80 rounded border border-zinc-700/50 text-[10px] text-zinc-400 font-mono mb-1">
-                              {item.card.subject}
-                            </span>
-                            <h3 className="text-sm font-semibold text-zinc-100 leading-snug line-clamp-2">
-                              {item.card.topic}
-                            </h3>
-                          </div>
-                          <p className="text-[10px] text-zinc-500">Studied {item.card.daysAgo} days ago</p>
-                        </div>
-                        <button
-                          onClick={() => handleSolveNow(item.card.subject, item.card.topic)}
-                          className="w-full py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
-                        >
-                          Solve Now <ArrowRight className="w-3 h-3" />
-                        </button>
-                      </>
-                    ) : (
-                      <div className="h-full flex flex-col items-center justify-center text-center opacity-50 py-4">
-                        <div className="mb-2">{item.icon}</div>
-                        <span className="text-xs font-semibold text-zinc-400">{item.title}</span>
-                        <p className="text-[10px] text-zinc-500 mt-1">{item.desc}</p>
-                        <span className="text-[10px] bg-zinc-900 px-2 py-0.5 rounded mt-2">Up to date</span>
-                      </div>
-                    )}
-                  </div>
                 ))}
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* R5: ELASTIC STREAK HEALTH BAR & RESILIENCE TOKEN ENGINE HUB */}
-        {/* ========================================================================= */}
-        <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-900/70 to-zinc-950 border border-zinc-800/90 rounded-2xl p-6 shadow-2xl space-y-6 relative overflow-hidden">
-          
-          {/* Ambient Glow Background Accent */}
-          <div 
-            className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl pointer-events-none opacity-20 transition-all duration-700"
-            style={{ backgroundColor: healthTier.tier === 'emerald' ? '#10b981' : healthTier.tier === 'amber' ? '#f59e0b' : '#f43f5e' }}
-          />
-
-          {/* Top Row: Title, Resilient Badge & Controls */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className={`p-3 rounded-2xl border ${healthTier.borderColor} bg-zinc-950/60 shadow-inner`}>
-                <ShieldCheck className={`w-6 h-6 ${healthTier.textColor}`} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg font-bold text-zinc-100 tracking-tight">Elastic Streak & Resilience Hub</h2>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full">
-                    Resilient
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  100 HP health buffer absorbs off-days • Surplus effort charges shield tokens
-                </p>
-              </div>
             </div>
-
-            {/* Streak & Record Badges */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <div className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-md ${streakBadge.badgeClass}`}>
-                <span>{streakBadge.icon}</span>
-                <span>{streakBadge.text}</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-950/70 border border-zinc-800 rounded-xl text-xs font-semibold text-zinc-300">
-                <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                <span>Best: <strong className="text-zinc-100">{elasticStreak?.longestStreakDays ?? 0}d</strong></span>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleRecompute}
-                className="p-2 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700/60 rounded-xl text-xs transition-colors cursor-pointer"
-                title="Recalculate streak resilience from full log history"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Health Bar Section */}
-          <div className="space-y-2.5 relative z-10">
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 font-mono">
-                <HeartPulse className={`w-4 h-4 ${healthTier.textColor}`} />
-                <span className="text-sm font-bold text-zinc-100">
-                  {elasticStreak?.currentHP ?? 100} <span className="text-zinc-500 font-normal">/ {MAX_HP} HP</span>
-                </span>
-                <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${healthTier.borderColor} ${healthTier.textColor} bg-zinc-950/60`}>
-                  {healthTier.label}
-                </span>
-              </div>
-
-              {/* Daily Target Setting */}
-              <div className="flex items-center gap-2 text-zinc-400">
-                {isEditingTarget ? (
-                  <div className="flex items-center gap-1.5 bg-zinc-950 border border-zinc-700 rounded-lg px-2 py-1">
-                    <span className="text-[11px] text-zinc-400">Target:</span>
-                    <input
-                      type="number"
-                      min="15"
-                      max="720"
-                      value={targetInput}
-                      onChange={e => setTargetInput(e.target.value)}
-                      className="w-12 bg-transparent text-zinc-100 text-xs font-mono focus:outline-none"
-                    />
-                    <span className="text-[11px] text-zinc-500">m</span>
-                    <button
-                      type="button"
-                      onClick={handleSaveTarget}
-                        aria-label="Save daily target"
-                        title="Save daily target"
-                      className="p-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px] ml-1"
-                    >
-                      <Check className="w-3 h-3" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingTarget(false)}
-                      className="p-1 text-zinc-500 hover:text-zinc-300 text-[10px]"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setTargetInput(String(elasticStreak?.targetMinutesDaily || 120));
-                      setIsEditingTarget(true);
-                    }}
-                    className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-[11px] text-zinc-300 transition-colors cursor-pointer"
-                    title="Click to adjust daily target minutes"
-                  >
-                    <span>Target: <strong>{elasticStreak?.targetMinutesDaily || 120}m</strong> / day</span>
-                    <Sliders className="w-3 h-3 text-indigo-400" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Visual Health Bar */}
-            <div className="h-4 w-full bg-zinc-950/80 rounded-full border border-zinc-800/80 p-0.5 overflow-hidden shadow-inner relative">
-              <div 
-                className={`h-full rounded-full transition-all duration-700 ease-out ${healthTier.barColor}`}
-                style={{ width: `${Math.max(0, Math.min(100, elasticStreak?.currentHP ?? 100))}%` }}
-              />
-            </div>
-
-            {/* Mechanics Rules Badges */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-zinc-400 pt-1">
-              <div className="bg-zinc-950/50 border border-zinc-800/70 rounded-lg p-2 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-                <span><strong>+15 HP</strong> on Target ({elasticStreak?.targetMinutesDaily || 120}m)</span>
-              </div>
-              <div className="bg-zinc-950/50 border border-zinc-800/70 rounded-lg p-2 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0" />
-                <span><strong>+25 HP & +1 </strong> Overdrive ({Math.round((elasticStreak?.targetMinutesDaily || 120) * 1.5)}m)</span>
-              </div>
-              <div className="bg-zinc-950/50 border border-zinc-800/70 rounded-lg p-2 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                <span><strong>-20 HP max</strong> Partial Study</span>
-              </div>
-              <div className="bg-zinc-950/50 border border-zinc-800/70 rounded-lg p-2 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-rose-400 shrink-0" />
-                <span><strong>-35 HP</strong> Miss (0 Shields)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Resilience Shield Token Rack */}
-          <div className="border-t border-zinc-800/80 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div>
-              <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-indigo-400" />
-                Resilience Shield Tokens ({elasticStreak?.shieldTokens ?? 2} / {MAX_SHIELD_TOKENS} Armed)
-              </span>
-              <p className="text-[11px] text-zinc-500 mt-0.5">
-                Shields automatically deploy on missed/rest days: 0 HP lost & streak frozen
-              </p>
-            </div>
-
-            {/* 3 Shield Icons Rack */}
-            <div className="flex items-center gap-2.5">
-              {shieldRack.map(slot => (
+            <div className="w-full h-1 rounded-full overflow-hidden flex bg-[var(--sx-elevated)]">
+              {subjectShare7d.map((item, idx) => (
                 <div
-                  key={slot.index}
-                  className="group relative cursor-pointer"
-                  title={slot.tooltip}
-                >
-                  <div className={`p-2.5 rounded-xl border flex items-center justify-center transition-all ${
-                    slot.isCharged
-                      ? 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300 shadow-[0_0_12px_rgba(99,102,241,0.4)] group-hover:scale-110'
-                      : 'bg-zinc-950/60 border-zinc-800 text-zinc-600 group-hover:border-zinc-700'
-                  }`}>
-                    {slot.isCharged ? (
-                      <ShieldCheck className="w-5 h-5 text-indigo-400 fill-indigo-400/20 animate-pulse" />
-                    ) : (
-                      <ShieldAlert className="w-5 h-5 text-zinc-600" />
-                    )}
-                  </div>
-                  
-                  {/* Tooltip Overlay */}
-                  <div className="opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-48 bg-zinc-900 border border-zinc-700 text-[10px] text-zinc-300 p-2 rounded-lg shadow-xl z-30">
-                    <p className="font-bold text-zinc-100 mb-0.5">{slot.label}</p>
-                    <p className="text-zinc-400 leading-snug">{slot.tooltip}</p>
-                  </div>
-                </div>
+                  key={item.name}
+                  style={{ width: `${item.pct}%`, backgroundColor: barColors[idx % barColors.length] }}
+                />
               ))}
             </div>
           </div>
+        )}
+      </section>
 
-          {/* Defense History Accordion */}
-          {elasticStreak?.history && elasticStreak.history.length > 0 && (
-            <div className="border-t border-zinc-800/80 pt-3 relative z-10">
-              <button
-                type="button"
-                onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center justify-between w-full text-xs text-zinc-400 hover:text-zinc-200 transition-colors py-1 cursor-pointer"
-              >
-                <span className="flex items-center gap-1.5 font-semibold">
-                  <Info className="w-3.5 h-3.5 text-indigo-400" />
-                  Recent Resilience Defense & Health Log ({elasticStreak.history.length} events)
-                </span>
-                {showHistory ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </button>
-
-              {showHistory && (
-                <div className="mt-3 space-y-2 max-h-48 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-zinc-800 animate-in fade-in duration-200">
-                  {elasticStreak.history.slice(0, 10).map((entry, idx) => (
-                    <div
-                      key={`${entry.date}-${idx}`}
-                      className="bg-zinc-950/70 border border-zinc-850 p-2.5 rounded-xl flex items-center justify-between text-xs gap-3"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-zinc-400 text-[11px]">{entry.date}</span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                          entry.status === 'surplus_overdrive' ? 'bg-cyan-950/60 border border-cyan-500/40 text-cyan-300' :
-                          entry.status === 'target_met' ? 'bg-emerald-950/60 border border-emerald-500/40 text-emerald-300' :
-                          entry.status === 'shield_defended' ? 'bg-indigo-950/60 border border-indigo-500/40 text-indigo-300' :
-                          entry.status === 'partial_decay' ? 'bg-amber-950/60 border border-amber-500/40 text-amber-300' :
-                          'bg-rose-950/60 border border-rose-500/40 text-rose-300'
-                        }`}>
-                          {entry.status === 'surplus_overdrive' ? 'Overdrive' :
-                           entry.status === 'target_met' ? 'Target Met' :
-                           entry.status === 'shield_defended' ? 'Shield Defended' :
-                           entry.status === 'partial_decay' ? 'Partial Study' : 'Missed Study'}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3 text-[11px]">
-                        <span className="text-zinc-400">{entry.actualMinutes}m / {entry.targetMinutes}m</span>
-                        <span className={`font-mono font-bold ${entry.hpDelta >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {entry.hpDelta >= 0 ? `+${entry.hpDelta}` : entry.hpDelta} HP
-                        </span>
-                        <span className="text-zinc-300 font-mono">({entry.hpResult} HP)</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
-            <div className="p-3 bg-blue-500/10 rounded-full border border-blue-500/20">
-              <Clock className="w-6 h-6 text-blue-400" />
-            </div>
-            <div>
-              <p className="text-sm text-zinc-500 font-medium">Study Time</p>
-              <p className="text-2xl font-bold text-zinc-100">{Math.floor(totalMinutes / 60)}h {totalMinutes % 60}m</p>
-            </div>
+      {/* Clean 2-Column Main Stage */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left: Sessions List */}
+        <section className="lg:col-span-7 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-medium text-[var(--sx-ink)]">Sessions</h2>
+            <span className="font-mono text-xs text-[var(--sx-ink-muted)]">
+              {todayLogs.length} logged
+            </span>
           </div>
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
-            <div className="p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-            </div>
-            <div>
-              <p className="text-sm text-zinc-500 font-medium">Problems Solved</p>
-              <p className="text-2xl font-bold text-zinc-100">{totalProblems}</p>
-            </div>
-          </div>
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
-            <div className="p-3 bg-purple-500/10 rounded-full border border-purple-500/20">
-              <BookOpen className="w-6 h-6 text-purple-400" />
-            </div>
-            <div>
-              <p className="text-sm text-zinc-500 font-medium">Subjects Today</p>
-              <p className="text-2xl font-bold text-zinc-100">{subjects.length}</p>
-            </div>
-          </div>
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 flex items-center gap-4 shadow-lg hover:border-zinc-700 transition-colors">
-            <div className="p-3 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-              <Scale className="w-6 h-6 text-emerald-400" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm text-zinc-500 font-medium">Equilibrium</p>
-                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${equilibriumReport.statusBadgeColor}`}>
-                  {equilibriumReport.status === 'harmonious' ? 'Balanced' : equilibriumReport.status === 'mild_skew' ? 'Mild Skew' : 'Neglect Alert'}
-                </span>
+
+          <div className="border border-[var(--sx-hairline)] rounded-[8px] bg-[var(--sx-surface)] divide-y divide-[var(--sx-hairline)]">
+            {todayLogs.length === 0 ? (
+              <div className="p-8 text-center text-xs text-[var(--sx-ink-muted)]">
+                No study sessions logged for {displayDateLabel}. Type above to log one in seconds.
               </div>
-              <p className="text-2xl font-bold text-zinc-100 font-mono">{equilibriumReport.equilibriumScore}%</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Practical Daily Study Agenda Checklist & Live Desk Problem Counter */}
-        <div className="w-full">
-          <DailyAgendaDesk selectedDate={selectedDate} />
-        </div>
-
-        <div className="w-full">
-          <LogInput selectedDate={selectedDate} />
-        </div>
-
-        {/* 52-Week Study Streak Heatmap */}
-        <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-xl">
-          <StudyHeatmap logs={logs} selectedDate={selectedDate} onSelectDate={handleDateChange} />
-        </div>
-
-        {/* Dynamic Exam Countdowns & Velocity Forecast */}
-        <ExamCountdown />
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            
-            {/* Subject Equilibrium Status & PID Next-Day Prescription Banner */}
-            <div className="bg-gradient-to-r from-zinc-900/90 via-zinc-900/70 to-zinc-950 border border-zinc-800/90 rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400 shrink-0">
-                    <Scale className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-sm font-bold text-zinc-100">Subject Equilibrium & PID Rebalancer</h3>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${equilibriumReport.statusBadgeColor}`}>
-                        {equilibriumReport.statusLabel} ({equilibriumReport.equilibriumScore}%)
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-300 mt-1 font-medium leading-relaxed">
-                      {equilibriumReport.actionablePrescription}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-1.5 shrink-0">
-                  {equilibriumReport.subjectDistributions.map(sub => (
-                    <div
-                      key={sub.subject}
-                      className="px-2 py-1 bg-zinc-950/80 border border-zinc-800 rounded-lg text-[10px] font-mono flex items-center gap-1"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: sub.color }} />
-                      <span className="text-zinc-400">{sub.subject}:</span>
-                      <strong className={
-                        sub.recommendedDailyAdjustmentMins > 0 ? 'text-emerald-400' :
-                        sub.recommendedDailyAdjustmentMins < 0 ? 'text-amber-400' : 'text-zinc-400'
-                      }>
-                        {sub.recommendedDailyAdjustmentMins > 0 ? `+${sub.recommendedDailyAdjustmentMins}m` :
-                         sub.recommendedDailyAdjustmentMins < 0 ? `${sub.recommendedDailyAdjustmentMins}m` : '0m'}
-                      </strong>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <InsightsPanel selectedDate={selectedDate} />
-          </div>
-          <div className="space-y-6">
-            
-            {/* Recent Logs */}
-            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-6 shadow-lg">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider">Sessions</h3>
-                  <span className="px-2.5 py-0.5 bg-zinc-800/50 rounded-full text-[10px] text-zinc-500 border border-zinc-700 font-medium">{selectedDate}</span>
-                </div>
-                {todayLogs.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={handleQuickReanalyzeInsights}
-                    disabled={isReanalyzingInsights}
-                    title="Re-analyze with latest logs"
-                    className="text-[11px] font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer transition-colors"
-                  >
-                    <RotateCcw className={`w-3 h-3 ${isReanalyzingInsights ? 'animate-spin' : ''}`} />
-                    <span>Re-analyze</span>
-                  </button>
-                )}
-              </div>
-              {todayLogs.length === 0 ? (
-                <p className="text-sm text-zinc-600 text-center py-8">No sessions logged yet.</p>
-              ) : (
-                <div className="space-y-3">
-                  {todayLogs.map(log => (
-                    <div key={log.id} className="p-4 bg-zinc-950/50 border border-zinc-800/50 rounded-xl group hover:border-zinc-700 transition-all hover:shadow-md">
-                      {editingLogId === log.id ? (
-                        <div className="space-y-3">
-                          <input 
-                            type="text" 
-                            value={editForm.subject} 
-                            onChange={e => setEditForm({...editForm, subject: e.target.value})}
-                            className="w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:ring-1 focus:ring-indigo-500"
+            ) : (
+              todayLogs.map((log: any) => {
+                const isEditing = editingLogId === log.id;
+                return (
+                  <div key={log.id} className="p-3.5 hover:bg-[var(--sx-hover)]/40 transition-colors">
+                    {isEditing ? (
+                      <div className="space-y-2.5">
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            type="text"
+                            value={editForm.subject}
+                            onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })}
                             placeholder="Subject"
+                            className="px-2.5 py-1.5 text-xs rounded-[5px] border"
                           />
-                          <input 
-                            type="text" 
-                            value={editForm.topic} 
-                            onChange={e => setEditForm({...editForm, topic: e.target.value})}
-                            className="w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:ring-1 focus:ring-indigo-500"
+                          <input
+                            type="text"
+                            value={editForm.topic}
+                            onChange={(e) => setEditForm({ ...editForm, topic: e.target.value })}
                             placeholder="Topic"
+                            className="px-2.5 py-1.5 text-xs rounded-[5px] border"
                           />
-                          <div className="flex gap-2">
-                            <div className="flex-1">
-                              <label className="text-[10px] text-zinc-500 uppercase tracking-wider">Mins</label>
-                              <input 
-                                type="number" 
-                                value={editForm.durationMinutes} 
-                                onChange={e => setEditForm({...editForm, durationMinutes: e.target.value})}
-                                className="w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:ring-1 focus:ring-indigo-500"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <label className="text-[10px] text-zinc-500 uppercase tracking-wider">Probs</label>
-                              <input 
-                                type="number" 
-                                value={editForm.problemsSolved} 
-                                onChange={e => setEditForm({...editForm, problemsSolved: e.target.value})}
-                                className="w-full bg-zinc-900/60 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:ring-1 focus:ring-indigo-500"
-                              />
-                            </div>
-                          </div>
-                          <div className="flex justify-end gap-2 mt-3 pt-2 border-t border-zinc-800">
-                            <button onClick={() => setEditingLogId(null)} className="px-3 py-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors">Cancel</button>
-                            <button onClick={() => handleSaveEdit(log.id)} className="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors shadow-sm">Save</button>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            value={editForm.durationMinutes}
+                            onChange={(e) => setEditForm({ ...editForm, durationMinutes: e.target.value })}
+                            placeholder="Minutes"
+                            className="w-24 px-2.5 py-1.5 text-xs rounded-[5px] border"
+                          />
+                          <input
+                            type="number"
+                            value={editForm.problemsSolved}
+                            onChange={(e) => setEditForm({ ...editForm, problemsSolved: e.target.value })}
+                            placeholder="Problems"
+                            className="w-24 px-2.5 py-1.5 text-xs rounded-[5px] border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleSaveEdit(log.id)}
+                            aria-label="Save session"
+                            className="sx-btn-primary p-1.5 rounded-[5px] cursor-pointer"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingLogId(null)}
+                            aria-label="Cancel edit"
+                            className="p-1.5 text-[var(--sx-ink-muted)] hover:text-[var(--sx-ink)] cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-[var(--sx-ink)] truncate">
+                              {log.subject || 'General'}
+                            </span>
+                            {log.topic && (
+                              <span className="text-xs text-[var(--sx-ink-secondary)] truncate">
+                                · {log.topic}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      ) : (
-                        <>
-                          <div className="flex justify-between items-start mb-2 relative">
-                            <span className="text-sm font-semibold text-zinc-200">{log.subject}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-zinc-400 font-medium bg-zinc-900 px-2 py-0.5 rounded-full border border-zinc-800">{log.durationMinutes}m</span>
-                              <div className="flex items-center gap-1.5">
-                                <button 
-                                  onClick={() => handleEditClick(log)} 
-                                  className="p-1.5 text-zinc-300 hover:text-indigo-300 bg-zinc-900 hover:bg-indigo-950/40 rounded-lg transition-all border border-zinc-700 hover:border-indigo-500/50 cursor-pointer shadow-sm"
-                                  title="Edit Log"
-                                >
-                                  <Edit2 className="w-3.5 h-3.5" />
-                                </button>
-                                <button 
-                                  onClick={() => handleDeleteLog(log.id)} 
-                                  className="p-1.5 text-zinc-300 hover:text-rose-300 bg-zinc-900 hover:bg-rose-950/40 rounded-lg transition-all border border-zinc-700 hover:border-rose-500/50 cursor-pointer shadow-sm"
-                                  title="Delete Log"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                          <p className="text-xs text-zinc-400 truncate">{log.topic}</p>
-                          {log.problemsSolved > 0 && <p className="text-[10px] text-zinc-500 mt-2 font-medium bg-zinc-900/50 inline-block px-2 py-0.5 rounded-full">{log.problemsSolved} problems</p>}
-                          {log.efficiencyScore && (
-                            <div className="mt-3 flex items-center gap-2">
-                              <div className="h-1.5 flex-1 bg-zinc-800 rounded-full overflow-hidden">
-                                <div 
-                                  className="h-full bg-indigo-500 rounded-full" 
-                                  style={{ width: `${(log.efficiencyScore / 10) * 100}%` }}
-                                />
-                              </div>
-                              <span className="text-[10px] text-zinc-500 font-medium">EFF {log.efficiencyScore}/10</span>
-                            </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <span className="font-mono text-xs text-[var(--sx-ink)]">
+                            {log.durationMinutes || 0}m
+                          </span>
+                          {(log.problemsSolved || 0) > 0 && (
+                            <span className="font-mono text-xs text-[var(--sx-ink-muted)]">
+                              {log.problemsSolved}Q
+                            </span>
                           )}
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-
-        {/* ================================================================= */}
-        {/* CIRCADIAN COGNITIVE LOAD SCHEDULER */}
-        {/* ================================================================= */}
-        <div className={`relative rounded-2xl overflow-hidden shadow-2xl border ${currentZone.borderColor} ${currentZone.bgColor}`}>
-          <div
-            className="absolute inset-0 pointer-events-none opacity-30"
-            style={{ background: `radial-gradient(ellipse at top left, ${currentZone.glowColor}22 0%, transparent 60%)` }}
-          />
-          <div className="relative z-10 p-6">
-
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="text-3xl leading-none">{currentZone.icon}</div>
-                <div>
-                  <h2 className={`text-lg font-bold ${currentZone.accentColor}`}>
-                    Circadian Cognitive Scheduler
-                  </h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    Your brain's current energy state · Live-updating every minute
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className={`px-3 py-1.5 rounded-xl border text-xs font-bold ${currentZone.badgeBg}`}>
-                  {currentZone.icon} {currentZone.brainState}
-                </span>
-              </div>
-            </div>
-
-            {/* Timeline bar */}
-            <div className="mb-6">
-              <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest mb-2">24-Hour Energy Map</p>
-              <div className="flex h-5 rounded-full overflow-hidden gap-0.5">
-                {circadianTimeline.map((seg) => (
-                  <div
-                    key={seg.zone.id}
-                    title={`${seg.zone.icon} ${seg.zone.label}`}
-                    className={`h-full transition-all rounded-sm ${seg.isCurrent ? 'opacity-100 ring-2 ring-white/30' : 'opacity-40'}`}
-                    style={{
-                      width: `${seg.widthFraction * 100}%`,
-                      background: seg.zone.glowColor,
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-[9px] text-zinc-600 mt-1.5 font-mono">
-                <span>5:30</span>
-                <span>9:00</span>
-                <span>12:00</span>
-                <span>14:00</span>
-                <span>17:00</span>
-                <span>20:00</span>
-                <span>22:00</span>
-              </div>
-            </div>
-
-            {/* Current zone card + countdown */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-              <div className={`sm:col-span-2 rounded-xl border p-4 ${currentZone.borderColor} bg-zinc-950/40`}>
-                <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold mb-2">Now — What to do</p>
-                <ul className="space-y-2">
-                  {circadianRecs.map((rec, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${currentZone.accentColor.replace('text-', 'bg-')}`} />
-                      <span className="text-sm text-zinc-300">{rec}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="rounded-xl border border-zinc-800/60 bg-zinc-950/40 p-4 flex flex-col items-center justify-center text-center gap-1">
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">Next Zone In</p>
-                  <p className={`text-3xl font-bold font-mono ${currentZone.accentColor}`}>
-                    {formatCountdown(minsLeft)}
-                  </p>
-                  <p className="text-xs text-zinc-500 mt-1">
-                    → {nextZone.icon} {nextZone.label}
-                  </p>
-                </div>
-                <div className="rounded-xl border border-zinc-800/60 bg-zinc-950/40 p-3 flex flex-col items-center justify-center text-center gap-1">
-                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-semibold">Current Time</p>
-                  <p className="text-lg font-bold font-mono text-zinc-200">
-                    {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Weak subject callout */}
-            {weakSubjects.length > 0 && (
-              <div className="rounded-xl border border-amber-500/20 bg-amber-950/20 p-3 flex items-start gap-3">
-                <span className="text-amber-400 text-lg leading-none mt-0.5"></span>
-                <div>
-                  <p className="text-xs font-bold text-amber-300">Weakest subject this week</p>
-                  <p className="text-xs text-amber-200/70 mt-0.5">
-                    <strong>{weakSubjects[0].subject}</strong> — only {weakSubjects[0].totalMinutes} min in the last 7 days.
-                    Schedule it in your next Peak Working Memory slot.
-                  </p>
-                </div>
-              </div>
+                          <button
+                            type="button"
+                            onClick={() => handleEditClick(log)}
+                            aria-label="Edit session"
+                            title="Edit"
+                            className="p-1 text-[var(--sx-ink-muted)] hover:text-[var(--sx-ink)] cursor-pointer"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteLog(log.id)}
+                            aria-label="Delete session"
+                            title="Delete"
+                            className="p-1 text-[var(--sx-ink-muted)] hover:text-[var(--sx-fault)] cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
             )}
           </div>
-        </div>
 
+          <DailyAgendaDesk selectedDate={selectedDate} />
+        </section>
+
+        {/* Right: Upcoming Exams */}
+        <aside className="lg:col-span-5">
+          <ExamCountdown />
+        </aside>
       </div>
     </div>
   );
