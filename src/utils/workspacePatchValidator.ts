@@ -5,7 +5,7 @@
  * Savantix workspace customization patches. Never trusts raw LLM output (OWASP LLM01/LLM06).
  */
 
-import type { DayKey, ChapterStatus, TimetableSlot, SyllabusChapter, StudentPlannerState } from '../components/StudyPlanner';
+import type { DayKey, ChapterStatus, TimetableSlot, SyllabusChapter, StudentPlannerState } from '../utils/plannerStorage';
 
 export interface ProposedGoal {
   title: string;

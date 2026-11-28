@@ -21,7 +21,7 @@ import {
   loadPlannerState,
   savePlannerState,
   StudentPlannerState,
-} from './StudyPlanner';
+} from '../utils/plannerStorage';
 import { useAppContext } from '../context/AppContext';
 
 interface AIWorkspaceCustomizerProps {
@@ -137,6 +137,21 @@ export const AIWorkspaceCustomizer: React.FC<AIWorkspaceCustomizerProps> = ({
 
     const next = applyPatchToPlannerState(current, preview, applyMode);
     savePlannerState(next);
+
+    // Sync schoolDaysPerWeek into Attendance profile if updated
+    if (preview.schoolDaysPerWeek === 5 || preview.schoolDaysPerWeek === 6) {
+      try {
+        const rawAtt = localStorage.getItem('savantix_attendance_institutional_v1');
+        if (rawAtt) {
+          const parsedAtt = JSON.parse(rawAtt);
+          if (parsedAtt && parsedAtt.profile) {
+            parsedAtt.profile.schoolDaysPerWeek = preview.schoolDaysPerWeek;
+            localStorage.setItem('savantix_attendance_institutional_v1', JSON.stringify(parsedAtt));
+            window.dispatchEvent(new CustomEvent('savantix:attendance-updated', { detail: parsedAtt }));
+          }
+        }
+      } catch {}
+    }
 
     if (preview.goals && preview.goals.length > 0) {
       for (const g of preview.goals) {

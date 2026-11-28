@@ -84,7 +84,8 @@ export function computeWorkingDaysBetween(
   startDate: string,
   endDate: string,
   holidays: HolidayEntry[] = DEFAULT_HOLIDAYS,
-  vacations: VacationEntry[] = DEFAULT_VACATIONS
+  vacations: VacationEntry[] = DEFAULT_VACATIONS,
+  schoolDaysPerWeek: 5 | 6 = 5
 ): number {
   if (!startDate || !endDate || endDate < startDate) return 0;
   const holidaySet = new Set((holidays || []).map((h) => h.date));
@@ -98,7 +99,8 @@ export function computeWorkingDaysBetween(
   let count = 0;
   while (cur <= end) {
     const dow = cur.getUTCDay(); // 0=Sun, 6=Sat
-    if (dow >= 1 && dow <= 5) {
+    const maxDow = schoolDaysPerWeek === 6 ? 6 : 5;
+    if (dow >= 1 && dow <= maxDow) {
       const iso = cur.toISOString().slice(0, 10);
       if (!holidaySet.has(iso) && !isVacation(iso)) {
         count++;
@@ -117,7 +119,8 @@ export function computeWorkingDaysToToday(
   const lock = state.profile?.lockDate || '2026-12-31';
   const today = asOfDate || new Date().toISOString().slice(0, 10);
   const effectiveEnd = today < lock ? today : lock;
-  return computeWorkingDaysBetween(start, effectiveEnd, state.holidays, state.vacations);
+  const daysPerWeek: 5 | 6 = state.profile?.schoolDaysPerWeek === 6 ? 6 : 5;
+  return computeWorkingDaysBetween(start, effectiveEnd, state.holidays, state.vacations, daysPerWeek);
 }
 
 export function computeLiveMetrics(state: InstitutionalAttendanceState): AttendanceMetrics {

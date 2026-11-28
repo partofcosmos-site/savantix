@@ -450,6 +450,7 @@ export const AttendanceTracker: React.FC = () => {
     setEditWorkingDaysHeld(String(state.profile.workingDaysHeld ?? 0));
     setEditTotalWorkingDays(String(state.profile.totalWorkingDays ?? 140));
     setEditOnDutyDays(String(metrics.onDutyDays ?? state.profile.onDutyDays ?? 0));
+    setEditSchoolDaysPerWeek(state.profile.schoolDaysPerWeek === 6 ? 6 : 5);
     setIsEditingProfile(true);
   };
 
@@ -469,6 +470,7 @@ export const AttendanceTracker: React.FC = () => {
           totalWorkingDays: total,
           onDutyDays: od,
           onDutyCredits: od,
+          schoolDaysPerWeek: editSchoolDaysPerWeek,
           absentDays: prev.absences.length,
           presentDays: Math.max(0, held - prev.absences.length),
         } as any
@@ -760,6 +762,42 @@ export const AttendanceTracker: React.FC = () => {
             >
               <Download className="w-3.5 h-3.5 text-indigo-400" />
               <span>Backup (.json)</span>
+            </button>
+            <button
+              onClick={() => {
+                const rows = [
+                  ['Summary', 'Institution', state.profile.schoolName || ''],
+                  ['Summary', 'School Week', `${state.profile.schoolDaysPerWeek === 6 ? 6 : 5} days/week`],
+                  ['Summary', 'Working Days Held', String(metrics.workingDaysHeld)],
+                  ['Summary', 'Present Days', String(metrics.presentDays)],
+                  ['Summary', 'Absent Days', String(metrics.absentDays)],
+                  ['Summary', 'On-Duty Days', String(metrics.onDutyDays)],
+                  ['Summary', 'Raw Attendance %', `${metrics.rawPct.toFixed(1)}%`],
+                  ['Summary', 'Effective Attendance %', `${metrics.effectivePct.toFixed(1)}%`],
+                  [],
+                  ['Date', 'Day', 'Status', 'Category', 'Reason'],
+                  ...state.absences.map((a) => [
+                    a.date || '',
+                    a.dayOfWeek || '',
+                    a.status || 'ABSENT',
+                    a.category || '',
+                    (a.reason || '').replace(/"/g, '""'),
+                  ]),
+                ];
+                const csv = rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `savantix-attendance-${new Date().toISOString().slice(0, 10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Exported attendance register (.csv)');
+              }}
+              title="Export auditable attendance register as CSV for Excel / Google Sheets"
+              className="px-2.5 py-1.5 bg-[var(--sx-surface)] hover:bg-[var(--sx-hover)] text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)] border border-[var(--sx-hairline)] rounded-[5px] text-xs font-medium transition-colors cursor-pointer"
+            >
+              Export CSV
             </button>
             {!isGuest && (
               <button
@@ -2869,6 +2907,25 @@ export const AttendanceTracker: React.FC = () => {
                     onChange={(e) => setEditOnDutyDays(e.target.value)}
                     className="w-full px-3 py-2 text-sm border rounded-[8px]"
                   />
+                </div>
+              </div>
+              <div className="pt-1">
+                <label className="block text-xs font-medium text-[var(--sx-ink-secondary)] mb-1">School Week</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditSchoolDaysPerWeek(5)}
+                    className={`px-3 py-2 text-xs font-semibold rounded-[8px] border cursor-pointer ${editSchoolDaysPerWeek === 5 ? 'bg-[var(--sx-accent)] text-white border-[var(--sx-accent)]' : 'bg-[var(--sx-canvas)] text-[var(--sx-ink-secondary)] border-[var(--sx-hairline)]'}`}
+                  >
+                    5-Day (Mon–Fri)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditSchoolDaysPerWeek(6)}
+                    className={`px-3 py-2 text-xs font-semibold rounded-[8px] border cursor-pointer ${editSchoolDaysPerWeek === 6 ? 'bg-[var(--sx-accent)] text-white border-[var(--sx-accent)]' : 'bg-[var(--sx-canvas)] text-[var(--sx-ink-secondary)] border-[var(--sx-hairline)]'}`}
+                  >
+                    6-Day (Mon–Sat)
+                  </button>
                 </div>
               </div>
             </div>

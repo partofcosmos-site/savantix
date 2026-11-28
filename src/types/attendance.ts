@@ -107,6 +107,7 @@ export interface InstitutionalProfile {
   absentDays: number;
   onDutyDays: number;
   autoSyncWorkingDays?: boolean;
+  schoolDaysPerWeek?: 5 | 6;
   subjects: SubjectAttendance[];
 }
 

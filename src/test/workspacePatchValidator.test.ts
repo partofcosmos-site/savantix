@@ -4,7 +4,7 @@ import {
   applyPatchToPlannerState,
   extractJsonFromLLMText,
 } from '../utils/workspacePatchValidator';
-import { createBlankPlannerState } from '../components/StudyPlanner';
+import { createBlankPlannerState } from '../utils/plannerStorage';
 
 console.log('=== Running AI Workspace Patch Validator & Isolation Tests ===');
 
