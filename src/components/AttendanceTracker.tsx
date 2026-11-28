@@ -189,6 +189,7 @@ export const AttendanceTracker: React.FC = () => {
   const [absenceCategoryFilter, setAbsenceCategoryFilter] = useState<string>('all');
   const [absenceSearch, setAbsenceSearch] = useState<string>('');
   const [isAddingAbsence, setIsAddingAbsence] = useState<boolean>(false);
+  const [editSchoolDaysPerWeek, setEditSchoolDaysPerWeek] = useState<5 | 6>(5);
   const [newAbsDate, setNewAbsDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
   const [newAbsReason, setNewAbsReason] = useState<string>('');
   const [newAbsCategory, setNewAbsCategory] = useState<AbsenceCategory>('self_study');
