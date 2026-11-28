@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'savantix-pwa-v12';
+﻿const CACHE_NAME = 'savantix-pwa-v13';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/favicon.svg',

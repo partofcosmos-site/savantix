@@ -18,6 +18,7 @@ import {
   MessageSquareHeart,
   GraduationCap,
   CalendarDays,
+  Wand2,
   RefreshCw,
   ArrowUpRight,
   Sun,
@@ -26,6 +27,7 @@ import {
 import clsx from 'clsx';
 import { MicroLoggerModal } from './MicroLoggerModal';
 import { AIGatewayButton } from './AIGateway';
+import { AIWorkspaceCustomizer } from './AIWorkspaceCustomizer';
 import { getSavedTheme, toggleTheme, SavantixTheme } from '../utils/themeManager';
 
 export type ActiveTabType =
@@ -49,6 +51,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
   const { user, isGuest, logout, syncStatus, forceSyncNow } = useAppContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMicroLoggerOpen, setIsMicroLoggerOpen] = useState(false);
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [theme, setTheme] = useState<SavantixTheme>(() => getSavedTheme());
 
@@ -94,11 +97,14 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
     };
 
     const handleOpenMicroLog = () => setIsMicroLoggerOpen(true);
+    const handleOpenCustomizer = () => setIsCustomizerOpen(true);
     window.addEventListener('savantix_open_microlog', handleOpenMicroLog);
+    window.addEventListener('savantix_open_customizer', handleOpenCustomizer);
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => {
       window.removeEventListener('keydown', handleGlobalKeyDown);
       window.removeEventListener('savantix_open_microlog', handleOpenMicroLog);
+      window.removeEventListener('savantix_open_customizer', handleOpenCustomizer);
     };
   }, []);
 
@@ -124,6 +130,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-[var(--sx-canvas)] text-[var(--sx-ink)] flex flex-col md:flex-row font-sans relative">
       <MicroLoggerModal isOpen={isMicroLoggerOpen} onClose={() => setIsMicroLoggerOpen(false)} />
+      <AIWorkspaceCustomizer isOpen={isCustomizerOpen} onClose={() => setIsCustomizerOpen(false)} />
       <AIGatewayButton />
 
       {/* Mobile Top Bar */}

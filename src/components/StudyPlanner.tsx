@@ -9,6 +9,7 @@ import {
   Circle,
   RotateCw,
   Sparkles,
+  Wand2,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useAppContext } from '../context/AppContext';
@@ -33,6 +34,8 @@ export interface SyllabusChapter {
 }
 
 export interface StudentPlannerState {
+  schoolDaysPerWeek: 5 | 6;
+  simpleMode?: boolean;
   timetable: TimetableSlot[];
   syllabus: SyllabusChapter[];
   updatedAt: string;
@@ -40,54 +43,42 @@ export interface StudentPlannerState {
 
 export const PLANNER_STORAGE_KEY = 'savantix_student_planner_v1';
 
-const DAYS: DayKey[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS_5: DayKey[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const DAYS_6: DayKey[] = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const DEFAULT_PLANNER_STATE: StudentPlannerState = {
-  timetable: [
-    { id: 'tt_mon_1', day: 'Mon', time: '08:30', subject: 'Physics', note: 'Mechanics & Lab' },
-    { id: 'tt_mon_2', day: 'Mon', time: '09:30', subject: 'Mathematics', note: 'Calculus' },
-    { id: 'tt_mon_3', day: 'Mon', time: '10:45', subject: 'Chemistry', note: 'Physical Chemistry' },
-    { id: 'tt_mon_4', day: 'Mon', time: '12:00', subject: 'English', note: 'Core Literature' },
-    { id: 'tt_tue_1', day: 'Tue', time: '08:30', subject: 'Mathematics', note: 'Coordinate Geometry' },
-    { id: 'tt_tue_2', day: 'Tue', time: '09:30', subject: 'Physics', note: 'Electromagnetism' },
-    { id: 'tt_tue_3', day: 'Tue', time: '10:45', subject: 'Computer Science', note: 'Algorithms & Python' },
-    { id: 'tt_wed_1', day: 'Wed', time: '08:30', subject: 'Chemistry', note: 'Organic Chemistry' },
-    { id: 'tt_wed_2', day: 'Wed', time: '09:30', subject: 'Mathematics', note: 'Algebra' },
-    { id: 'tt_wed_3', day: 'Wed', time: '10:45', subject: 'Physics', note: 'Optics & Waves' },
-    { id: 'tt_thu_1', day: 'Thu', time: '08:30', subject: 'Physics', note: 'Problem Solving' },
-    { id: 'tt_thu_2', day: 'Thu', time: '09:30', subject: 'Chemistry', note: 'Inorganic Chemistry' },
-    { id: 'tt_thu_3', day: 'Thu', time: '10:45', subject: 'Computer Science', note: 'Lab Practice' },
-    { id: 'tt_fri_1', day: 'Fri', time: '08:30', subject: 'Mathematics', note: 'Mock Drill' },
-    { id: 'tt_fri_2', day: 'Fri', time: '09:30', subject: 'English', note: 'Writing & Grammar' },
-    { id: 'tt_fri_3', day: 'Fri', time: '10:45', subject: 'Physics', note: 'Weekly Review' },
-  ],
-  syllabus: [
-    { id: 'syl_p1', subject: 'Physics', title: 'Kinematics & Laws of Motion', status: 'mastered', updatedAt: new Date().toISOString() },
-    { id: 'syl_p2', subject: 'Physics', title: 'Work, Energy & Rotational Dynamics', status: 'revised', updatedAt: new Date().toISOString() },
-    { id: 'syl_p3', subject: 'Physics', title: 'Electrostatics & Current Electricity', status: 'in_progress', updatedAt: new Date().toISOString() },
-    { id: 'syl_p4', subject: 'Physics', title: 'Optics & Modern Physics', status: 'not_started', updatedAt: new Date().toISOString() },
-    { id: 'syl_c1', subject: 'Chemistry', title: 'Atomic Structure & Chemical Bonding', status: 'mastered', updatedAt: new Date().toISOString() },
-    { id: 'syl_c2', subject: 'Chemistry', title: 'Thermodynamics & Equilibrium', status: 'in_progress', updatedAt: new Date().toISOString() },
-    { id: 'syl_c3', subject: 'Chemistry', title: 'Organic Reaction Mechanisms', status: 'not_started', updatedAt: new Date().toISOString() },
-    { id: 'syl_m1', subject: 'Mathematics', title: 'Limits, Continuity & Differentiation', status: 'revised', updatedAt: new Date().toISOString() },
-    { id: 'syl_m2', subject: 'Mathematics', title: 'Integration & Differential Equations', status: 'in_progress', updatedAt: new Date().toISOString() },
-    { id: 'syl_m3', subject: 'Mathematics', title: 'Vectors, 3D Geometry & Probability', status: 'not_started', updatedAt: new Date().toISOString() },
-  ],
-  updatedAt: new Date().toISOString(),
-};
+/**
+ * Fresh accounts always start completely clean and simple — zero pre-stuffed subjects
+ * or hardcoded timetables. Users either add their own classes/chapters or let the
+ * AI Workspace Customizer configure Savantix from a single sentence.
+ */
+export function createBlankPlannerState(schoolDaysPerWeek: 5 | 6 = 5): StudentPlannerState {
+  return {
+    schoolDaysPerWeek,
+    simpleMode: true,
+    timetable: [],
+    syllabus: [],
+    updatedAt: new Date().toISOString(),
+  };
+}
 
 export function loadPlannerState(): StudentPlannerState {
-  if (typeof window === 'undefined') return DEFAULT_PLANNER_STATE;
+  if (typeof window === 'undefined') return createBlankPlannerState(5);
   try {
     const raw = localStorage.getItem(PLANNER_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.timetable) && Array.isArray(parsed.syllabus)) {
-        return parsed;
+        return {
+          schoolDaysPerWeek: parsed.schoolDaysPerWeek === 6 ? 6 : 5,
+          simpleMode: typeof parsed.simpleMode === 'boolean' ? parsed.simpleMode : false,
+          timetable: parsed.timetable,
+          syllabus: parsed.syllabus,
+          updatedAt: parsed.updatedAt || new Date().toISOString(),
+        };
       }
     }
   } catch {}
-  return DEFAULT_PLANNER_STATE;
+  return createBlankPlannerState(5);
 }
 
 export function savePlannerState(state: StudentPlannerState) {
@@ -127,17 +118,21 @@ const STATUS_META: Record<
   },
 };
 
-function getTodayKey(): DayKey {
+function getTodayKey(daysPerWeek: 5 | 6): DayKey {
   const idx = new Date().getDay(); // 0=Sun, 1=Mon...6=Sat
   const map: Record<number, DayKey> = { 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
-  return map[idx] || 'Mon';
+  const candidate = map[idx] || 'Mon';
+  if (daysPerWeek === 5 && candidate === 'Sat') return 'Mon';
+  return candidate;
 }
 
 export const StudyPlanner: React.FC = () => {
   const { forceSyncNow } = useAppContext();
   const [view, setView] = useState<'timetable' | 'syllabus'>('timetable');
   const [planner, setPlanner] = useState<StudentPlannerState>(() => loadPlannerState());
-  const [selectedDay, setSelectedDay] = useState<DayKey>(() => getTodayKey());
+  const [selectedDay, setSelectedDay] = useState<DayKey>(() =>
+    getTodayKey(loadPlannerState().schoolDaysPerWeek)
+  );
 
   // Timetable add form
   const [newTime, setNewTime] = useState('08:30');
@@ -146,15 +141,20 @@ export const StudyPlanner: React.FC = () => {
 
   // Syllabus add form
   const [selectedSubjFilter, setSelectedSubjFilter] = useState<string>('All');
-  const [chapSubject, setChapSubject] = useState('Physics');
+  const [chapSubject, setChapSubject] = useState('');
   const [chapTitle, setChapTitle] = useState('');
 
-  // Re-hydrate if cloud sync updates localStorage
   useEffect(() => {
-    const onSync = () => setPlanner(loadPlannerState());
+    const onSync = () => {
+      const next = loadPlannerState();
+      setPlanner(next);
+      if (next.schoolDaysPerWeek === 5 && selectedDay === 'Sat') {
+        setSelectedDay('Mon');
+      }
+    };
     window.addEventListener('savantix:planner-updated', onSync);
     return () => window.removeEventListener('savantix:planner-updated', onSync);
-  }, []);
+  }, [selectedDay]);
 
   const persistAndSync = (next: StudentPlannerState) => {
     const stamped = { ...next, updatedAt: new Date().toISOString() };
@@ -167,7 +167,22 @@ export const StudyPlanner: React.FC = () => {
     }, 300);
   };
 
-  const todayKey = getTodayKey();
+  const openAICustomizer = () => {
+    window.dispatchEvent(new CustomEvent('savantix_open_customizer'));
+  };
+
+  const activeDays = planner.schoolDaysPerWeek === 6 ? DAYS_6 : DAYS_5;
+  const todayKey = getTodayKey(planner.schoolDaysPerWeek);
+
+  const handleSetWeekDays = (days: 5 | 6) => {
+    if (days === planner.schoolDaysPerWeek) return;
+    if (days === 5 && selectedDay === 'Sat') setSelectedDay('Mon');
+    persistAndSync({
+      ...planner,
+      schoolDaysPerWeek: days,
+    });
+  };
+
   const daySlots = useMemo(
     () =>
       planner.timetable
@@ -200,10 +215,11 @@ export const StudyPlanner: React.FC = () => {
   };
 
   const subjects = useMemo(() => {
-    const set = new Set<string>(['Physics', 'Chemistry', 'Mathematics', 'Computer Science', 'English']);
+    const set = new Set<string>();
     planner.syllabus.forEach((c) => set.add(c.subject));
+    planner.timetable.forEach((s) => set.add(s.subject));
     return Array.from(set);
-  }, [planner.syllabus]);
+  }, [planner.syllabus, planner.timetable]);
 
   const filteredChapters = useMemo(() => {
     if (selectedSubjFilter === 'All') return planner.syllabus;
@@ -265,6 +281,8 @@ export const StudyPlanner: React.FC = () => {
     });
   };
 
+  const isEmptyWorkspace = planner.timetable.length === 0 && planner.syllabus.length === 0;
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
       {/* Header */}
@@ -274,74 +292,136 @@ export const StudyPlanner: React.FC = () => {
             Study Planner
           </h1>
           <p className="text-sm text-[var(--sx-ink-secondary)] mt-0.5">
-            Your weekly class timetable and chapter-by-chapter syllabus progress, synced to your account.
+            Weekly timetable ({planner.schoolDaysPerWeek}-day week) and chapter progress, synced privately to your account.
           </p>
         </div>
 
-        <div className="inline-flex rounded-lg bg-[var(--sx-surface)] border border-[var(--sx-hairline)] p-1 self-start">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            onClick={() => setView('timetable')}
-            className={clsx(
-              'flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer',
-              view === 'timetable'
-                ? 'bg-[var(--sx-accent)] text-white'
-                : 'text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)]'
-            )}
+            onClick={openAICustomizer}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[var(--sx-accent)]/15 text-[var(--sx-accent)] hover:bg-[var(--sx-accent)]/25 border border-[var(--sx-accent)]/30 text-sm font-semibold transition-colors cursor-pointer"
           >
-            <CalendarDays className="w-4 h-4" />
-            Timetable
+            <Wand2 className="w-4 h-4" />
+            Customize with AI
           </button>
-          <button
-            type="button"
-            onClick={() => setView('syllabus')}
-            className={clsx(
-              'flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer',
-              view === 'syllabus'
-                ? 'bg-[var(--sx-accent)] text-white'
-                : 'text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)]'
-            )}
-          >
-            <BookMarked className="w-4 h-4" />
-            Syllabus ({syllabusStats.pct}%)
-          </button>
+
+          <div className="inline-flex rounded-lg bg-[var(--sx-surface)] border border-[var(--sx-hairline)] p-1">
+            <button
+              type="button"
+              onClick={() => setView('timetable')}
+              className={clsx(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                view === 'timetable'
+                  ? 'bg-[var(--sx-accent)] text-white'
+                  : 'text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)]'
+              )}
+            >
+              <CalendarDays className="w-4 h-4" />
+              Timetable
+            </button>
+            <button
+              type="button"
+              onClick={() => setView('syllabus')}
+              className={clsx(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                view === 'syllabus'
+                  ? 'bg-[var(--sx-accent)] text-white'
+                  : 'text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)]'
+              )}
+            >
+              <BookMarked className="w-4 h-4" />
+              Syllabus{syllabusStats.total > 0 ? ` (${syllabusStats.pct}%)` : ''}
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* Fresh-user welcome card when blank */}
+      {isEmptyWorkspace && (
+        <div className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h2 className="text-base font-semibold text-[var(--sx-ink)]">
+              Start fresh — set up Savantix your way
+            </h2>
+            <p className="text-sm text-[var(--sx-ink-secondary)]">
+              Add your classes and chapters manually below, or describe your school week and subjects in one sentence and let AI configure everything for you.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={openAICustomizer}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--sx-accent)] hover:opacity-90 text-white text-sm font-semibold shrink-0 cursor-pointer"
+          >
+            <Wand2 className="w-4 h-4" />
+            Set Up with AI
+          </button>
+        </div>
+      )}
+
       {view === 'timetable' ? (
         <div className="space-y-5">
-          {/* Day selector */}
-          <div className="flex flex-wrap gap-2">
-            {DAYS.map((day) => {
-              const count = planner.timetable.filter((s) => s.day === day).length;
-              const isToday = day === todayKey;
-              return (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => setSelectedDay(day)}
-                  className={clsx(
-                    'px-3.5 py-2 rounded-lg text-sm font-medium border transition-colors cursor-pointer flex items-center gap-2',
-                    selectedDay === day
-                      ? 'bg-[var(--sx-accent)] text-white border-[var(--sx-accent)]'
-                      : 'bg-[var(--sx-surface)] text-[var(--sx-ink-secondary)] border-[var(--sx-hairline)] hover:text-[var(--sx-ink)]'
-                  )}
-                >
-                  <span>{day}</span>
-                  {isToday && (
-                    <span
-                      className={clsx(
-                        'text-[11px] px-1.5 py-0.2 rounded-full',
-                        selectedDay === day ? 'bg-white/20 text-white' : 'bg-[var(--sx-accent)]/15 text-[var(--sx-accent)]'
-                      )}
-                    >
-                      Today
-                    </span>
-                  )}
-                  <span className="text-xs opacity-70">{count}</span>
-                </button>
-              );
-            })}
+          {/* Day selector + 5-day / 6-day toggle */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              {activeDays.map((day) => {
+                const count = planner.timetable.filter((s) => s.day === day).length;
+                const isToday = day === todayKey;
+                return (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => setSelectedDay(day)}
+                    className={clsx(
+                      'px-3.5 py-2 rounded-lg text-sm font-medium border transition-colors cursor-pointer flex items-center gap-2',
+                      selectedDay === day
+                        ? 'bg-[var(--sx-accent)] text-white border-[var(--sx-accent)]'
+                        : 'bg-[var(--sx-surface)] text-[var(--sx-ink-secondary)] border-[var(--sx-hairline)] hover:text-[var(--sx-ink)]'
+                    )}
+                  >
+                    <span>{day}</span>
+                    {isToday && (
+                      <span
+                        className={clsx(
+                          'text-[11px] px-1.5 py-0.2 rounded-full',
+                          selectedDay === day ? 'bg-white/20 text-white' : 'bg-[var(--sx-accent)]/15 text-[var(--sx-accent)]'
+                        )}
+                      >
+                        Today
+                      </span>
+                    )}
+                    <span className="text-xs opacity-70">{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="inline-flex items-center rounded-lg bg-[var(--sx-surface)] border border-[var(--sx-hairline)] p-0.5 text-xs">
+              <button
+                type="button"
+                onClick={() => handleSetWeekDays(5)}
+                className={clsx(
+                  'px-2.5 py-1.5 rounded-md font-medium transition-colors cursor-pointer',
+                  planner.schoolDaysPerWeek === 5
+                    ? 'bg-[var(--sx-accent)] text-white'
+                    : 'text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)]'
+                )}
+              >
+                5-Day (Mon–Fri)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetWeekDays(6)}
+                className={clsx(
+                  'px-2.5 py-1.5 rounded-md font-medium transition-colors cursor-pointer',
+                  planner.schoolDaysPerWeek === 6
+                    ? 'bg-[var(--sx-accent)] text-white'
+                    : 'text-[var(--sx-ink-secondary)] hover:text-[var(--sx-ink)]'
+                )}
+              >
+                6-Day (Mon–Sat)
+              </button>
+            </div>
           </div>
 
           {/* Add Class Form */}
@@ -368,7 +448,7 @@ export const StudyPlanner: React.FC = () => {
                 type="text"
                 value={newSubject}
                 onChange={(e) => setNewSubject(e.target.value)}
-                placeholder="e.g. Physics, Maths, Lab"
+                placeholder="e.g. Physics, Maths, History"
                 className="w-full px-3 py-2 rounded-lg bg-[var(--sx-canvas)] border border-[var(--sx-hairline)] text-sm text-[var(--sx-ink)] focus:outline-none focus:border-[var(--sx-accent)]"
               />
             </div>
@@ -380,7 +460,7 @@ export const StudyPlanner: React.FC = () => {
                 type="text"
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
-                placeholder="e.g. Room 204, Optics Practical"
+                placeholder="e.g. Room 204, Lab"
                 className="w-full px-3 py-2 rounded-lg bg-[var(--sx-canvas)] border border-[var(--sx-hairline)] text-sm text-[var(--sx-ink)] focus:outline-none focus:border-[var(--sx-accent)]"
               />
             </div>
@@ -399,7 +479,10 @@ export const StudyPlanner: React.FC = () => {
           <div className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-xl divide-y divide-[var(--sx-hairline)]">
             {daySlots.length === 0 ? (
               <div className="p-8 text-center text-sm text-[var(--sx-ink-muted)]">
-                No classes scheduled for {selectedDay}. Add a period above to build your timetable.
+                No classes scheduled for {selectedDay} yet. Add a period above or click{' '}
+                <button type="button" onClick={openAICustomizer} className="text-[var(--sx-accent)] font-medium hover:underline cursor-pointer">
+                  Customize with AI
+                </button>.
               </div>
             ) : (
               daySlots.map((slot) => (
@@ -465,23 +548,25 @@ export const StudyPlanner: React.FC = () => {
           </div>
 
           {/* Subject Filter Pills */}
-          <div className="flex flex-wrap gap-2">
-            {['All', ...subjects].map((subj) => (
-              <button
-                key={subj}
-                type="button"
-                onClick={() => setSelectedSubjFilter(subj)}
-                className={clsx(
-                  'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors cursor-pointer',
-                  selectedSubjFilter === subj
-                    ? 'bg-[var(--sx-accent)] text-white border-[var(--sx-accent)]'
-                    : 'bg-[var(--sx-surface)] text-[var(--sx-ink-secondary)] border-[var(--sx-hairline)] hover:text-[var(--sx-ink)]'
-                )}
-              >
-                {subj}
-              </button>
-            ))}
-          </div>
+          {subjects.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {['All', ...subjects].map((subj) => (
+                <button
+                  key={subj}
+                  type="button"
+                  onClick={() => setSelectedSubjFilter(subj)}
+                  className={clsx(
+                    'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors cursor-pointer',
+                    selectedSubjFilter === subj
+                      ? 'bg-[var(--sx-accent)] text-white border-[var(--sx-accent)]'
+                      : 'bg-[var(--sx-surface)] text-[var(--sx-ink-secondary)] border-[var(--sx-hairline)] hover:text-[var(--sx-ink)]'
+                  )}
+                >
+                  {subj}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Add Chapter Form */}
           <form
@@ -497,6 +582,7 @@ export const StudyPlanner: React.FC = () => {
                 list="savantix-subjects"
                 value={chapSubject}
                 onChange={(e) => setChapSubject(e.target.value)}
+                placeholder="e.g. Physics, Biology"
                 className="w-full px-3 py-2 rounded-lg bg-[var(--sx-canvas)] border border-[var(--sx-hairline)] text-sm text-[var(--sx-ink)] focus:outline-none focus:border-[var(--sx-accent)]"
               />
               <datalist id="savantix-subjects">
@@ -532,7 +618,10 @@ export const StudyPlanner: React.FC = () => {
           <div className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-xl divide-y divide-[var(--sx-hairline)]">
             {filteredChapters.length === 0 ? (
               <div className="p-8 text-center text-sm text-[var(--sx-ink-muted)]">
-                No chapters added yet for {selectedSubjFilter}.
+                No chapters added yet. Add a chapter above or click{' '}
+                <button type="button" onClick={openAICustomizer} className="text-[var(--sx-accent)] font-medium hover:underline cursor-pointer">
+                  Customize with AI
+                </button>.
               </div>
             ) : (
               filteredChapters.map((chap) => {
