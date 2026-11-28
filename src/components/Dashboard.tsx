@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { format, subDays, parseISO, isValid, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
-import { Edit2, Check, X, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Edit2, Check, X, Trash2, Plus, ChevronDown, ChevronUp, Wand2, CalendarDays } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { parseQuickStudyLog } from '../utils/quickLogParser';
 import { ExamCountdown } from './ExamCountdown';
 import { DailyAgendaDesk } from './DailyAgendaDesk';
 import { LogInput } from './LogInput';
+import { loadPlannerState, DayKey } from '../utils/plannerStorage';
 
 export const Dashboard = () => {
   const {
@@ -83,6 +84,31 @@ export const Dashboard = () => {
   const targetMins = Math.max(15, elasticStreak?.targetMinutesDaily || 120);
   const targetPct = Math.min(100, Math.round((totalMinutes / targetMins) * 100));
   const activeStreak = elasticStreak?.activeStreakDays || 0;
+
+  const [plannerTick, setPlannerTick] = useState(0);
+  React.useEffect(() => {
+    const onP = () => setPlannerTick((t) => t + 1);
+    window.addEventListener('savantix:planner-updated', onP);
+    return () => window.removeEventListener('savantix:planner-updated', onP);
+  }, []);
+
+  const plannerSummary = useMemo(() => {
+    const st = loadPlannerState();
+    const map: Record<number, DayKey> = { 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
+    const dow = new Date().getDay();
+    const dayKey = map[dow] || 'Mon';
+    const isWeekend = dow === 0 || (st.schoolDaysPerWeek === 5 && dow === 6);
+    const todaySlots = isWeekend
+      ? []
+      : st.timetable.filter((s) => s.day === dayKey).sort((a, b) => a.time.localeCompare(b.time));
+    return {
+      isEmpty: st.timetable.length === 0 && st.syllabus.length === 0,
+      schoolDaysPerWeek: st.schoolDaysPerWeek,
+      dayKey,
+      isWeekend,
+      todaySlots,
+    };
+  }, [plannerTick]);
 
   const handleQuickLogSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -461,7 +487,60 @@ export const Dashboard = () => {
 
         {/* Right: Upcoming Exams */}
         <aside className="lg:col-span-5">
-          <ExamCountdown />
+          {/* Today's Classes or Fresh-User AI Setup Strip */}
+      {plannerSummary.isEmpty ? (
+        <div className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 text-sm text-[var(--sx-ink-secondary)]">
+            <Wand2 className="w-4 h-4 text-[var(--sx-accent)] shrink-0" />
+            <span>
+              <strong className="text-[var(--sx-ink)]">New workspace?</strong> Tell AI your school week (5-day or 6-day) and subjects to set up your timetable &amp; syllabus in seconds.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('savantix_open_customizer'))}
+            className="px-3 py-1.5 rounded-lg bg-[var(--sx-accent)] hover:opacity-90 text-white text-xs font-semibold cursor-pointer"
+          >
+            Customize with AI
+          </button>
+        </div>
+      ) : (
+        <div className="bg-[var(--sx-surface)] border border-[var(--sx-hairline)] rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
+            <CalendarDays className="w-4 h-4 text-[var(--sx-accent)] shrink-0" />
+            <span className="text-xs font-semibold text-[var(--sx-ink)] shrink-0">
+              {plannerSummary.isWeekend
+                ? `Weekend (${plannerSummary.schoolDaysPerWeek}-day school)`
+                : `${plannerSummary.dayKey} Classes:`}
+            </span>
+            {plannerSummary.todaySlots.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {plannerSummary.todaySlots.slice(0, 6).map((slot) => (
+                  <span
+                    key={slot.id}
+                    className="text-xs px-2 py-0.5 rounded-md bg-[var(--sx-canvas)] border border-[var(--sx-hairline)] text-[var(--sx-ink-secondary)]"
+                  >
+                    <strong className="text-[var(--sx-ink)]">{slot.time}</strong> {slot.subject}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <span className="text-xs text-[var(--sx-ink-muted)]">
+                {plannerSummary.isWeekend ? 'No school today — ideal for revision or rest.' : 'No periods added for today.'}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: { tab: 'planner' } }))}
+            className="text-xs font-semibold text-[var(--sx-accent)] hover:underline cursor-pointer shrink-0"
+          >
+            Open Planner &rarr;
+          </button>
+        </div>
+      )}
+
+      <ExamCountdown />
         </aside>
       </div>
     </div>
