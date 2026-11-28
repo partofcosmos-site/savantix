@@ -13,6 +13,7 @@ const Settings = lazy(() => import('./components/Settings').then(m => ({ default
 const DeepWorkFortress = lazy(() => import('./components/DeepWorkFortress').then(m => ({ default: m.DeepWorkFortress })));
 const ContactFeedback = lazy(() => import('./components/ContactFeedback').then(m => ({ default: m.ContactFeedback })));
 const AttendanceCalculator = lazy(() => import('./components/AttendanceCalculator').then(m => ({ default: m.AttendanceCalculator })));
+const StudyPlanner = lazy(() => import('./components/StudyPlanner').then(m => ({ default: m.StudyPlanner })));
 
 const TabFallback = () => (
   <div className="flex items-center justify-center h-64 text-xs text-[var(--sx-ink-muted)]">
@@ -25,6 +26,7 @@ const TAB_ROUTES: Record<ActiveTabType, { path: string; title: string }> = {
   pomodoro: { path: '/pomodoro', title: 'Focus Timer — Savantix' },
   analytics: { path: '/analytics', title: 'Analytics — Savantix' },
   attendance: { path: '/attendance', title: 'Attendance — Savantix' },
+  planner: { path: '/planner', title: 'Study Planner — Savantix' },
   goals: { path: '/goals', title: 'Goals — Savantix' },
   journal: { path: '/journal', title: 'Journal — Savantix' },
   settings: { path: '/settings', title: 'Settings — Savantix' },
@@ -50,8 +52,6 @@ function resolveTabFromLocation(): ActiveTabType {
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTabType>(resolveTabFromLocation);
   const [isFortressMode, setIsFortressMode] = useState(false);
-  // Keep Pomodoro mounted once visited so active focus timers keep ticking across tabs;
-  // unmount static tabs so the DOM stays lightweight and responsive.
   const [pomodoroMounted, setPomodoroMounted] = useState<boolean>(() => resolveTabFromLocation() === 'pomodoro');
 
   useEffect(() => {
@@ -115,6 +115,7 @@ export default function App() {
               )}
               {activeTab === 'analytics' && <Analytics />}
               {activeTab === 'attendance' && <AttendanceCalculator />}
+              {activeTab === 'planner' && <StudyPlanner />}
               {activeTab === 'goals' && <Goals />}
               {activeTab === 'journal' && <Journal />}
               {activeTab === 'settings' && <Settings />}

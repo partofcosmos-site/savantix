@@ -17,6 +17,7 @@ import {
   Zap,
   MessageSquareHeart,
   GraduationCap,
+  CalendarDays,
   RefreshCw,
   ArrowUpRight,
   Sun,
@@ -32,6 +33,7 @@ export type ActiveTabType =
   | 'pomodoro'
   | 'analytics'
   | 'attendance'
+  | 'planner'
   | 'goals'
   | 'journal'
   | 'settings'
@@ -75,8 +77,8 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
       } else if (e.altKey && (e.key === 't' || e.key === 'T')) {
         e.preventDefault();
         handleToggleTheme();
-      } else if (e.altKey && /^[1-8]$/.test(e.key)) {
-        const order: ActiveTabType[] = ['dashboard', 'attendance', 'pomodoro', 'analytics', 'goals', 'journal', 'settings', 'feedback'];
+      } else if (e.altKey && /^[1-9]$/.test(e.key)) {
+        const order: ActiveTabType[] = ['dashboard', 'attendance', 'planner', 'pomodoro', 'analytics', 'goals', 'journal', 'settings', 'feedback'];
         const target = order[parseInt(e.key, 10) - 1];
         if (target) {
           e.preventDefault();
@@ -103,6 +105,7 @@ export const Layout = ({ children, activeTab, setActiveTab }: LayoutProps) => {
   const tabs = [
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard },
     { id: 'attendance', label: 'Attendance', icon: GraduationCap },
+    { id: 'planner', label: 'Planner', icon: CalendarDays },
     { id: 'pomodoro', label: 'Focus', icon: Clock },
     { id: 'analytics', label: 'Analytics', icon: BarChart2 },
     { id: 'goals', label: 'Goals', icon: Target },

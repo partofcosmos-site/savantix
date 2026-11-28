@@ -28,6 +28,7 @@ export interface CloudSyncPayload {
   flashcards: any[];
   examTargets: any[];
   streakState?: any;
+  student_planner?: any;
   profile?: any;
 }
 
@@ -227,6 +228,12 @@ export class CloudSyncService {
       if (rawStreak) streakState = JSON.parse(rawStreak);
     } catch {}
 
+    let student_planner: any = null;
+    try {
+      const rawPlanner = localStorage.getItem('savantix_student_planner_v1');
+      if (rawPlanner) student_planner = JSON.parse(rawPlanner);
+    } catch {}
+
     let profile: any = null;
     try {
       const rawProf = localStorage.getItem(`savantix_user_profile_${userUidKey}`);
@@ -251,6 +258,7 @@ export class CloudSyncService {
       flashcards,
       examTargets,
       streakState,
+      student_planner,
       profile
     };
   }
@@ -495,6 +503,14 @@ export class CloudSyncService {
     }
     if (remote.profile) {
       localStorage.setItem(`savantix_user_profile_${userUidKey}`, JSON.stringify(remote.profile));
+    }
+    if (remote.student_planner && Array.isArray(remote.student_planner.timetable)) {
+      try {
+        localStorage.setItem('savantix_student_planner_v1', JSON.stringify(remote.student_planner));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('savantix:planner-updated', { detail: remote.student_planner }));
+        }
+      } catch {}
     }
 
     const timestamp = new Date().toLocaleTimeString();
